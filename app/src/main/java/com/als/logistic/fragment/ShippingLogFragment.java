@@ -112,7 +112,7 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
         MainDriverId    = DriverConst.GetDriverDetails(DriverConst.DriverID, getContext());
         CoDriverId      = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getContext());
         DeviceId        = SharedPref.GetSavedSystemToken(getActivity());
-        SelectedDate    = Global.GetCurrentDeviceDate();
+        SelectedDate    = Global.GetCurrentDeviceDate(null, Global, getActivity());
 
         hiddenListView.setVisibility(View.GONE);
         rightMenuBtn.setVisibility(View.GONE);

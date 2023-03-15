@@ -46,6 +46,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.background.service.AfterLogoutService;
+import com.background.service.BackgroundLocationService;
 import com.background.service.BleDataService;
 import com.constants.APIs;
 import com.constants.Anim;
@@ -55,6 +56,7 @@ import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.Utils;
 import com.custom.dialogs.BleAvailableDevicesDialog;
+import com.custom.dialogs.TimeZoneDialog;
 import com.driver.details.DriverConst;
 import com.driver.details.ParseLoginDetails;
 import com.google.android.gms.common.ConnectionResult;
@@ -66,6 +68,7 @@ import com.local.db.MalfunctionDiagnosticMethod;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.MainDriverEldPref;
 
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -563,38 +566,49 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 
 		if (Build.VERSION.SDK_INT >= 23) {
-			if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-					== PackageManager.PERMISSION_GRANTED) {
-				//requestPermissionPhone();
+			int PreciseLocation = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+			int ApproximateLocation = checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
 
-				if(IsbleService){
-					if (constants.CheckGpsStatusToCheckMalfunction(this)) {
-						BleDataService.IsScanClick = true;
-						SharedPref.SetPingStatus("ble_start", getApplicationContext());
-						loginBleStatusBtn.startAnimation(connectionStatusAnimation);
-						startService();
-					} else {
-						global.EldScreenToast(mainLoginLayout, getResources().getString(R.string.gps_alert), getResources().getColor(R.color.colorVoilation));
-					}
-				}else{
-					isNearByDevicesGranted();
-					//login();
-				}
 
-				return true;
-			} else {
+			if (PreciseLocation != PackageManager.PERMISSION_GRANTED &&
+					ApproximateLocation != PackageManager.PERMISSION_GRANTED) {
+
 				Logger.LogVerbose("TAG", "Permission is revoked");
 				if(IsbleService){
-					ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-							FINE_LOCATION);
+					ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+							Manifest.permission.ACCESS_COARSE_LOCATION}, FINE_LOCATION);
 					Toast.makeText(this, getString(R.string.loc_per_denied), Toast.LENGTH_LONG).show();
 				}else {
 					ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+							Manifest.permission.ACCESS_COARSE_LOCATION,
 							Manifest.permission.ACCESS_BACKGROUND_LOCATION}, LOCATION_REQUEST);
 					Toast.makeText(this, getString(R.string.loc_per_revoked), Toast.LENGTH_SHORT).show();
 				}
 				//requestPermissionPhone();
 				return false;
+
+			} else {
+
+				if(ApproximateLocation == PackageManager.PERMISSION_GRANTED && PreciseLocation != PackageManager.PERMISSION_GRANTED){
+					ActivityCompat.requestPermissions(LoginActivity.this,
+							new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+							LOCATION_REQUEST);
+				}else {
+					if (IsbleService) {
+						if (constants.CheckGpsStatusToCheckMalfunction(this)) {
+							BleDataService.IsScanClick = true;
+							SharedPref.SetPingStatus("ble_start", getApplicationContext());
+							loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+							startService();
+						} else {
+							global.EldScreenToast(mainLoginLayout, getResources().getString(R.string.gps_alert), getResources().getColor(R.color.colorVoilation));
+						}
+					} else {
+						isNearByDevicesGranted();
+						//login();
+					}
+				}
+				return true;
 			}
 		} else { //permission is automatically granted on sdk<23 upon installation
 			Logger.LogVerbose("TAG", "Permission is granted");
@@ -764,15 +778,27 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 	void login() {
 
-		/*DateTime selectedDateTime = Globally.getDateTimeObj("2022-08-07T06:38:04", false);
-		DateTime currentUtcDate = Globally.GetCurrentUTCDateTime();
-		long hourDiff = Constants.getDateTimeDuration(selectedDateTime, currentUtcDate).getStandardHours();
-		int dayDiff = Constants.getDayDiff(selectedDateTime.toString(), currentUtcDate.toString());
+	/*	DateTime selectedDateTime = Globally.getDateTimeObj("2022-08-07T00:00:00", false);
+		DateTime currentUtcDate = Globally.getDateTimeObj("2022-08-07T23:59:59", false);
+		long secDiff = Constants.getDateTimeDuration(selectedDateTime, currentUtcDate).getStandardSeconds();
+		long minDiff = Constants.getDateTimeDuration(selectedDateTime, currentUtcDate).getStandardMinutes();
+		//int dayDiff = Constants.getDayDiff(selectedDateTime.toString(), currentUtcDate.toString());
+		double secInDouble = secDiff/60;
+		double secIn2 = secInDouble/60;
 
-		Logger.LogDebug("hourDiff","hourDiff:" +hourDiff);
-		Logger.LogDebug("dayDiff","dayDiff:" +dayDiff);
+		Logger.LogDebug("secDiff","secDiff:" +secDiff);
+		Logger.LogDebug("dayDiff","dayDiff:" +minDiff);
+		Logger.LogDebug("secInDouble","secInDouble:" +secIn2);
 */
 
+	/*	int dayDiff = 1;
+		boolean isMalfunctionForClear = malfunctionDiagnosticMethod.isMalfunctionEvent(Constants.PowerComplianceMalfunction) && dayDiff != 0;
+		boolean isMalfunctionForClear1 = malfunctionDiagnosticMethod.isMalfunctionEvent(Constants.DataTransferDiagnostic) && dayDiff != 0;
+		boolean isMalfunctionForClear2 = malfunctionDiagnosticMethod.isMalfunctionEvent(Constants.DataTransferMalfunction) && 0 != 0;
+		Logger.LogDebug("secDiff","isMalfunctionForClear:" +isMalfunctionForClear);
+		Logger.LogDebug("secDiff","isMalfunctionForClear1:" +isMalfunctionForClear1);
+		Logger.LogDebug("secDiff","isMalfunctionForClear2:" +isMalfunctionForClear2);
+*/
 
 		StrSingleUserame = userNameText.getText().toString().trim();
 		StrSinglePass = passwordText.getText().toString();
@@ -895,8 +921,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		//	SharedPref.SaveTruckInfoOnIgnitionChange("", "","", "","0", "0", getApplicationContext());
 			SharedPref.setUnIdenLastDutyStatus("", getApplicationContext());
 			SharedPref.SaveUnidentifiedIntermediateRecord("", "", "", "", "", getApplicationContext());
-			SharedPref.setUnAssignedVehicleMilesId("", getApplicationContext());
-			SharedPref.setIntermediateLogId("", getApplicationContext());
+			SharedPref.setUnAssignedVehicleMilesId("0", getApplicationContext());
+			SharedPref.setIntermediateLogId("0", getApplicationContext());
 			SharedPref.setTotalPUOdometerForDay("-1","", getApplicationContext());
 			SharedPref.SetWrongVinAlertView(false, getApplicationContext());
 			SharedPref.saveParticularMalDiaStatus( false ,false ,false ,false ,false , getApplicationContext());
@@ -914,14 +940,20 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.saveCoDriverSwitchingStatus(false, getApplicationContext());
 			SharedPref.setObdStatusAfterLogin(false, getApplicationContext());
 			SharedPref.SetEditedLogStatus(false, getApplicationContext());
+			SharedPref.SetHighPrecisionUnit("M", getApplicationContext());
+			SharedPref.setPuExceedCheckDate("", getApplicationContext());
 
-			SharedPref.saveLocDiagnosticStatus(SharedPref.isLocDiagnosticOccur(getApplicationContext()), Globally.GetCurrentDateTime(),
+			SharedPref.saveTimingMalfunctionStatus(false, "", getApplicationContext());
+			SharedPref.saveTimingMalfunctionWarningTime("", getApplicationContext());
+
+			SharedPref.setCheckUnassignedReqTime(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
+			SharedPref.saveLocDiagnosticStatus(SharedPref.isLocDiagnosticOccur(getApplicationContext()), Globally.GetDriverCurrentDateTime(global, getApplicationContext()),
 					Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
 
 			SharedPref.saveOtherMalDiaStatus( false, false, false, false,
 					false, false, false, getApplicationContext());
 			//SharedPref.setApiCallStatus("[]", getApplicationContext());
-			SharedPref.updateApiCallStatus( 0, false, getApplicationContext());
+			SharedPref.updateApiCallStatus( 0, false, global, getApplicationContext());
 
 			// clear array in table
 			if(CompanyId.length() > 0) {
@@ -1119,7 +1151,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 					protected Map<String, String> getParams() {
 						Map<String, String> params = new HashMap<String, String>();
 
-						String date = global.getCurrentDate();
+						String date = global.GetDriverCurrentDateTime(global, getApplicationContext());
 
 						params.put(ConstantsKeys.DeviceId, DeviceId);
 						params.put(ConstantsKeys.Password, pass);
@@ -1147,7 +1179,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			}
 
 		}else{
-			global.EldScreenToast(mainLoginLayout, getString(R.string.login_speed_alert), getResources().getColor(R.color.colorVoilation));
+			global.EldScreenToast(mainLoginLayout, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+					getString(R.string.login_speed_alert), getResources().getColor(R.color.colorVoilation));
 		}
 
 	}
@@ -1158,14 +1191,12 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			errorStr = "Invalid Username/Password.";
 		}else if( errorStr.contains("timeout")){
 			errorStr = "Connection timeout error";
-		}else if (errorStr.contains("NoConnectionError")) {
+		}else if (errorStr.contains("NoConnectionError") || errorStr.contains("SSLHandshakeException")) {
 			errorStr = "Internet connection error";
 		}else if(errorStr.contains("Network")){
 			errorStr = "Network Error";
 		} else if (errorStr.contains("ServerError")) {
 			errorStr = "ALS server not responding";
-		}else{
-
 		}
 
 		// intilize request queue object again to notify network.
@@ -1432,6 +1463,27 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 			case R.id.loginBleStatusBtn:
 
+			/*	DateTime selectedDateTime = Globally.getDateTimeObj("2023-02-12T06:59:42", false);
+				DateTime currentTime = Globally.getDateTimeObj("2023-02-13T05:59:42", false);
+				long hourDiff = Constants.getDateTimeDuration(selectedDateTime, currentTime).getStandardHours();
+				long minDiff = Constants.getDateTimeDuration(selectedDateTime, currentTime).getStandardMinutes();
+				int minDiffNew = Constants.getTimeDiffInMin(selectedDateTime.toString(), currentTime);
+
+				Logger.LogDebug("hourDiff","hourDiff: " +hourDiff );
+				Logger.LogDebug("minDiff","minDiff: " +minDiff );
+				Logger.LogDebug("minDiffUp","minDiffUp: " +minDiffNew );
+
+				selectedDateTime = Globally.getDateTimeObj("2023-02-13T15:59:40", false);
+				currentTime = Globally.getDateTimeObj("2023-02-13T00:59:42", false);
+				hourDiff = Constants.getDateTimeDuration(selectedDateTime, currentTime).getStandardHours();
+				minDiff = Constants.getDateTimeDuration(selectedDateTime, currentTime).getStandardMinutes();
+				minDiffNew = Constants.getTimeDiffInMin(selectedDateTime.toString(), currentTime);
+				Logger.LogDebug("hourDiffNew","hourDiffNew: " +hourDiff );
+				Logger.LogDebug("minDiffNew","minDiffNew: " +minDiff );
+				Logger.LogDebug("minDiffNewNew","minDiffNew: " +minDiffNew );
+
+*/
+
 				if(ObdPreference == Constants.OBD_PREF_BLE) {
 					if(!IsBleConnected) {
 						requestLocationPermission(true);
@@ -1477,6 +1529,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				break;
 
 			case R.id.loginBtn:
+
 				global.hideKeyboard(LoginActivity.this, mainLoginLayout);
 		// =============== Check storage permission =====================
 				isStoragePermissionGranted();
@@ -1496,7 +1549,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 					InFromRightAnim(loginLayout);
 
 				}else{
-					global.EldScreenToast(mainLoginLayout, getString(R.string.login_speed_alert), getResources().getColor(R.color.colorVoilation));
+					global.EldScreenToast(mainLoginLayout, "Vehicle speed is " +BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+							getString(R.string.login_speed_alert), getResources().getColor(R.color.colorVoilation));
 				}
 
 				break;
@@ -1518,7 +1572,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 					OutToLeftAnim(userTypeLayout);
 					InFromRightAnim(loginLayout);
 				}else{
-					global.EldScreenToast(mainLoginLayout, getString(R.string.login_speed_alert), getResources().getColor(R.color.colorVoilation));
+					global.EldScreenToast(mainLoginLayout, "Vehicle speed is " +BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+							getString(R.string.login_speed_alert), getResources().getColor(R.color.colorVoilation));
 				}
 
 				break;
@@ -1531,6 +1586,26 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 		}
 	}
+
+
+	/*void checkDriverTime(){
+
+		try {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					TimeZoneDialog timeZoneDialog = new TimeZoneDialog(LoginActivity.this, true, false, false);
+					timeZoneDialog.show();
+
+				}
+			});
+
+		} catch (final IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+	}*/
 
 
 	@Override

@@ -3,6 +3,7 @@ package com.constants;
 import android.content.Context;
 import android.util.Log;
 
+import com.als.logistic.Globally;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -31,14 +32,16 @@ public class SaveUnidentifiedRecord
     RequestQueue SaveLogRequest;
     FailedApiTrackMethod failedApiTrackMethod;
     DBHelper dbHelper;
+    Globally global;
 
 
-    public SaveUnidentifiedRecord(Context cxt, VolleyRequest.VolleyCallback response){
+    public SaveUnidentifiedRecord(Context cxt, VolleyRequest.VolleyCallback response, VolleyRequest.VolleyErrorCall error){
         context = cxt;
         postResponse = response;
+        ErrorCallBack = error;
         failedApiTrackMethod = new FailedApiTrackMethod();
         dbHelper = new DBHelper(cxt);
-
+        global   = new Globally();
     }
 
 
@@ -48,10 +51,10 @@ public class SaveUnidentifiedRecord
             SaveLogRequest = Volley.newRequestQueue(context);
         }
 
-        if(failedApiTrackMethod.isAllowToCallOrReset(dbHelper, api, false)) {
+        if(failedApiTrackMethod.isAllowToCallOrReset(dbHelper, api, false, global, context)) {
 
             // save api call count on request time
-            failedApiTrackMethod.confirmAndSaveApiTrack(dbHelper, api, true);
+            failedApiTrackMethod.confirmAndSaveApiTrack(dbHelper, api, global, context);
 
 
             StringRequest postRequest = new StringRequest(Request.Method.POST, api,
@@ -62,7 +65,7 @@ public class SaveUnidentifiedRecord
 
                             // Reset failed API track after successfully response
                             if(failedApiTrackMethod.isSuccess(response)) {
-                                failedApiTrackMethod.isAllowToCallOrReset(dbHelper, api, true);
+                                failedApiTrackMethod.isAllowToCallOrReset(dbHelper, api, true, global, context);
                             }
 
                             postResponse.getResponse(response, flag);
@@ -75,6 +78,7 @@ public class SaveUnidentifiedRecord
                             Logger.LogDebug("error", ">>errorrrrr: " + error);
                             try {
                                 ErrorCallBack.getError(error, flag);
+                               // postResponse.getResponse(error.toString(), flag);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -114,68 +118,79 @@ public class SaveUnidentifiedRecord
             SaveLogRequest.add(postRequest);
 
 
-        }else{
+        }else {
             ErrorCallBack.getError(null, flag);
 
 
             // ------------------------ Failed API code ------------------------------------
-            String failedInputData = failedApiTrackMethod.getFailedInputArrayData(SharedPref.getDriverId(context),
-                    api, driverLogData);
 
-            // call failed record save api to post failed data on server
-            StringRequest postRequest = new StringRequest(Request.Method.POST, APIs.FAILED_API_TRACK,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            Logger.LogDebug("Response ", ">>>Response: " + response);
+            String DriverId = SharedPref.getDriverId(context);
+            if(DriverId.length() > 0 && !DriverId.equals("0")) {
+                int callCount = failedApiTrackMethod.getCallCount(dbHelper, api);
+                if (callCount == 4 || callCount == 5) {
 
-                            // Reset failed API track after successfully response
+                    // save request time one more time to avoid api call
+                    failedApiTrackMethod.confirmAndSaveApiTrack(dbHelper, api, global, context);
+
+
+                    String failedInputData = failedApiTrackMethod.getFailedInputArrayData(SharedPref.getDriverId(context),
+                            api, driverLogData, global, context);
+
+                    // call failed record save api to post failed data on server
+                    StringRequest postRequest = new StringRequest(Request.Method.POST, APIs.FAILED_API_TRACK,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    Logger.LogDebug("Response ", ">>>Response: " + response);
+
+                                    // Reset failed API track after successfully response
                             /*if(failedApiTrackMethod.isSuccess(response)) {
                                 failedApiTrackMethod.isAllowToCallOrReset(dbHelper, api, true);
                             }*/
 
-                        }
-                    },
-                    new Response.ErrorListener() {
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Logger.LogDebug("error", ">>errorrrrr: " + error);
+                                }
+                            }
+                    ) {
+
                         @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Logger.LogDebug("error", ">>errorrrrr: " + error);
+                        public String getBodyContentType() {
+                            return "application/json; charset=utf-8";
                         }
-                    }
-            ) {
 
-                @Override
-                public String getBodyContentType() {
-                    return "application/json; charset=utf-8";
+                        @Override
+                        public byte[] getBody() throws AuthFailureError {
+                            try {
+                                Logger.LogDebug("FailedDataInput", ">>FailedDataInput: " + failedInputData);
+                                return failedInputData.getBytes("utf-8");
+                            } catch (UnsupportedEncodingException uee) {
+                                VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s",
+                                        failedInputData, "utf-8");
+                                return null;
+                            }
+
+                        }
+
+                        @Override
+                        protected Map<String, String> getParams() {
+                            Map<String, String> params = new HashMap<String, String>();
+                            return params;
+                        }
+                    };
+
+                    RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+                    postRequest.setRetryPolicy(policy);
+                    SaveLogRequest.add(postRequest);
+
+
                 }
-
-                @Override
-                public byte[] getBody() throws AuthFailureError {
-                    try {
-                        Logger.LogDebug("FailedDataInput", ">>FailedDataInput: " + failedInputData);
-                        return failedInputData.getBytes("utf-8");
-                    } catch (UnsupportedEncodingException uee) {
-                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s",
-                                failedInputData, "utf-8");
-                        return null;
-                    }
-
-                }
-
-                @Override
-                protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<String, String>();
-                    return params;
-                }
-            };
-
-            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-            postRequest.setRetryPolicy(policy);
-            SaveLogRequest.add(postRequest);
-
-
+            }
         }
-
     }
 
     public interface VolleyCallback {

@@ -1838,7 +1838,7 @@
                 android:textSize="@dimen/text_size_22"
                 android:textStyle="bold"
                 android:background="?attr/bgColor"
-
+                android:visibility="gone"
 
                 />
 
@@ -1850,6 +1850,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             layout="@layout/unidentified_dot"
+            android:visibility="gone"
             />
 
 

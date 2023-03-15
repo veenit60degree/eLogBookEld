@@ -1,7 +1,9 @@
 package com.constants;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.DisplayMetrics;
+import android.view.Display;
 
 import com.driver.details.DriverConst;
 import com.als.logistic.Globally;
@@ -10,8 +12,9 @@ public class CommonUtils {
 
 	
 	public static int setWidth(Context mContext) {
-		//Display display = ((Activity) mContext).getWindowManager().getDefaultDisplay();
-		//int w = display.getWidth();
+		Display display = ((Activity) mContext).getWindowManager().getDefaultDisplay();
+		int w = display.getWidth();
+		Logger.LogDebug("width","width: " +w);
 
 		int width = 500;	//((screenWidth / 3) + 130);
 		DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();

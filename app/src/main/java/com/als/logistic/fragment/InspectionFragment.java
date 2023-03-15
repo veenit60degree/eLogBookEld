@@ -44,6 +44,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
@@ -63,6 +64,7 @@ import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.DriverPermissionMethod;
+import com.local.db.FailedApiTrackMethod;
 import com.local.db.HelperMethods;
 import com.local.db.InspectionMethod;
 import com.local.db.ShipmentHelperMethod;
@@ -158,6 +160,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     JSONArray driverLogArray, inspection18DaysArray;
     JSONArray inspectionUnPostedArray = new JSONArray();
     SaveDriverLogPost saveInspectionPost;
+    FailedApiTrackMethod failedApiTrackMethod;
     Constants constants;
     CsvReader csvReader;
     Utils obdUtil;
@@ -208,6 +211,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             e.printStackTrace();
         }
 
+        failedApiTrackMethod = new FailedApiTrackMethod();
         queue = Volley.newRequestQueue(getActivity());
         pDialog = new ProgressDialog(getActivity());
 
@@ -282,7 +286,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         dateActionBarTV.setTextColor(getResources().getColor(R.color.whiteee));
 
         locInspectionTV.setThreshold(3);
-        SelectedDatee = Globally.GetCurrentDeviceDate();
+        SelectedDatee = Globally.GetCurrentDeviceDate(null, new Globally(), getActivity());
 
         AddStatesInList();
         // Spinner click listener
@@ -367,10 +371,13 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         VIN_NUMBER          = SharedPref.getVINNumber(getActivity());
         IsAOBRDAutomatic    = SharedPref.IsAOBRDAutomatic(getActivity());
         DeviceId            = SharedPref.GetSavedSystemToken(getActivity());
-        CreatedDate         = Globally.GetCurrentDeviceDateTime();
+        CreatedDate         = Globally.ConvertDateFormatMMddyyyyHHmm(Globally.GetDriverCurrentDateTime(new Globally(), getActivity()));
         IsAOBRD             = SharedPref.IsAOBRD(getActivity());
 
         DriverName          = slideMenu.usernameTV.getText().toString();
+        DriverTimeZone      = SharedPref.getTimeZone(getActivity());
+        InspectionDateTime  = CreatedDate;
+        date                    = Globally.ConvertDateTimeFormat(Globally.GetDriverCurrentDateTime(new Globally(), getActivity()));
 
         TruckNumber         = SharedPref.getTruckNumber(getActivity());
         TrailerNumber       = SharedPref.getTrailorNumber(getActivity());
@@ -593,7 +600,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                             Globally.EldScreenToast(saveInspectionBtn, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
                         }
                     }else{
-                        Globally.EldScreenToast(saveInspectionBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
+                        Globally.EldScreenToast(saveInspectionBtn, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
                     }
 
                 }
@@ -618,7 +626,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                             Globally.EldScreenToast(saveInspectionBtn, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
                         }
                     }else{
-                        Globally.EldScreenToast(saveInspectionBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
+                        Globally.EldScreenToast(saveInspectionBtn, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
                     }
                 }
 
@@ -774,7 +783,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                             Globally.EldScreenToast(saveInspectionBtn, "Please update your Truck or Trailer number before save the inspections." , getResources().getColor(R.color.colorVoilation));
                         }
                     }else{
-                        Globally.EldScreenToast(saveInspectionBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
+                        Globally.EldScreenToast(saveInspectionBtn, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
                     }
                 }else {
                     Globally.EldScreenToast(saveInspectionBtn, ConstantsEnum.PTI_SAVE_ONDUTY_ONLY, getResources().getColor(R.color.colorVoilation));
@@ -1337,7 +1347,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         public void SignOkBtn(InkView inkView, boolean IsSigned) {
 
             if(IsSigned) {
-                SignCopyDate = Globally.GetCurrentDateTime();
+                SignCopyDate = Globally.GetDriverCurrentDateTime(new Globally(), getActivity());
                 if( SignImageSelected.equals("driver") ){
                     signDriverIV.setImageResource(R.drawable.transparent);
                     new Handler().postDelayed(new Runnable() {
@@ -1553,8 +1563,9 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
         // disable temperory button click to avoid multiple clicks on button at the same time
         saveInspectionBtn.setEnabled(false);
-        CreatedDate         = Globally.GetCurrentDeviceDateTime();
-
+       // CreatedDate         = Globally.ConvertDateFormatMMddyyyyHHmm(Globally.GetCurrentUTCTimeFormat());
+        CreatedDate         = Globally.ConvertDateFormatMMddyyyyHHmm(Globally.GetDriverCurrentDateTime(new Globally(), getActivity()));
+       // Globally.GetCurrentUTCTimeFormat()
         pDialog.show();
 
         // Convert image file into bytes
@@ -1612,10 +1623,11 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
         // Add inspection JSON obj in Offline Array
 
-        JSONObject inspectionData = inspectionMethod.AddNewInspectionObj(DRIVER_ID, DeviceId, Globally.PROJECT_ID, DriverName, CompanyId, EldFragment.VehicleId, "", VIN_NUMBER,
-                TruckNumber, TrailerNumber, CreatedDate, Location, PreTripInsp, PostTripInsp, AboveDefectsCorrected, AboveDefectsNotCorrected,
-                Remarks, Globally.LATITUDE, Globally.LONGITUDE, DriverTimeZone, SupervisorMechanicsName, TruckIssueType, TraiorIssueType, InspectionTypeId,
-                ByteDriverSign, ByteSupervisorSign, Odometer, IsSignCopy, SignCopyDate);
+        JSONObject inspectionData = inspectionMethod.AddNewInspectionObj(DRIVER_ID, DeviceId, Globally.PROJECT_ID,
+                DriverName, CompanyId, EldFragment.VehicleId, "", VIN_NUMBER, TruckNumber, TrailerNumber,
+                CreatedDate, Location, PreTripInsp, PostTripInsp, AboveDefectsCorrected,  AboveDefectsNotCorrected,
+                Remarks, Globally.LATITUDE, Globally.LONGITUDE, DriverTimeZone, SupervisorMechanicsName, TruckIssueType,
+                TraiorIssueType, InspectionTypeId, ByteDriverSign, ByteSupervisorSign, Odometer, IsSignCopy, SignCopyDate);
 
         JSONArray unPostedArray = inspectionMethod.getOfflineInspectionsArray(Integer.valueOf(DRIVER_ID), dbHelper);
         unPostedArray.put(inspectionData);
@@ -1623,6 +1635,9 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
         Constants.IS_TRAILER_INSPECT = false;
         if(Globally.isConnected(getActivity()) ){
+            // reset api call count
+            failedApiTrackMethod.isAllowToCallOrReset(dbHelper, APIs.SAVE_INSPECTION_OFFLINE, true, new Globally(), getActivity());
+
             saveInspectionPost.PostDriverLogData(unPostedArray, APIs.SAVE_INSPECTION_OFFLINE, Constants.SocketTimeout20Sec, true, false, 1, 101);
         }else{
             pDialog.dismiss();
@@ -1879,14 +1894,17 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                                 getActivity().startActivity(i);
                                 getActivity().finish();
                             }else{
-                                Globally.hideSoftKeyboard(getActivity());
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        TabAct.host.setCurrentTab(0);
-                                    }
-                                }, 200);
-
+                                if(flag == UpdateObdVeh){
+                                    Globally.EldScreenToast(saveInspectionBtn, obj.getString("Message"), getResources().getColor(R.color.colorSleeper));
+                                }else {
+                                    Globally.hideSoftKeyboard(getActivity());
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            TabAct.host.setCurrentTab(0);
+                                        }
+                                    }, 200);
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

@@ -101,7 +101,7 @@ public class DatePickerDialog extends Dialog {
             int selectedMonth = Integer.parseInt(SelectedDate.substring(0, 2));
             int selectedDay = Integer.parseInt(SelectedDate.substring(3, 5));
 
-            String currentDate = Globally.GetCurrentDeviceDate() + " 23:59:59";
+            String currentDate = Globally.GetCurrentDeviceDate(null, global, getContext()) + " 23:59:59";
             Date Maxdate = Globally.ParseDate(currentDate);
             long maxDate = Maxdate.getTime();
             datePicker.setMaxDate(maxDate);             // Till current date

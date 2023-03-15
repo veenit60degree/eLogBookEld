@@ -101,32 +101,6 @@ public class RecapRecordSignAdapter extends BaseAdapter {
         }
 
 
-
-     /*   missingLocAnim.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                try {
-                    if(context != null){
-                        if(eventItem.isMissingLocation()){
-                            holder.missingLocTxtView.startAnimation(missingLocAnim);
-                        }
-                     }
-
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
-*/
-
         holder.signRecordCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

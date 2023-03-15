@@ -44,10 +44,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:layout_weight="0.4"
+                    android:layout_weight="0.44"
                     android:layout_marginLeft="@dimen/margin_short_8"
-                    android:layout_marginTop="@dimen/margin_10"
-                    android:layout_marginBottom="@dimen/margin_short_5"
 
                     >
 
@@ -57,7 +55,6 @@
                         android:layout_height="match_parent"
                         android:layout_weight="0.1"
                         android:background="@drawable/white_left"
-                        android:layout_marginBottom="@dimen/margin_short_8"
                         >
 
 
@@ -213,14 +210,13 @@
 
 
 
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:weightSum="1"
                     android:layout_weight="0.2"
-                    android:layout_marginTop="@dimen/margin_10"
-                    android:layout_marginBottom="@dimen/margin_short_5"
                     >
 
 
@@ -228,9 +224,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="horizontal"
-                        android:layout_weight="0.5"
                         android:background="?attr/bgColor"
-                        android:layout_marginBottom="@dimen/margin_short_8"
+                        android:layout_weight="0.5"
 
                         >
 
@@ -251,77 +246,78 @@
                                 card_view:cardBackgroundColor="?attr/layout_color_dot"
                                 card_view:cardCornerRadius="@dimen/margin_10">
 
-                                <LinearLayout
-                                    android:id="@+id/drivingShiftLay"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:layout_gravity="center"
-                                    >
 
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center_horizontal"
+                                    android:padding="@dimen/text_size_3"
+
+                                    >
+                                    <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
+
+
+                                    <at.grabner.circleprogress.CircleProgressView
+                                        android:id="@+id/shiftDrivingCircularView"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+
+                                        android:layout_centerInParent="true"
+                                        android:layout_marginStart="@dimen/margin_short_2"
+                                        android:layout_marginTop="@dimen/margin_short_2"
+                                        android:layout_marginEnd="@dimen/margin_short_2"
+                                        android:layout_marginBottom="@dimen/margin_short_2"
+                                        CircleProgressView:cpv_autoTextSize="true"
+                                        CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
+                                        CircleProgressView:cpv_barWidth="@dimen/margin_10"
+                                        CircleProgressView:cpv_innerContourSize="0dp"
+                                        CircleProgressView:cpv_maxValue="100"
+                                        CircleProgressView:cpv_outerContourSize="0dp"
+                                        CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
+                                        CircleProgressView:cpv_rimWidth="@dimen/margin_10"
+                                        CircleProgressView:cpv_seekMode="true"
+                                        CircleProgressView:cpv_showUnit="true"
+                                        CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
+                                        CircleProgressView:cpv_textColor="?attr/hos_break_time"
+                                        CircleProgressView:cpv_textScale="0"
+                                        CircleProgressView:cpv_unitColor="@color/white"
+                                        CircleProgressView:cpv_unitPosition="right_top"
+                                        CircleProgressView:cpv_unitScale="0" />
+
+
+                                    <TextView
+                                        android:id="@+id/drivingUsedTime"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerInParent="true"
+
+                                        android:layout_gravity="center_horizontal"
+                                        android:gravity="center_horizontal"
+                                        android:textColor="?attr/hos_used_time"
+                                        android:textSize="@dimen/text_size_35"
+                                        android:textStyle="bold" />
 
                                     <TextView
                                         android:id="@+id/hosShiftDrivingTV"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_below="@+id/drivingUsedTime"
+                                        android:layout_centerHorizontal="true"
                                         android:layout_gravity="center_horizontal"
+                                        android:layout_marginTop="@dimen/margin_short_1"
                                         android:text="@string/hos_driving_shift"
                                         android:textColor="?attr/txt_eld_color"
                                         android:textSize="@dimen/text_size_19"
-                                        android:textStyle="bold" />
+                                        android:textStyle="bold"
 
-                                    <RelativeLayout
-                                        android:layout_width="@dimen/view_height_110"
-                                        android:layout_height="@dimen/view_height_110"
-                                        android:layout_gravity="center_horizontal">
-                                        <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
+                                        />
 
 
-                                        <at.grabner.circleprogress.CircleProgressView
-                                            android:id="@+id/shiftDrivingCircularView"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_centerInParent="true"
-                                            android:layout_marginStart="@dimen/margin_short_3"
-                                            android:layout_marginTop="@dimen/margin_short_3"
-                                            android:layout_marginEnd="@dimen/margin_short_3"
-                                            android:layout_marginBottom="@dimen/margin_short_3"
-                                            CircleProgressView:cpv_autoTextSize="true"
-                                            CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
-                                            CircleProgressView:cpv_barWidth="@dimen/margin_short_7"
-                                            CircleProgressView:cpv_innerContourSize="0dp"
-                                            CircleProgressView:cpv_maxValue="100"
-                                            CircleProgressView:cpv_outerContourSize="0dp"
-                                            CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
-                                            CircleProgressView:cpv_rimWidth="@dimen/margin_short_7"
-                                            CircleProgressView:cpv_seekMode="true"
-                                            CircleProgressView:cpv_showUnit="true"
-
-                                            CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
-                                            CircleProgressView:cpv_textColor="?attr/hos_break_time"
-                                            CircleProgressView:cpv_textScale="0"
-                                            CircleProgressView:cpv_unitColor="@color/white"
-                                            CircleProgressView:cpv_unitPosition="right_top"
-                                            CircleProgressView:cpv_unitScale="0" />
+                                </RelativeLayout>
 
 
-                                        <TextView
-                                            android:id="@+id/drivingUsedTime"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_centerInParent="true"
-                                            android:layout_gravity="center_horizontal"
-                                            android:gravity="center_horizontal"
-                                            android:textColor="?attr/hos_used_time"
-                                            android:textSize="@dimen/text_size_17"
-
-                                            android:textStyle="bold" />
 
 
-                                    </RelativeLayout>
-
-
-                                </LinearLayout>
 
 
                             </androidx.cardview.widget.CardView>
@@ -337,77 +333,73 @@
                                 card_view:cardBackgroundColor="?attr/layout_color_dot"
                                 >
 
-                                <LinearLayout
-                                    android:id="@+id/perShiftOnDutyLay"
+
+                                <RelativeLayout
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginBottom="@dimen/margin_short_2"
-                                    android:orientation="vertical"
-                                    android:layout_gravity="center"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center_horizontal"
+                                    android:padding="@dimen/text_size_3"
+
                                     >
+                                    <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
+
+
+                                    <at.grabner.circleprogress.CircleProgressView
+                                        android:id="@+id/shiftOnDutyCircularView"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_centerInParent="true"
+                                        android:layout_marginStart="@dimen/margin_short_2"
+                                        android:layout_marginTop="@dimen/margin_short_2"
+                                        android:layout_marginEnd="@dimen/margin_short_2"
+                                        android:layout_marginBottom="@dimen/margin_short_2"
+                                        CircleProgressView:cpv_autoTextSize="true"
+                                        CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
+                                        CircleProgressView:cpv_barWidth="@dimen/margin_10"
+                                        CircleProgressView:cpv_innerContourSize="0dp"
+                                        CircleProgressView:cpv_maxValue="100"
+                                        CircleProgressView:cpv_outerContourSize="0dp"
+                                        CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
+
+                                        CircleProgressView:cpv_rimWidth="@dimen/margin_10"
+                                        CircleProgressView:cpv_seekMode="true"
+                                        CircleProgressView:cpv_showUnit="true"
+                                        CircleProgressView:cpv_spinColor="@color/hos_break_time"
+                                        CircleProgressView:cpv_textColor="?attr/hos_break_time"
+                                        CircleProgressView:cpv_textScale="0"
+                                        CircleProgressView:cpv_unitColor="@color/white"
+                                        CircleProgressView:cpv_unitPosition="right_top"
+                                        CircleProgressView:cpv_unitScale="0" />
+
+
+                                    <TextView
+                                        android:id="@+id/hosShiftUsedOnDutyTv"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerInParent="true"
+                                        android:layout_gravity="center_horizontal"
+                                        android:gravity="center_horizontal"
+                                        android:textColor="?attr/hos_used_time"
+                                        android:textSize="@dimen/text_size_35"
+                                        android:textStyle="bold" />
 
 
                                     <TextView
                                         android:id="@+id/hosShiftOnDutyTV"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_below="@+id/hosShiftUsedOnDutyTv"
+                                        android:layout_centerHorizontal="true"
                                         android:layout_gravity="center_horizontal"
+                                        android:layout_marginTop="@dimen/margin_short_1"
                                         android:text="@string/hos_OnDuty_shift"
                                         android:textColor="?attr/txt_eld_color"
                                         android:textSize="@dimen/text_size_19"
                                         android:textStyle="bold" />
 
-                                    <RelativeLayout
-                                        android:layout_width="@dimen/view_height_110"
-                                        android:layout_height="@dimen/view_height_110"
-                                        android:layout_gravity="center_horizontal">
-                                        <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
 
 
-                                        <at.grabner.circleprogress.CircleProgressView
-                                            android:id="@+id/shiftOnDutyCircularView"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_centerInParent="true"
-                                            android:layout_margin="@dimen/margin_short_3"
-                                            CircleProgressView:cpv_autoTextSize="true"
-                                            CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
-                                            CircleProgressView:cpv_barWidth="@dimen/margin_short_7"
-                                            CircleProgressView:cpv_innerContourSize="0dp"
-                                            CircleProgressView:cpv_maxValue="100"
-                                            CircleProgressView:cpv_outerContourSize="0dp"
-                                            CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
-                                            CircleProgressView:cpv_rimWidth="@dimen/margin_short_7"
-                                            CircleProgressView:cpv_seekMode="true"
-                                            CircleProgressView:cpv_showUnit="true"
-                                            CircleProgressView:cpv_spinColor="@color/hos_break_time"
-                                            CircleProgressView:cpv_textColor="?attr/hos_break_time"
-                                            CircleProgressView:cpv_textScale="0"
-                                            CircleProgressView:cpv_unitColor="@color/white"
-                                            CircleProgressView:cpv_unitPosition="right_top"
-                                            CircleProgressView:cpv_unitScale="0"
-
-                                            />
-
-
-                                        <TextView
-                                            android:id="@+id/hosShiftUsedOnDutyTv"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_centerInParent="true"
-                                            android:layout_gravity="center_horizontal"
-                                            android:gravity="center_horizontal"
-                                            android:textColor="?attr/hos_used_time"
-                                            android:textSize="@dimen/text_size_17"
-                                            android:textStyle="bold"
-
-                                            />
-
-
-                                    </RelativeLayout>
-
-
-                                </LinearLayout>
+                                </RelativeLayout>
 
 
                             </androidx.cardview.widget.CardView>
@@ -422,97 +414,97 @@
                                 card_view:cardBackgroundColor="?attr/layout_color_dot"
                                 card_view:cardCornerRadius="@dimen/margin_10">
 
-                                <LinearLayout
-                                    android:id="@+id/hosShiftNextBreakLay"
+
+                                <RelativeLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:layout_marginBottom="@dimen/margin_short_2"
-                                    android:orientation="vertical"
-                                    android:gravity="center"
+                                    android:layout_gravity="center_horizontal"
+                                    android:padding="@dimen/text_size_3"
+
                                     >
+
+
+                                    <at.grabner.circleprogress.CircleProgressView
+                                        android:id="@+id/shiftNextBreakCircularView"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_centerInParent="true"
+                                        android:layout_marginStart="@dimen/margin_short_2"
+                                        android:layout_marginTop="@dimen/margin_short_2"
+                                        android:layout_marginEnd="@dimen/margin_short_2"
+                                        android:layout_marginBottom="@dimen/margin_short_2"
+                                        CircleProgressView:cpv_autoTextSize="true"
+                                        CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
+
+                                        CircleProgressView:cpv_barWidth="@dimen/margin_10"
+                                        CircleProgressView:cpv_innerContourSize="0dp"
+                                        CircleProgressView:cpv_maxValue="100"
+                                        CircleProgressView:cpv_outerContourSize="0dp"
+                                        CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
+                                        CircleProgressView:cpv_rimWidth="@dimen/margin_10"
+                                        CircleProgressView:cpv_seekMode="true"
+                                        CircleProgressView:cpv_showUnit="true"
+                                        CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
+                                        CircleProgressView:cpv_textColor="?attr/hos_break_time"
+                                        CircleProgressView:cpv_textScale="0"
+                                        CircleProgressView:cpv_unitColor="@color/white"
+                                        CircleProgressView:cpv_unitPosition="right_top"
+                                        CircleProgressView:cpv_unitScale="0" />
+
+                                    <TextView
+                                        android:id="@+id/hosShiftNextBreakUsedTV"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+
+                                        android:layout_centerInParent="true"
+                                        android:layout_gravity="center_horizontal"
+                                        android:gravity="center_horizontal"
+                                        android:textColor="?attr/hos_used_time"
+                                        android:textSize="@dimen/text_size_35"
+                                        android:textStyle="bold" />
 
 
                                     <TextView
                                         android:id="@+id/hosShiftNextBreakTV"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_below="@+id/hosShiftNextBreakUsedTV"
+                                        android:layout_centerHorizontal="true"
                                         android:layout_gravity="center_horizontal"
+                                        android:layout_marginTop="@dimen/margin_short_1"
                                         android:text="@string/hos_break"
                                         android:textColor="?attr/txt_eld_color"
                                         android:textSize="@dimen/text_size_19"
-                                        android:textStyle="bold" />
-
-                                    <RelativeLayout
-                                        android:layout_width="@dimen/view_height_110"
-                                        android:layout_height="@dimen/view_height_110"
-                                        android:layout_gravity="center_horizontal">
-                                        <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
+                                        android:textStyle="bold"
 
 
-                                        <at.grabner.circleprogress.CircleProgressView
-                                            android:id="@+id/shiftNextBreakCircularView"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_centerInParent="true"
-                                            android:layout_margin="@dimen/margin_short_3"
-                                            CircleProgressView:cpv_autoTextSize="true"
-                                            CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
-                                            CircleProgressView:cpv_barWidth="@dimen/margin_short_7"
-                                            CircleProgressView:cpv_innerContourSize="0dp"
-                                            CircleProgressView:cpv_maxValue="100"
-                                            CircleProgressView:cpv_outerContourSize="0dp"
-                                            CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
-                                            CircleProgressView:cpv_rimWidth="@dimen/margin_short_7"
-                                            CircleProgressView:cpv_seekMode="true"
-                                            CircleProgressView:cpv_showUnit="true"
-                                            CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
-                                            CircleProgressView:cpv_textColor="?attr/hos_break_time"
-                                            CircleProgressView:cpv_textScale="0"
-                                            CircleProgressView:cpv_unitColor="@color/white"
-                                            CircleProgressView:cpv_unitPosition="right_top"
-                                            CircleProgressView:cpv_unitScale="0"
-
-                                            />
-
-                                        <TextView
-                                            android:id="@+id/hosShiftNextBreakUsedTV"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_centerInParent="true"
-                                            android:layout_gravity="center_horizontal"
-                                            android:gravity="center_horizontal"
-                                            android:textColor="?attr/hos_used_time"
-                                            android:textSize="@dimen/text_size_17"
-                                            android:textStyle="bold"
-
-                                            />
+                                        />
 
 
-                                    </RelativeLayout>
+
+                                </RelativeLayout>
 
 
-                                </LinearLayout>
 
 
                             </androidx.cardview.widget.CardView>
+
+
                         </LinearLayout>
-
-
                     </LinearLayout>
 
                     <RelativeLayout
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_weight="0.5"
                         android:background="?attr/bgColor"
-
-
+                        android:layout_weight="0.5"
                         >
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="horizontal"
+
                             >
 
                             <androidx.cardview.widget.CardView
@@ -525,113 +517,128 @@
                                 app:cardUseCompatPadding="true"
                                 card_view:cardCornerRadius="@dimen/margin_10">
 
-                                <LinearLayout
+
+
+
+                                <RelativeLayout
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginBottom="@dimen/margin_short_2"
-                                    android:orientation="vertical"
-                                    android:layout_gravity="center"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center_horizontal"
+                                    android:padding="@dimen/text_size_3"
+
+
                                     >
 
+
+                                    <at.grabner.circleprogress.CircleProgressView
+                                        android:id="@+id/perDayDrivingCircularView"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_centerInParent="true"
+                                        android:layout_marginStart="@dimen/margin_short_2"
+                                        android:layout_marginTop="@dimen/margin_short_2"
+                                        android:layout_marginEnd="@dimen/margin_short_2"
+                                        android:layout_marginBottom="@dimen/margin_short_2"
+                                        CircleProgressView:cpv_autoTextSize="true"
+                                        CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
+                                        CircleProgressView:cpv_barWidth="@dimen/margin_10"
+
+                                        CircleProgressView:cpv_innerContourSize="0dp"
+                                        CircleProgressView:cpv_maxValue="100"
+                                        CircleProgressView:cpv_outerContourSize="0dp"
+                                        CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
+                                        CircleProgressView:cpv_rimWidth="@dimen/margin_10"
+                                        CircleProgressView:cpv_seekMode="true"
+                                        CircleProgressView:cpv_showUnit="true"
+                                        CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
+                                        CircleProgressView:cpv_textColor="?attr/hos_break_time"
+                                        CircleProgressView:cpv_textScale="0"
+                                        CircleProgressView:cpv_unitColor="@color/white"
+                                        CircleProgressView:cpv_unitPosition="right_top"
+                                        CircleProgressView:cpv_unitScale="0" />
+
+
                                     <TextView
-                                        android:id="@+id/hosPerDayDrivingTV"
+                                        android:id="@+id/hosPerDayUsedDrivingTV"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+
+                                        android:layout_centerInParent="true"
                                         android:layout_gravity="center_horizontal"
-                                        android:text="@string/hos_driving_shift"
-                                        android:textColor="?attr/txt_eld_color"
-                                        android:textSize="@dimen/text_size_19"
-                                        android:textStyle="bold"
-                                        android:visibility="gone"
-                                        />
+                                        android:gravity="center_horizontal"
+
+                                        android:textColor="?attr/hos_used_time"
+                                        android:textSize="@dimen/text_size_35"
+                                        android:textStyle="bold" />
+
+
                                     <LinearLayout
-                                        android:id="@+id/hos_CycleViewChange"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:orientation="horizontal"
-                                        android:layout_gravity="center_horizontal"
-                                        android:gravity="center_vertical"
-                                        android:visibility="gone"
+                                        android:layout_below="@+id/hosPerDayUsedDrivingTV"
+                                        android:layout_centerHorizontal="true"
                                         >
 
                                         <TextView
+                                            android:id="@+id/hosPerDayDrivingTV"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="@string/hos_cycle"
-                                            android:textColor="?attr/txt_eld_color"
-                                            android:textStyle="bold"
-                                            android:textSize="@dimen/text_size_17"
                                             android:layout_gravity="center_horizontal"
+                                            android:text="@string/hos_driving_shift"
+                                            android:textColor="?attr/txt_eld_color"
+                                            android:textSize="@dimen/text_size_19"
+                                            android:textStyle="bold"
+                                            android:visibility="gone"
+
                                             />
 
-                                        <TextView
-                                            android:id="@+id/hosCycleTVUsa"
+                                        <LinearLayout
+                                            android:id="@+id/hos_CycleViewChange"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:layout_gravity="center_vertical"
-                                            android:paddingLeft="@dimen/margin_short_5"
-                                            android:text="@string/us_cycle_7days_hos"
-                                            android:textColor="?attr/bluee_login_hover"
-                                            android:textSize="@dimen/text_size_10"
-                                            android:textStyle="normal"
-                                            android:visibility="visible" />
+                                            android:orientation="horizontal"
+                                            android:layout_gravity="center_horizontal"
+                                            android:gravity="center_vertical"
+                                            android:visibility="gone"
+
+                                            >
+
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:text="@string/hos_cycle"
+                                                android:textColor="?attr/txt_eld_color"
+                                                android:textStyle="bold"
+                                                android:textSize="@dimen/text_size_18"
+                                                android:layout_gravity="center_horizontal"
+                                                />
+
+                                            <TextView
+                                                android:id="@+id/hosCycleTVUsa"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_gravity="center_vertical"
+                                                android:paddingLeft="@dimen/margin_short_5"
+                                                android:text="@string/us_cycle_7days_hos"
+                                                android:textColor="?attr/bluee_login_hover"
+                                                android:textSize="@dimen/text_size_8"
+                                                android:textStyle="normal"
+                                                android:visibility="visible" />
+
+                                        </LinearLayout>
+
 
                                     </LinearLayout>
 
 
-                                    <RelativeLayout
-                                        android:layout_width="@dimen/view_height_110"
-                                        android:layout_height="@dimen/view_height_110"
-                                        android:layout_gravity="center_horizontal">
-                                        <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
 
 
-                                        <at.grabner.circleprogress.CircleProgressView
-                                            android:id="@+id/perDayDrivingCircularView"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_centerInParent="true"
-                                            android:layout_marginStart="@dimen/margin_short_3"
-                                            android:layout_marginTop="@dimen/margin_short_3"
-                                            android:layout_marginEnd="@dimen/margin_short_3"
-                                            android:layout_marginBottom="@dimen/margin_short_3"
-                                            CircleProgressView:cpv_autoTextSize="true"
-                                            CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
-                                            CircleProgressView:cpv_barWidth="@dimen/margin_short_7"
-                                            CircleProgressView:cpv_innerContourSize="0dp"
-                                            CircleProgressView:cpv_maxValue="100"
-                                            CircleProgressView:cpv_outerContourSize="0dp"
-                                            CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
-                                            CircleProgressView:cpv_rimWidth="@dimen/margin_short_7"
-                                            CircleProgressView:cpv_seekMode="true"
-
-                                            CircleProgressView:cpv_showUnit="true"
-                                            CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
-                                            CircleProgressView:cpv_textColor="?attr/hos_break_time"
-                                            CircleProgressView:cpv_textScale="0"
-                                            CircleProgressView:cpv_unitColor="@color/white"
-                                            CircleProgressView:cpv_unitPosition="right_top"
-                                            CircleProgressView:cpv_unitScale="0" />
 
 
-                                        <TextView
-                                            android:id="@+id/hosPerDayUsedDrivingTV"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_centerInParent="true"
-                                            android:layout_gravity="center_horizontal"
-                                            android:gravity="center_horizontal"
-                                            android:textColor="?attr/hos_used_time"
-                                            android:textSize="@dimen/text_size_17"
-                                            android:textStyle="bold"
-
-                                            />
+                                </RelativeLayout>
 
 
-                                    </RelativeLayout>
-
-
-                                </LinearLayout>
 
 
                             </androidx.cardview.widget.CardView>
@@ -641,85 +648,82 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 app:cardElevation="@dimen/margin_short_1"
+                                card_view:cardBackgroundColor="?attr/layout_color_dot"
                                 app:cardUseCompatPadding="true"
                                 card_view:cardCornerRadius="@dimen/margin_10"
                                 android:layout_weight="1"
                                 android:visibility="invisible"
-                                card_view:cardBackgroundColor="?attr/layout_color_dot"
+
                                 >
 
-                                <LinearLayout
+                                <RelativeLayout
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:layout_gravity="center"
-                                    android:layout_marginBottom="@dimen/margin_short_2"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center_horizontal"
+                                    android:padding="@dimen/text_size_3"
+
                                     >
+
+
+                                    <at.grabner.circleprogress.CircleProgressView
+                                        android:id="@+id/perDayOnDutyCircularView"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_centerInParent="true"
+                                        android:layout_marginStart="@dimen/margin_short_2"
+                                        android:layout_marginTop="@dimen/margin_short_2"
+                                        android:layout_marginEnd="@dimen/margin_short_2"
+                                        android:layout_marginBottom="@dimen/margin_short_2"
+                                        CircleProgressView:cpv_autoTextSize="true"
+                                        CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
+                                        CircleProgressView:cpv_barWidth="@dimen/margin_10"
+                                        CircleProgressView:cpv_innerContourSize="0dp"
+                                        CircleProgressView:cpv_maxValue="100"
+                                        CircleProgressView:cpv_outerContourSize="0dp"
+                                        CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
+                                        CircleProgressView:cpv_rimWidth="@dimen/margin_10"
+
+                                        CircleProgressView:cpv_seekMode="true"
+                                        CircleProgressView:cpv_showUnit="true"
+                                        CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
+                                        CircleProgressView:cpv_textColor="?attr/hos_break_time"
+                                        CircleProgressView:cpv_textScale="0"
+                                        CircleProgressView:cpv_unitColor="@color/white"
+                                        CircleProgressView:cpv_unitPosition="right_top"
+                                        CircleProgressView:cpv_unitScale="0" />
+
+
+                                    <TextView
+                                        android:id="@+id/hosPerDayUsedOnDutyTV"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerInParent="true"
+                                        android:layout_gravity="center_horizontal"
+                                        android:gravity="center_horizontal"
+                                        android:textColor="?attr/hos_used_time"
+                                        android:textSize="@dimen/text_size_35"
+
+                                        android:textStyle="bold" />
+
 
                                     <TextView
                                         android:id="@+id/hosPerDayOnDutyTV"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_below="@+id/hosPerDayUsedOnDutyTV"
+                                        android:layout_centerHorizontal="true"
+                                        android:layout_gravity="center_horizontal"
+                                        android:layout_marginTop="@dimen/margin_short_1"
                                         android:text="@string/hos_OnDuty_shift"
                                         android:textColor="?attr/txt_eld_color"
-                                        android:textStyle="bold"
                                         android:textSize="@dimen/text_size_19"
-                                        android:layout_gravity="center_horizontal"
+                                        android:textStyle="bold"
+
                                         />
 
-                                    <RelativeLayout
-                                        android:layout_width="@dimen/view_height_110"
-                                        android:layout_height="@dimen/view_height_110"
-                                        android:layout_gravity="center_horizontal"
-                                        >
-                                        <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
 
+                                </RelativeLayout>
 
-                                        <at.grabner.circleprogress.CircleProgressView
-                                            android:id="@+id/perDayOnDutyCircularView"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_margin="@dimen/margin_short_3"
-                                            android:layout_centerInParent="true"
-                                            CircleProgressView:cpv_autoTextSize="true"
-                                            CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
-                                            CircleProgressView:cpv_barWidth="@dimen/margin_short_7"
-                                            CircleProgressView:cpv_innerContourSize="0dp"
-                                            CircleProgressView:cpv_maxValue="100"
-                                            CircleProgressView:cpv_outerContourSize="0dp"
-                                            CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
-                                            CircleProgressView:cpv_rimWidth="@dimen/margin_short_7"
-                                            CircleProgressView:cpv_seekMode="true"
-                                            CircleProgressView:cpv_showUnit="true"
-                                            CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
-                                            CircleProgressView:cpv_textColor="?attr/hos_break_time"
-                                            CircleProgressView:cpv_textScale="0"
-                                            CircleProgressView:cpv_unitColor="@color/white"
-                                            CircleProgressView:cpv_unitPosition="right_top"
-                                            CircleProgressView:cpv_unitScale="0"
-
-                                            />
-
-
-                                        <TextView
-                                            android:id="@+id/hosPerDayUsedOnDutyTV"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_centerInParent="true"
-                                            android:layout_gravity="center_horizontal"
-                                            android:gravity="center_horizontal"
-                                            android:textColor="?attr/hos_used_time"
-
-                                            android:textSize="@dimen/text_size_17"
-                                            android:textStyle="bold" />
-
-
-
-
-                                    </RelativeLayout>
-
-
-                                </LinearLayout>
 
 
                             </androidx.cardview.widget.CardView>
@@ -737,20 +741,70 @@
 
                                 >
 
-                                <LinearLayout
+
+
+
+                                <RelativeLayout
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:layout_marginBottom="@dimen/margin_short_2"
-                                    android:layout_gravity="center"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center_horizontal"
+                                    android:padding="@dimen/text_size_3"
+
                                     >
+
+
+                                    <at.grabner.circleprogress.CircleProgressView
+                                        android:id="@+id/perDayOffDutyCircularView"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_centerInParent="true"
+                                        android:layout_marginStart="@dimen/margin_short_2"
+                                        android:layout_marginTop="@dimen/margin_short_2"
+                                        android:layout_marginEnd="@dimen/margin_short_2"
+                                        android:layout_marginBottom="@dimen/margin_short_2"
+                                        CircleProgressView:cpv_autoTextSize="true"
+                                        CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
+
+                                        CircleProgressView:cpv_barWidth="@dimen/margin_10"
+                                        CircleProgressView:cpv_innerContourSize="0dp"
+                                        CircleProgressView:cpv_maxValue="100"
+                                        CircleProgressView:cpv_outerContourSize="0dp"
+                                        CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
+                                        CircleProgressView:cpv_rimWidth="@dimen/margin_10"
+                                        CircleProgressView:cpv_seekMode="true"
+                                        CircleProgressView:cpv_showUnit="true"
+                                        CircleProgressView:cpv_spinColor="@color/hos_break_time"
+                                        CircleProgressView:cpv_textColor="?attr/hos_break_time"
+                                        CircleProgressView:cpv_textScale="0"
+                                        CircleProgressView:cpv_unitColor="@color/white"
+                                        CircleProgressView:cpv_unitPosition="right_top"
+                                        CircleProgressView:cpv_unitScale="0" />
+
+
+                                    <TextView
+                                        android:id="@+id/hosPerDayUsedOffDutyTV"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerInParent="true"
+                                        android:layout_gravity="center_horizontal"
+                                        android:gravity="center_horizontal"
+                                        android:textColor="?attr/hos_used_time"
+
+                                        android:textSize="@dimen/text_size_35"
+                                        android:textStyle="bold" />
+
 
                                     <LinearLayout
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_gravity="center_horizontal"
                                         android:gravity="center_vertical"
-                                        android:orientation="horizontal">
+                                        android:orientation="horizontal"
+                                        android:layout_below="@+id/hosPerDayUsedOffDutyTV"
+                                        android:layout_centerHorizontal="true"
+                                        android:layout_marginTop="@dimen/margin_short_1"
+
+                                        >
 
                                         <TextView
                                             android:id="@+id/hosPerDayOffDutyTV"
@@ -759,7 +813,7 @@
                                             android:text="@string/hos_perDay_offduty"
                                             android:textColor="?attr/txt_eld_color"
                                             android:textStyle="bold"
-                                            android:textSize="@dimen/text_size_19"
+                                            android:textSize="@dimen/text_size_15"
                                             android:layout_gravity="center_horizontal"
                                             />
 
@@ -767,10 +821,10 @@
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:layout_gravity="center_vertical"
-                                            android:paddingLeft="@dimen/margin_short_3"
+                                            android:paddingLeft="@dimen/margin_short_1"
                                             android:text="@string/in_a_day"
                                             android:textColor="?attr/bluee_login_hover"
-                                            android:textSize="@dimen/text_size_10"
+                                            android:textSize="@dimen/text_size_8"
                                             android:textStyle="normal"
                                             android:visibility="visible" />
 
@@ -779,59 +833,9 @@
 
 
 
-                                    <RelativeLayout
-                                        android:layout_width="@dimen/view_height_110"
-                                        android:layout_height="@dimen/view_height_110"
-                                        android:layout_gravity="center_horizontal"
-                                        >
-                                        <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
+                                </RelativeLayout>
 
 
-                                        <at.grabner.circleprogress.CircleProgressView
-                                            android:id="@+id/perDayOffDutyCircularView"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_margin="@dimen/margin_short_3"
-                                            android:layout_centerInParent="true"
-                                            CircleProgressView:cpv_autoTextSize="true"
-                                            CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
-                                            CircleProgressView:cpv_barWidth="@dimen/margin_short_7"
-                                            CircleProgressView:cpv_innerContourSize="0dp"
-                                            CircleProgressView:cpv_maxValue="100"
-                                            CircleProgressView:cpv_outerContourSize="0dp"
-                                            CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
-                                            CircleProgressView:cpv_rimWidth="@dimen/margin_short_7"
-                                            CircleProgressView:cpv_seekMode="true"
-                                            CircleProgressView:cpv_showUnit="true"
-                                            CircleProgressView:cpv_spinColor="@color/hos_break_time"
-                                            CircleProgressView:cpv_textColor="?attr/hos_break_time"
-                                            CircleProgressView:cpv_textScale="0"
-                                            CircleProgressView:cpv_unitColor="@color/white"
-                                            CircleProgressView:cpv_unitPosition="right_top"
-                                            CircleProgressView:cpv_unitScale="0"
-
-                                            />
-
-
-                                        <TextView
-                                            android:id="@+id/hosPerDayUsedOffDutyTV"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_centerInParent="true"
-                                            android:layout_gravity="center_horizontal"
-                                            android:gravity="center_horizontal"
-                                            android:textColor="?attr/hos_used_time"
-                                            android:textSize="@dimen/text_size_17"
-
-                                            android:textStyle="bold" />
-
-
-
-
-                                    </RelativeLayout>
-
-
-                                </LinearLayout>
 
 
                             </androidx.cardview.widget.CardView>
@@ -849,20 +853,16 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:layout_weight="0.4"
-                    android:layout_marginRight="@dimen/margin_short_8"
-                    android:layout_marginTop="@dimen/margin_10"
-                    android:layout_marginBottom="@dimen/margin_short_5"
-
+                    android:layout_marginRight="@dimen/margin_short_5"
                     >
 
 
                     <RelativeLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.5"
+                        android:layout_height="@dimen/view_height_180"
+                        android:layout_weight="0.4"
                         android:background="?attr/bgColor"
-                        android:layout_marginBottom="@dimen/margin_short_8"
-
+                        android:layout_marginBottom="@dimen/margin_short_5"
 
                         >
 
@@ -871,17 +871,59 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             app:cardElevation="@dimen/margin_short_1"
-                            app:cardUseCompatPadding="true"
                             card_view:cardBackgroundColor="?attr/layout_color_dot"
+                            app:cardUseCompatPadding="true"
                             card_view:cardCornerRadius="@dimen/margin_10">
 
 
-                            <LinearLayout
-                                android:id="@+id/hosShiftLay"
+                            <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:orientation="vertical">
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:padding="@dimen/text_size_3"
+
+                                >
+
+
+                                <at.grabner.circleprogress.CircleProgressView
+                                    android:id="@+id/shiftCircularView"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_centerInParent="true"
+                                    android:layout_marginStart="@dimen/margin_short_2"
+                                    android:layout_marginTop="@dimen/margin_short_2"
+                                    android:layout_marginEnd="@dimen/margin_short_2"
+                                    android:layout_marginBottom="@dimen/margin_short_2"
+                                    CircleProgressView:cpv_autoTextSize="true"
+                                    CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
+                                    CircleProgressView:cpv_barWidth="@dimen/margin_10"
+                                    CircleProgressView:cpv_innerContourSize="0dp"
+                                    CircleProgressView:cpv_maxValue="100"
+                                    CircleProgressView:cpv_outerContourSize="0dp"
+                                    CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
+
+                                    CircleProgressView:cpv_rimWidth="@dimen/margin_10"
+                                    CircleProgressView:cpv_seekMode="true"
+                                    CircleProgressView:cpv_showUnit="true"
+                                    CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
+                                    CircleProgressView:cpv_textColor="?attr/hos_break_time"
+                                    CircleProgressView:cpv_textScale="0"
+                                    CircleProgressView:cpv_unitColor="@color/white"
+                                    CircleProgressView:cpv_unitPosition="right_top"
+                                    CircleProgressView:cpv_unitScale="0" />
+
+
+                                <TextView
+                                    android:id="@+id/hosShiftUsedTV"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerInParent="true"
+                                    android:layout_gravity="center_horizontal"
+                                    android:gravity="center_horizontal"
+                                    android:textColor="?attr/hos_used_time"
+
+                                    android:textSize="@dimen/text_size_35"
+                                    android:textStyle="bold" />
 
 
                                 <TextView
@@ -892,68 +934,25 @@
                                     android:text="@string/hos_shift"
                                     android:textColor="?attr/txt_eld_color"
                                     android:textSize="@dimen/text_size_19"
-                                    android:textStyle="bold" />
+                                    android:textStyle="bold"
+                                    android:layout_below="@+id/hosShiftUsedTV"
+                                    android:layout_marginTop="@dimen/margin_short_1"
+                                    android:layout_centerHorizontal="true"
 
-                                <RelativeLayout
-                                    android:layout_width="@dimen/view_height_110"
-                                    android:layout_height="@dimen/view_height_110"
-                                    android:layout_gravity="center_horizontal">
-                                    <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
-
-
-                                    <at.grabner.circleprogress.CircleProgressView
-                                        android:id="@+id/shiftCircularView"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_centerInParent="true"
-                                        android:layout_margin="@dimen/margin_short_3"
-                                        CircleProgressView:cpv_autoTextSize="true"
-                                        CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
-                                        CircleProgressView:cpv_barWidth="@dimen/margin_short_7"
-                                        CircleProgressView:cpv_innerContourSize="0dp"
-                                        CircleProgressView:cpv_maxValue="100"
-                                        CircleProgressView:cpv_outerContourSize="0dp"
-                                        CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
-                                        CircleProgressView:cpv_rimWidth="@dimen/margin_short_7"
-                                        CircleProgressView:cpv_seekMode="true"
-                                        CircleProgressView:cpv_showUnit="true"
-                                        CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
-                                        CircleProgressView:cpv_textColor="?attr/hos_break_time"
-                                        CircleProgressView:cpv_textScale="0"
-                                        CircleProgressView:cpv_unitColor="@color/white"
-                                        CircleProgressView:cpv_unitPosition="right_top"
-                                        CircleProgressView:cpv_unitScale="0"
-
-                                        />
+                                    />
 
 
-                                    <TextView
-                                        android:id="@+id/hosShiftUsedTV"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_centerInParent="true"
-                                        android:layout_gravity="center_horizontal"
-                                        android:gravity="center_horizontal"
-                                        android:textColor="?attr/hos_used_time"
-                                        android:textSize="@dimen/text_size_17"
-                                        android:textStyle="bold"
-
-                                        />
-
-
-                                </RelativeLayout>
-
-
-                            </LinearLayout>
+                            </RelativeLayout>
 
 
                         </androidx.cardview.widget.CardView>
                     </RelativeLayout>
 
+
                     <RelativeLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.5"
+                        android:layout_height="@dimen/view_height_180"
+                        android:layout_weight="0.4"
                         android:background="?attr/bgColor"
 
                         >
@@ -962,26 +961,77 @@
                             android:id="@+id/hosCycleCardView"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            card_view:cardCornerRadius="@dimen/margin_10"
                             app:cardElevation="@dimen/margin_short_1"
                             app:cardUseCompatPadding="true"
-                            android:visibility="invisible"
+                            card_view:cardCornerRadius="@dimen/margin_10"
                             card_view:cardBackgroundColor="?attr/layout_color_dot"
+                            android:visibility="invisible"
+
                             >
 
 
-                            <LinearLayout
+                            <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:orientation="vertical">
+                                android:layout_gravity="center_horizontal"
+                                android:padding="@dimen/text_size_3"
+
+                                >
+
+
+                                <at.grabner.circleprogress.CircleProgressView
+                                    android:id="@+id/cycleCircularView"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_centerInParent="true"
+                                    android:layout_marginStart="@dimen/margin_short_2"
+                                    android:layout_marginTop="@dimen/margin_short_2"
+                                    android:layout_marginEnd="@dimen/margin_short_2"
+                                    android:layout_marginBottom="@dimen/margin_short_2"
+                                    CircleProgressView:cpv_autoTextSize="true"
+                                    CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
+                                    CircleProgressView:cpv_barWidth="@dimen/margin_10"
+                                    CircleProgressView:cpv_innerContourSize="0dp"
+                                    CircleProgressView:cpv_maxValue="100"
+                                    CircleProgressView:cpv_outerContourSize="0dp"
+                                    CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
+
+                                    CircleProgressView:cpv_rimWidth="@dimen/margin_10"
+                                    CircleProgressView:cpv_seekMode="true"
+                                    CircleProgressView:cpv_showUnit="true"
+                                    CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
+                                    CircleProgressView:cpv_textColor="?attr/hos_break_time"
+                                    CircleProgressView:cpv_textScale="0"
+                                    CircleProgressView:cpv_unitColor="@color/white"
+                                    CircleProgressView:cpv_unitPosition="right_top"
+                                    CircleProgressView:cpv_unitScale="0" />
+
+
+                                <TextView
+                                    android:id="@+id/hosUsedCycleTV"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerInParent="true"
+                                    android:layout_gravity="center_horizontal"
+                                    android:gravity="center_horizontal"
+                                    android:textColor="?attr/hos_used_time"
+                                    android:textSize="@dimen/text_size_35"
+                                    android:textStyle="bold"
+
+                                    />
+
 
                                 <LinearLayout
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center_horizontal"
                                     android:gravity="center_vertical"
-                                    android:orientation="horizontal">
+                                    android:orientation="horizontal"
+                                    android:layout_below="@+id/hosUsedCycleTV"
+                                    android:layout_centerHorizontal="true"
+                                    android:layout_marginTop="@dimen/margin_short_1"
+
+                                    >
 
                                     <TextView
                                         android:layout_width="wrap_content"
@@ -989,7 +1039,7 @@
                                         android:layout_gravity="center_horizontal"
                                         android:text="@string/hos_cycle"
                                         android:textColor="?attr/txt_eld_color"
-                                        android:textSize="@dimen/text_size_19"
+                                        android:textSize="@dimen/text_size_18"
                                         android:textStyle="bold" />
 
                                     <TextView
@@ -997,69 +1047,18 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_gravity="center_vertical"
-                                        android:paddingLeft="@dimen/margin_short_3"
+                                        android:paddingLeft="@dimen/margin_short_5"
                                         android:text="@string/us_cycle_7days_hos"
                                         android:textColor="?attr/bluee_login_hover"
-                                        android:textSize="@dimen/text_size_10"
+                                        android:textSize="@dimen/text_size_9"
                                         android:textStyle="normal"
                                         android:visibility="visible" />
 
                                 </LinearLayout>
 
 
-                                <RelativeLayout
-                                    android:layout_width="@dimen/view_height_110"
-                                    android:layout_height="@dimen/view_height_110"
-                                    android:layout_gravity="center_horizontal">
-                                    <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
+                            </RelativeLayout>
 
-
-                                    <at.grabner.circleprogress.CircleProgressView
-                                        android:id="@+id/cycleCircularView"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_centerInParent="true"
-                                        android:layout_marginStart="@dimen/margin_short_3"
-                                        android:layout_marginTop="@dimen/margin_short_3"
-                                        android:layout_marginEnd="@dimen/margin_short_3"
-                                        android:layout_marginBottom="@dimen/margin_short_3"
-                                        CircleProgressView:cpv_autoTextSize="true"
-                                        CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
-                                        CircleProgressView:cpv_barWidth="@dimen/margin_short_7"
-                                        CircleProgressView:cpv_innerContourSize="0dp"
-                                        CircleProgressView:cpv_maxValue="100"
-                                        CircleProgressView:cpv_outerContourSize="0dp"
-                                        CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
-                                        CircleProgressView:cpv_rimWidth="@dimen/margin_short_7"
-                                        CircleProgressView:cpv_seekMode="true"
-                                        CircleProgressView:cpv_showUnit="true"
-                                        CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
-
-                                        CircleProgressView:cpv_textColor="?attr/hos_break_time"
-                                        CircleProgressView:cpv_textScale="0"
-                                        CircleProgressView:cpv_unitColor="@color/white"
-                                        CircleProgressView:cpv_unitPosition="right_top"
-                                        CircleProgressView:cpv_unitScale="0" />
-
-
-                                    <TextView
-                                        android:id="@+id/hosUsedCycleTV"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_centerInParent="true"
-                                        android:layout_gravity="center_horizontal"
-                                        android:gravity="center_horizontal"
-                                        android:textColor="?attr/hos_used_time"
-                                        android:textSize="@dimen/text_size_17"
-                                        android:textStyle="bold"
-
-                                        />
-
-
-                                </RelativeLayout>
-
-
-                            </LinearLayout>
 
 
                         </androidx.cardview.widget.CardView>
@@ -1068,6 +1067,10 @@
 
 
                 </LinearLayout>
+
+
+
+
 
 
             </LinearLayout>
@@ -1102,7 +1105,7 @@
                     android:paddingLeft="@dimen/margin_short_5"
                     android:text="@string/AccumPersonalDis"
                     android:textColor="?attr/txt_eld_color"
-                    android:textSize="@dimen/text_size_17"
+                    android:textSize="@dimen/text_size_22"
                     android:textStyle="bold"
 
                     />
@@ -1115,7 +1118,7 @@
                     android:paddingLeft="@dimen/margin_12"
                     android:text="@string/temp_no_value"
                     android:textColor="?attr/gray_hos"
-                    android:textSize="@dimen/text_size_15" />
+                    android:textSize="@dimen/text_size_22" />
 
 
             </LinearLayout>

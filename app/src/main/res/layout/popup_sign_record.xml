@@ -10,8 +10,7 @@
         android:id="@+id/recapRecordItemLay"
         android:layout_width="match_parent"
         android:layout_height="@dimen/view_height_45"
-        android:paddingLeft="@dimen/margin_short_5"
-        >
+        android:paddingLeft="@dimen/margin_short_5">
 
 
         <CheckBox
@@ -20,41 +19,40 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:button="@drawable/unidentified_checkbox_drawable"
-            android:paddingRight="@dimen/margin_short_9"
-            android:textSize="@dimen/text_size_16"
-            android:textColor="?attr/color_eld_bg"
             android:buttonTint="?attr/color_eld_bg"
+            android:paddingRight="@dimen/margin_short_9"
+            android:textColor="?attr/color_eld_bg"
+            android:textSize="@dimen/text_size_16"
 
             />
 
-    <TextView
-        android:id="@+id/dateSignTxtView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/date"
-        android:textSize="@dimen/text_size_16"
-        android:textColor="?attr/textColor"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/signRecordCheckBox"
+        <TextView
+            android:id="@+id/dateSignTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/signRecordCheckBox"
+            android:text="@string/date"
+            android:textColor="?attr/textColor"
+            android:textSize="@dimen/text_size_16"
 
-        />
-
+            />
 
 
         <TextView
             android:id="@+id/missingLocTxtView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/MissingLoc"
-            android:paddingBottom="@dimen/margin_short_3"
-            android:paddingTop="@dimen/margin_short_3"
-            android:textSize="@dimen/text_size_13"
-            android:textAllCaps="true"
-            android:textColor="@color/warning"
-            android:layout_toLeftOf="@+id/certifyStatusTxtView"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/margin_10"
+            android:layout_toLeftOf="@+id/certifyStatusTxtView"
             android:background="@drawable/missing_loc_border"
+            android:paddingTop="@dimen/margin_short_3"
+            android:paddingBottom="@dimen/margin_short_3"
+            android:text="@string/MissingLoc"
+            android:textAllCaps="true"
+            android:textColor="@color/warning"
+            android:textSize="@dimen/text_size_13"
             android:textStyle="bold"
             android:visibility="gone"
 
@@ -64,10 +62,10 @@
             android:id="@+id/noSignErrorImg"
             android:layout_width="@dimen/margin_17"
             android:layout_height="@dimen/margin_17"
-            android:src="@drawable/error"
-            android:layout_toRightOf="@+id/dateSignTxtView"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/margin_short_5"
+            android:layout_toRightOf="@+id/dateSignTxtView"
+            android:src="@drawable/error"
 
             />
 
@@ -96,9 +94,9 @@
             android:id="@+id/signRecordRightImg"
             android:layout_width="@dimen/margin_15"
             android:layout_height="@dimen/margin_15"
-            android:src="@drawable/arrow_next_unidentfied"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:src="@drawable/arrow_next_unidentfied"
 
 
             />

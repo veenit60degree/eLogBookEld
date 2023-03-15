@@ -30,7 +30,7 @@
         android:id="@+id/notificationDescTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/black_semi"
+        android:textColor="?attr/black_semi"
         android:layout_marginTop="@dimen/margin_short_3"
         android:paddingBottom="@dimen/margin_short_2"
         android:textSize="@dimen/text_size_16" />

@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/white_full_border"
         android:orientation="vertical"
-        android:minWidth="@dimen/view_height_450"
+        android:minWidth="@dimen/view_height_550"
         android:paddingBottom="@dimen/margin_15"
         android:backgroundTint="?attr/trailer_dialog_background"
 
@@ -33,7 +33,7 @@
         android:textStyle="bold"
         android:textSize="@dimen/text_size_18"
         android:gravity="center"
-        android:layout_marginBottom="@dimen/margin_12"
+
 
 
         />
@@ -84,21 +84,21 @@
     </LinearLayout>
 
 
-    <Button
+    <TextView
         android:id="@+id/notificationOkBtn"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/view_height_42"
+        android:layout_height="wrap_content"
         android:text="@string/ok"
-        android:textColor="@color/whiteee"
-        android:textSize="@dimen/text_size_17"
+        android:textColor="?attr/active_status_bg"
+        android:textSize="@dimen/text_size_16"
         android:gravity="center"
-        android:layout_marginRight="@dimen/margin_15"
-        android:paddingLeft="@dimen/margin_15"
-        android:paddingRight="@dimen/margin_15"
-        android:background="@drawable/eld_blue_new_selector"
-
+        android:layout_marginRight="@dimen/margin_10"
+        android:paddingLeft="@dimen/margin_short_7"
+        android:paddingRight="@dimen/margin_short_7"
+        android:paddingBottom="@dimen/margin_short_3"
         android:layout_gravity="right"
         android:textAllCaps="false"
+        android:textStyle="bold"
 
         />
 

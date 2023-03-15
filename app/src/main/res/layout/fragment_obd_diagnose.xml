@@ -259,12 +259,11 @@
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@id/button2"
-        android:layout_marginRight="@dimen/margin_10"
         android:layout_marginLeft="@dimen/margin_10"
-        android:background="@drawable/edit_green_drawable"
+        android:layout_marginRight="@dimen/margin_10"
         android:layout_marginBottom="@dimen/margin_short_6"
-        />
+        android:layout_toLeftOf="@id/button2"
+        android:background="@drawable/edit_green_drawable" />
 
 
 

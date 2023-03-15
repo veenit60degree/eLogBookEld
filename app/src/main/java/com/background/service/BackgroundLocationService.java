@@ -57,6 +57,7 @@ import com.constants.VolleyRequest;
 import com.driver.details.DriverConst;
 import com.htstart.htsdk.HTBleSdk;
 import com.htstart.htsdk.bluetooth.HTBleData;
+import com.htstart.htsdk.bluetooth.HTBleDevice;
 import com.local.db.BleGpsAppLaunchMethod;
 import com.local.db.CTPatInspectionMethod;
 import com.local.db.CertifyLogMethod;
@@ -64,6 +65,7 @@ import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.DeferralMethod;
 import com.local.db.DriverPermissionMethod;
+import com.local.db.FailedApiTrackMethod;
 import com.local.db.HelperMethods;
 import com.local.db.InspectionMethod;
 import com.local.db.LatLongHelper;
@@ -76,6 +78,7 @@ import com.local.db.ShipmentHelperMethod;
 import com.local.db.SyncingMethod;
 import com.local.db.UpdateLogRecordMethod;
 import com.local.db.VehiclePowerEventMethod;
+import com.models.EldDataModelNew;
 import com.notifications.NotificationManagerSmart;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.EldCoDriverLogPref;
@@ -91,6 +94,7 @@ import com.wifi.settings.WiFiConfig;
 
 import org.greenrobot.eventbus.EventBus;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -119,19 +123,22 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     String SelectedDriverId = "";
     Intent locServiceIntent;
 
-    String obdEngineHours = "0", currentHighPrecisionOdometer = "0", obdOdometer = "0", obdTripDistance = "0", ignitionStatus = "OFF",
-            HighResolutionDistance = "0", truckRPM = "0";
+    String obdEngineHours = "0", currentHighPrecisionOdometer = "0", obdTripDistance = "0", ignitionStatus = "OFF",
+            HighResolutionDistance = "0", truckRPM = "0";   // obdOdometer = "0",
 
     int GPSSpeed = 0;
     int timeInSec = -1;
     int timeDuration = 4000;
+    int dayInMinDuration = 1440;
 
     int SecondDriver                        = 0;
     final int UpdateOffLineStatus           = 2;
     final int SaveShippingOffline           = 3;
+
     final int SaveOdometerOffline           = 4;
     final int GetOdometers18Days            = 6;
     final int SaveCertifyLog                = 7;
+    final int SaveCertifyLogCo              = 70;
     final int SaveDriverLog                 = 8;
     final int SaveInspectionMain            = 9;
     final int SaveInspectionCo              = 10;
@@ -154,6 +161,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
     final int GetRecapViewFlagMain          = 111;
     final int GetRecapViewFlagCo            = 112;
+    final int MainDriverNotification        = 113;
+    final int CoDriverNotification          = 114;
 
     final int SaveMainDriverLogData         = 1002;
     final int SaveCoDriverLogData           = 1003;
@@ -173,7 +182,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     int onReceiveTotalCountOnReq            = 0;
 
 
-    int obdVehicleSpeed       = -1;
+    public static int obdVehicleSpeed       = -1;
 
     int LocRefreshTime = 10;
     int CheckInternetConnection = 2;
@@ -187,7 +196,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     String ObdRestarted = "OBD Restarted";
 
     int DriverType = 0, LastObdSpeed = -1;
-    boolean isStopService = false,  RestartObdFlag = false, isTeamDriverLogin = false;
+    boolean isStopService = false,  RestartObdFlag = false, isTeamDriverLogin = false, isDriverLogout = false;
     JSONArray shipmentArray, odometerArray, driverLogArray;
     DBHelper dbHelper;
     HelperMethods hMethods;
@@ -203,6 +212,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     DeferralMethod deferralMethod;
     BleGpsAppLaunchMethod bleGpsAppLaunchMethod;
     VehiclePowerEventMethod vehiclePowerEventMethod;
+    FailedApiTrackMethod failedApiTrackMethod;
 
     CheckConnectivity checkConnectivity;
 
@@ -211,6 +221,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     MainDriverEldPref MainDriverPref;
     CoDriverEldPref CoDriverPref;
     NotificationManagerSmart mNotificationManager;
+    NotificationMethod notificationMethod;
     Constants constants;
     ShippingPost postRequest;
     ServiceCycle serviceCycle;
@@ -234,7 +245,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     File locDataFile;
     private TextToSpeech tts;
     String ViolationReason = "";
-    SaveDriverLogPost saveDriverLogPost;
+    SaveDriverLogPost saveDriverLogPost, saveNotificationReq;
     SaveLogJsonObj saveEventLogPost;
     CertifyLogMethod certifyLogMethod;
     UpdateLogRecordMethod logRecordMethod;
@@ -275,6 +286,9 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     String PreviousLatitude = "", PreviousLongitude = "", PreviousOdometer = "";
     double tempOdo = 1180321279;  //1.090133595E9
     double tempEngHour = 22999.95;
+    int tempSpeed = 0;
+    int ignitionCount = 0;
+
 
    private BroadcastReceiver mMessageReceiver = null;
 
@@ -302,6 +316,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         deferralMethod          = new DeferralMethod();
         bleGpsAppLaunchMethod   = new BleGpsAppLaunchMethod();
         vehiclePowerEventMethod = new VehiclePowerEventMethod();
+        failedApiTrackMethod    = new FailedApiTrackMethod();
 
         checkConnectivity       = new CheckConnectivity(getApplicationContext());
         MainDriverPref          = new MainDriverEldPref();
@@ -318,6 +333,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         SaveAgricultureRequest  = new VolleyRequest(getApplicationContext());
         GetLogRequest           = new VolleyRequest(getApplicationContext());
         mNotificationManager    = new NotificationManagerSmart(getApplicationContext());
+        notificationMethod      = new NotificationMethod();
 
      //   saveDriverDeviceUsageLog= new VolleyRequest(getApplicationContext());
         GetOdometerRequest      = new VolleyRequest(getApplicationContext());
@@ -326,8 +342,12 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         ctPatInspectionMethod   = new CTPatInspectionMethod();
         logRecordMethod         = new UpdateLogRecordMethod();
         certifyLogMethod        = new CertifyLogMethod();
+
         saveDriverLogPost       = new SaveDriverLogPost(getApplicationContext(), saveLogRequestResponse);
+        saveNotificationReq     = new SaveDriverLogPost(getApplicationContext(), saveLogRequestResponse);
+
         saveEventLogPost        = new SaveLogJsonObj(getApplicationContext(), saveEventRequestResponse );
+
 
         data                    = new OBDDeviceData();
         decoder                 = new Decoder();
@@ -346,9 +366,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
         startLocationService();
 
-        DriverId         = SharedPref.getDriverId(getApplicationContext());
-        SelectedDriverId = SharedPref.getDriverId(getApplicationContext());
-        CoDriverId       =  DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getApplicationContext());
+        getDriverIDs();
 
         if (SharedPref.GetNewLoginStatus(getApplicationContext()) && SharedPref.IsDriverLogin(getApplicationContext())) {
             String VIN = SharedPref.getVINNumber(getApplicationContext());
@@ -377,7 +395,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             }
 
             if(!HTBleSdk.Companion.getInstance().isConnected() && SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED){
-                SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(),
+                SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
                         global.GetCurrentUTCTimeFormat(), getApplicationContext());
             }
 
@@ -463,13 +481,13 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
             String obdLastCallDate = SharedPref.getWiredObdCallTime(getApplicationContext());
             if(obdLastCallDate.length() > 10){
-                final DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);    // Current Date Time
+                final DateTime currentDateTime = global.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getApplicationContext());    // Current Date Time
                 final DateTime savedDateTime = global.getDateTimeObj(obdLastCallDate, false);
 
                 int timeInSec = (int) Constants.getDateTimeDuration(savedDateTime, currentDateTime).getStandardSeconds();
                 if(timeInSec >= 3){  // minimum call interval is 3 sec.
-                    SharedPref.SetWiredObdCallTime(Globally.GetCurrentDateTime(), getApplicationContext());
-                    //  Logger.LogDebug("GetCurrentDateTime", "GetCurrentDateTime: " + Globally.GetCurrentDateTime());
+                    SharedPref.SetWiredObdCallTime(Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
+                    //  Logger.LogDebug("GetCurrentDateTime", "GetCurrentDateTime: " + Globally.GetDriverCurrentDateTime(global, getApplicationContext()));
 
                     if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED ) {
 
@@ -478,7 +496,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                         try {
                             timeStamp = bundle.getString(constants.OBD_TimeStamp);
-                            obdOdometer = bundle.getString(constants.OBD_Odometer);
+                           // obdOdometer = bundle.getString(constants.OBD_Odometer);
                             obdTripDistance = bundle.getString(constants.OBD_TripDistance);
                             ignitionStatus = bundle.getString(constants.OBD_IgnitionStatus);
                             truckRPM = bundle.getString(constants.OBD_RPM);
@@ -487,8 +505,16 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                             speed = bundle.getInt(constants.OBD_Vss);
                             obdVehicleSpeed = speed;
 
-                            if(bundle.getString(constants.OBD_HighPrecisionOdometer) != null) {
-                                currentHighPrecisionOdometer = bundle.getString(constants.OBD_HighPrecisionOdometer);
+                            currentHighPrecisionOdometer = bundle.getString(constants.OBD_HighPrecisionOdometer);
+                            // using simple odometer value only when High Precision value was null or 0.
+                            if(currentHighPrecisionOdometer.equals("null") || currentHighPrecisionOdometer.equals("0")) {
+                                currentHighPrecisionOdometer = bundle.getString(constants.OBD_Odometer);
+                                currentHighPrecisionOdometer = Constants.kmToMeter(currentHighPrecisionOdometer);
+                            }else{
+                                // if Truck's High Precision Odometer unit type is KM.
+                                if(SharedPref.getHighPrecisionUnit(getApplicationContext()).equalsIgnoreCase("km")) {
+                                    currentHighPrecisionOdometer = Constants.kmToMeter(currentHighPrecisionOdometer);
+                                }
                             }
 
                             if(vin.length() <= 5){
@@ -499,15 +525,34 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                         }
 
 
-
-
                         // ---------------- temp data ---------------------
 
                         // temp odometer for simulator converting odometer from km to meter. because it is saving in km.
                         //  currentHighPrecisionOdometer = Constants.kmToMeter(obdOdometer);
 
 
-                        sendBroadCast(parseObdDatainHtml(vin, speed, -1), "");
+                  /*      obdEngineHours = "123956";
+                        ignitionCount++;
+                        String obdOdometer = String.valueOf(tempOdo);
+                        currentHighPrecisionOdometer = Constants.kmToMeter(obdOdometer);
+                        SharedPref.SetObdOdometer(obdOdometer, getApplicationContext());
+                        tempOdo = tempOdo + 500;
+                        if(SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED) {
+
+                            ignitionStatus = "ON"; truckRPM = "700";
+                            if(tempSpeed > 10) {
+                                speed = 15;
+                                tempSpeed = 0;
+                            }else{
+                                speed = 0;
+                            }
+                            tempSpeed++;
+                        }else {
+                            ignitionStatus = "OFF"; truckRPM = "0"; speed = 0;
+                        }*/
+
+
+                        sendBroadCast(parseObdDataInHtml(vin, speed), "");
 
                         if (SharedPref.IsDriverLogin(getApplicationContext())) {
 
@@ -543,7 +588,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                                         }else{
                                             if(timeDiffInSec < 0){
-                                                SharedPref.SetIgnitionOffCallTime(global.GetCurrentDateTime(), getApplicationContext());
+                                                SharedPref.SetIgnitionOffCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
                                             }
                                         }
 
@@ -570,7 +615,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                 SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
 
                             obdCallBackObservable(-1, SharedPref.getVINNumber(getApplicationContext()),
-                                                    global.GetCurrentDateTime());
+                                                    global.GetDriverCurrentDateTime(global, getApplicationContext()));
                         }
                     }
 
@@ -578,12 +623,12 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
 
                 }else if(timeInSec < 0){
-                    SharedPref.SetWiredObdCallTime(Globally.GetCurrentDateTime(), getApplicationContext());
+                    SharedPref.SetWiredObdCallTime(Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
                     Logger.LogDebug("GetCurrentDateTime", "Negative Time: " + timeInSec);
                 }
 
             }else{
-                SharedPref.SetWiredObdCallTime(Globally.GetCurrentDateTime(), getApplicationContext());
+                SharedPref.SetWiredObdCallTime(Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
             }
 
 
@@ -596,7 +641,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
     private void obdCallBackObservable(int speed, String vin, String timeStamp){
 
-        SharedPref.SetIgnitionOffCallTime(global.GetCurrentDateTime(), getApplicationContext());
+        SharedPref.SetIgnitionOffCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
         int OBD_LAST_STATUS = SharedPref.getObdStatus(getApplicationContext());
         String last_obs_source_name = SharedPref.getObdSourceName(getApplicationContext());
 
@@ -616,154 +661,162 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             // this check is using because some times OBD returns 0 value
             checkEngHrOdo();
 
-            writeWiredObdLogs(OBD_LAST_STATUS, speed, timeStamp, "Save Truck Info - OBD_LAST_STATUS: ");
+            // check valid time before change status automatically
+            boolean IsValidTime = global.isCorrectTime(getApplicationContext(), false);
+            if (IsValidTime) {
+                writeWiredObdLogs(OBD_LAST_STATUS, speed, timeStamp, "Save Truck Info - OBD_LAST_STATUS: ");
 
-            if (OBD_LAST_STATUS == constants.WIRED_CONNECTED || OBD_LAST_STATUS == constants.BLE_CONNECTED) {
 
-                // ELD rule calling for Wired OBD
-                try {
-                    if (ignitionStatus.equals("ON")) {
+                if (OBD_LAST_STATUS == constants.WIRED_CONNECTED || OBD_LAST_STATUS == constants.BLE_CONNECTED) {
 
-                        String currentLogDate = global.GetCurrentDateTime();
-                        Globally.IS_OBD_IGNITION = true;
-                        continueStatusPromtForPcYm(ignitionStatus, last_obs_source_name, global.getCurrentDate(), OBD_LAST_STATUS);
+                    // ELD rule calling for Wired OBD
+                    try {
+                        if (ignitionStatus.equals("ON")) {
 
-                        /* ======================== Malfunction & Diagnostic Events ========================= */
-                        if(obdEngineHours.length() > 0 && !obdEngineHours.equals("0") && !obdEngineHours.equals("0.00")) {
+                            String currentLogDate = global.GetDriverCurrentDateTime(global, getApplicationContext());
+                            Globally.IS_OBD_IGNITION = true;
+                            continueStatusPromtForPcYm(ignitionStatus, last_obs_source_name, global.GetDriverCurrentDateTime(global, getApplicationContext()), OBD_LAST_STATUS);
+
+                            /* ======================== Malfunction & Diagnostic Events ========================= */
+                            if (obdEngineHours.length() > 0 && !obdEngineHours.equals("0") && !obdEngineHours.equals("0.00")) {
+
+                                vehiclePowerEventMethod.savePowerEventOnChange(ignitionStatus, offsetFromUTC, dbHelper, getApplicationContext());
+
+                                ClearMissingDiagnostics();  // checking  missing data for clear
+
+                                checkPowerMalDiaEvent();   // checking Power Data Compliance Mal/Dia event
+
+                                checkEngSyncClearEvent();  // checking EngineSyncDataCompliance Mal/Dia clear event if already occurred
+
+                            }
+
+
+                            double obdOdometerDouble = Double.parseDouble(currentHighPrecisionOdometer);
+                            // save current odometer for HOS calculation
+                            saveDayStartOdometer(currentHighPrecisionOdometer);
+
+                            String savedDate = SharedPref.getHighPrecesionSavedTime(getApplicationContext());
+                            if (savedDate.length() == 0 && obdOdometerDouble > 0) {
+                                // save current HighPrecisionOdometer locally
+                                savedDate = currentLogDate;
+                                SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
+                            }
+
+                            boolean isDrivingAllowed = true;
+                            if (SharedPref.isDrivingAllowed(getApplicationContext()) == false && speed >= 8) {
+                                final DateTime currentDateTime = global.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getApplicationContext());    // Current Date Time
+                                final DateTime savedDateTime = global.getDateTimeObj(SharedPref.getDrivingAllowedTime(getApplicationContext()), false);
+
+                                if (savedDateTime.toString().length() > 10) {
+                                    int timeInSec = (int) Constants.getDateTimeDuration(savedDateTime, currentDateTime).getStandardSeconds();
+                                    if (timeInSec > 20) {
+                                        isDrivingAllowed = true;
+                                        SharedPref.setDrivingAllowedStatus(true, "", getApplicationContext());
+                                    } else {
+                                        isDrivingAllowed = false;
+                                    }
+                                }
+                            }
+
+                            if (speed > 1) {
+                                SharedPref.setVehilceMovingStatus(true, getApplicationContext());
+                                speedMovingBroadcast();
+                            } else {
+                                SharedPref.setVehilceMovingStatus(false, getApplicationContext());
+                            }
+
+                            if (isDrivingAllowed) {
+                                timeDuration = Constants.SocketTimeout3Sec;
+                                callRuleWithStatusWise(currentHighPrecisionOdometer, savedDate, vin, timeStamp, speed, -1);
+                            }
+
+                            callWiredDataService(timeDuration);
+
+                        } else {
 
                             vehiclePowerEventMethod.savePowerEventOnChange(ignitionStatus, offsetFromUTC, dbHelper, getApplicationContext());
 
-                            ClearMissingDiagnostics();  // checking  missing data for clear
+                            saveIgnitionStatus(ignitionStatus, last_obs_source_name);
 
-                            checkPowerMalDiaEvent();   // checking Power Data Compliance Mal/Dia event
-
-                            checkEngSyncClearEventAtLogout();  // checking EngineSyncDataCompliance Mal/Dia clear event if already occurred
-
-                        }
-
-
-
-                        double obdOdometerDouble = Double.parseDouble(currentHighPrecisionOdometer);
-                        // save current odometer for HOS calculation
-                        saveDayStartOdometer(currentHighPrecisionOdometer);
-
-                        String savedDate = SharedPref.getHighPrecesionSavedTime(getApplicationContext());
-                        if (savedDate.length() == 0 && obdOdometerDouble > 0) {
-                            // save current HighPrecisionOdometer locally
-                            savedDate = currentLogDate;
-                            SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
-                        }
-
-                        boolean isDrivingAllowed = true;
-                        if (SharedPref.isDrivingAllowed(getApplicationContext()) == false && speed >= 8) {
-                            final DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);    // Current Date Time
-                            final DateTime savedDateTime = global.getDateTimeObj(SharedPref.getDrivingAllowedTime(getApplicationContext()), false);
-
-                            if (savedDateTime.toString().length() > 10) {
-                                int timeInSec = (int) Constants.getDateTimeDuration(savedDateTime, currentDateTime).getStandardSeconds();
-                                if (timeInSec > 20) {
-                                    isDrivingAllowed = true;
-                                    SharedPref.setDrivingAllowedStatus(true, "", getApplicationContext());
-                                } else {
-                                    isDrivingAllowed = false;
-                                }
-                            }
-                        }
-
-                        if (speed > 1) {
-                            SharedPref.setVehilceMovingStatus(true, getApplicationContext());
-                            speedMovingBroadcast();
-                        } else {
+                            speed = 0;
+                            Globally.IS_OBD_IGNITION = false;
+                            SharedPref.SetTruckIgnitionStatusForContinue("OFF", last_obs_source_name, "", getApplicationContext());
+                            SharedPref.setVss(speed, getApplicationContext());
                             SharedPref.setVehilceMovingStatus(false, getApplicationContext());
+
+                            String savedDate = SharedPref.getHighPrecesionSavedTime(getApplicationContext());
+                            if (savedDate.length() == 0 && Double.parseDouble(currentHighPrecisionOdometer) > 0) {
+                                savedDate = global.GetDriverCurrentDateTime(global, getApplicationContext());
+                                SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, savedDate, getApplicationContext());
+                            }
+
+                            callRuleWithStatusWise(currentHighPrecisionOdometer, savedDate, vin, timeStamp, speed, 0);
+
+                            callWiredDataService(Constants.SocketTimeout8Sec);
+
                         }
 
-                        if (isDrivingAllowed) {
-                            timeDuration = Constants.SocketTimeout3Sec;
-                            callRuleWithStatusWise(currentHighPrecisionOdometer, savedDate, vin, timeStamp, speed, -1);
-                        }
-
-                        callWiredDataService(timeDuration);
-
-                    } else {
-
-                        vehiclePowerEventMethod.savePowerEventOnChange(ignitionStatus, offsetFromUTC, dbHelper, getApplicationContext());
-
-                        saveIgnitionStatus(ignitionStatus, last_obs_source_name);
-
-                        speed = 0;
+                    } catch (Exception e) {
+                        e.printStackTrace();
                         Globally.IS_OBD_IGNITION = false;
-                        SharedPref.SetTruckIgnitionStatusForContinue("OFF", last_obs_source_name, "", getApplicationContext());
-                        SharedPref.setVss(speed, getApplicationContext());
+                        callWiredDataService(Constants.SocketTimeout3Sec);
+                    }
+
+                } else {
+
+                    // check in wire disconnect case but device is also not connected with ALS/OBD wifi ssid
+                    if (SharedPref.getObdPreference(getApplicationContext()) != Constants.OBD_PREF_WIFI) {
+
                         SharedPref.setVehilceMovingStatus(false, getApplicationContext());
 
-                        String savedDate = SharedPref.getHighPrecesionSavedTime(getApplicationContext());
-                        if (savedDate.length() == 0 && Double.parseDouble(currentHighPrecisionOdometer) > 0) {
-                            savedDate = global.GetCurrentDateTime();
-                            SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), getApplicationContext());
+                        // Check Engine Sync data Malfunction/Diagnostic event
+                        checkEngineSyncMalDiaOccurredEvent(speed, false, false, 0);
+
+
+                        if (OBD_LAST_STATUS == constants.WIRED_DISCONNECTED) {
+                            callWiredDataService(Constants.SocketTimeout5Sec);
                         }
 
-                        callRuleWithStatusWise(currentHighPrecisionOdometer, savedDate, vin, timeStamp, speed, 0);
-
-                        callWiredDataService(Constants.SocketTimeout8Sec);
-
                     }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Globally.IS_OBD_IGNITION = false;
-                    callWiredDataService(Constants.SocketTimeout3Sec);
-                }
-
-            } else {
-
-                // check in wire disconnect case but device is also not connected with ALS/OBD wifi ssid
-                if (SharedPref.getObdPreference(getApplicationContext()) != Constants.OBD_PREF_WIFI) {
-
-                    SharedPref.setVehilceMovingStatus(false, getApplicationContext());
-
-                    // Check Engine Sync data Malfunction/Diagnostic event
-                    checkEngineSyncMalDiaOccurredEvent(speed, false, false, 0);
-
-
-                    if (OBD_LAST_STATUS == constants.WIRED_DISCONNECTED) {
-                        callWiredDataService(Constants.SocketTimeout5Sec);
+                    String savedDate = SharedPref.getHighPrecesionSavedTime(getApplicationContext());
+                    if (savedDate.length() == 0 && Double.parseDouble(currentHighPrecisionOdometer) > 0) {
+                        savedDate = global.GetDriverCurrentDateTime(global, getApplicationContext());
+                        SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, savedDate, getApplicationContext());
                     }
+                    callRuleWithStatusWise(currentHighPrecisionOdometer, savedDate, vin, timeStamp, speed, -1);
 
                 }
 
-                String savedDate = SharedPref.getHighPrecesionSavedTime(getApplicationContext());
-                if (savedDate.length() == 0 && Double.parseDouble(currentHighPrecisionOdometer) > 0) {
-                    savedDate = global.GetCurrentDateTime();
-                    SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), getApplicationContext());
+        }else{
+             callWiredDataService(Constants.SocketTimeout8Sec);
+        }
+
+
+            if(!constants.isValidVinFromObd(ignitionStatus, getApplicationContext()) ) {
+
+                if( !SharedPref.IsWrongVinAlertView(getApplicationContext())) {
+                    constants.saveObdData(constants.getObdSource(getApplicationContext()),
+                            "WIRED-InValidVinFromObd: " + vin + ", VIN Length- " + vin.length(), "",
+                            currentHighPrecisionOdometer, "", "", ignitionStatus, truckRPM, String.valueOf(speed),
+                            String.valueOf(-1), obdEngineHours, timeStamp, timeStamp,
+                            DriverId, dbHelper, driverPermissionMethod, obdUtil, getApplicationContext());
+
+                    SharedPref.SetWrongVinAlertView(true, getApplicationContext());
+
+                    Globally.PlayNotificationSound(getApplicationContext());
+                    global.ShowLocalNotification(getApplicationContext(),
+                            getString(R.string.confirm_vin),
+                            getString(R.string.confirm_vin_desc), 20811);
+
+                    try {
+                        Message message = speedAlertHandler.obtainMessage();
+                        message.sendToTarget();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-                callRuleWithStatusWise(currentHighPrecisionOdometer, savedDate, vin, timeStamp, speed, -1);
-
-            }
-
-            if(constants.isValidVinFromObd(ignitionStatus, getApplicationContext()) == false &&
-                    SharedPref.IsWrongVinAlertView(getApplicationContext()) == false) {
-
-                constants.saveObdData(constants.getObdSource(getApplicationContext()),
-                        "WIRED-InValidVinFromObd: " + vin + ", VIN Length- " + vin.length(), "",
-                        currentHighPrecisionOdometer,  "", "", ignitionStatus, truckRPM, String.valueOf(speed),
-                        String.valueOf(-1), obdEngineHours, timeStamp, timeStamp,
-                        DriverId, dbHelper, driverPermissionMethod, obdUtil);
-
-                SharedPref.SetWrongVinAlertView(true, getApplicationContext());
-
-                Globally.PlayNotificationSound(getApplicationContext());
-                global.ShowLocalNotification(getApplicationContext(),
-                        getString(R.string.confirm_vin),
-                        getString(R.string.confirm_vin_desc), 20811);
-
-                try {
-                    Message message = speedAlertHandler.obtainMessage();
-                    message.sendToTarget();
-
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-
             }else{
                 mNotificationManager.dismissNotification(getApplicationContext(), 20811);
 
@@ -823,11 +876,11 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             if (SharedPref.getVINNumber(getApplicationContext()).length() > 5) {
                 if (obdShell.result == 0) {
                     // Logger.LogDebug("OBD", "obd --> cat type --> " + obdShell.successMsg);
-                    if (obdShell.successMsg.contains("USB_DCP")) {  // USB_DCP     Connected State
+                    if (obdShell.successMsg.contains("USB_DCP") ) {  // USB_DCP  Connected State    || obdShell.successMsg.contains("USB")
 
                         if (lastObdStatus != Constants.WIRED_CONNECTED) {
 
-                            SharedPref.SetIgnitionOffCallTime(global.GetCurrentDateTime(), getApplicationContext());
+                            SharedPref.SetIgnitionOffCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
                             SharedPref.SetIgnitionOffCalled(false, getApplicationContext());
                             SharedPref.setObdStatusAfterLogin(true, getApplicationContext());
 
@@ -835,7 +888,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                     "WIRED-CONNECTED", "", "-1",
                                     currentHighPrecisionOdometer, "", "", truckRPM, "-1",
                                     "-1", obdEngineHours, "", "",
-                                    DriverId, dbHelper, driverPermissionMethod, obdUtil);
+                                    DriverId, dbHelper, driverPermissionMethod, obdUtil, getApplicationContext());
 
                             sendBroadCast("<b>Wired tablet connected</b> <br/>", "");
                             sendBroadcastUpdateObd(false);
@@ -850,7 +903,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                         }
 
-                        SharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, global.getCurrentDate(),
+                        SharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
                                 global.GetCurrentUTCTimeFormat(), getApplicationContext());
 
                     } else {
@@ -863,9 +916,9 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                         "WIRED-DISCONNECTED", "", "-1",
                                         currentHighPrecisionOdometer, "", "", truckRPM, "-1",
                                         "-1", obdEngineHours, "", "",
-                                        DriverId, dbHelper, driverPermissionMethod, obdUtil);
+                                        DriverId, dbHelper, driverPermissionMethod, obdUtil, getApplicationContext());
 
-                                SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, global.getCurrentDate(),
+                                SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
                                         global.GetCurrentUTCTimeFormat(), getApplicationContext());
                                 SharedPref.setVehilceMovingStatus(false, getApplicationContext());
 
@@ -891,7 +944,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                     "WIRED-ERROR", "", "-1",
                                     currentHighPrecisionOdometer, "", "", truckRPM, "-1",
                                     "-1", obdEngineHours, "", "",
-                                    DriverId, dbHelper, driverPermissionMethod, obdUtil);
+                                    DriverId, dbHelper, driverPermissionMethod, obdUtil, getApplicationContext());
 
 
                             sendEcmBroadcast(true);
@@ -900,13 +953,15 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                     getString(R.string.wired_tablettt),
                                     getString(R.string.wired_tablet_conn_error), 2081);
 
-                            SharedPref.SaveObdStatus(Constants.WIRED_ERROR, global.getCurrentDate(),
+                            SharedPref.SaveObdStatus(Constants.WIRED_ERROR, global.GetDriverCurrentDateTime(global, getApplicationContext()),
                                     global.GetCurrentUTCTimeFormat(), getApplicationContext());
                             sendBroadcastUpdateObd(false);
                         }
                     }
                 }
             }
+
+
         }
 
 
@@ -921,7 +976,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         if (lastIgnitionStatus.equals("ON")) {
             // save truck info to check power compliance mal/dia later.
             SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, last_obs_source_name,
-                    global.getCurrentDate(), global.GetCurrentUTCTimeFormat(),
+                    global.GetDriverCurrentDateTime(global, getApplicationContext()), global.GetCurrentUTCTimeFormat(),
                     SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, getApplicationContext()),
                     SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, getApplicationContext()),
                     getApplicationContext());
@@ -954,7 +1009,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
             String lastCallTime = SharedPref.getObdWriteCallTime(getApplicationContext());
             if (lastCallTime.length() > 10) {
-                DateTime currentTime = Globally.GetCurrentJodaDateTime();
+                DateTime currentTime = Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getApplicationContext());
                 DateTime lastCallDateTime = Globally.getDateTimeObj(lastCallTime, false);
                 long secDiff = Constants.getDateTimeDuration(lastCallDateTime, currentTime).getStandardSeconds();
                 long CheckIntervalInSec = 120;   // 2 min
@@ -963,17 +1018,17 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 }
 
                 if (secDiff >= CheckIntervalInSec) {
-                    SharedPref.setObdWriteCallTime(Globally.GetCurrentDateTime(), getApplicationContext());
+                    SharedPref.setObdWriteCallTime(Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
                     constants.saveObdData(constants.getObdSource(getApplicationContext()),
                             "VIN: " + SharedPref.getVehicleVin(getApplicationContext()) + ", " + detail +OBD_LAST_STATUS,
                             "", currentHighPrecisionOdometer,
                             currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(speed),
                             String.valueOf(-1), obdEngineHours, timeStamp, timeStamp,
-                            DriverId, dbHelper, driverPermissionMethod, obdUtil);
+                            DriverId, dbHelper, driverPermissionMethod, obdUtil, getApplicationContext());
 
                 }
             } else {
-                SharedPref.setObdWriteCallTime(Globally.GetCurrentDateTime(), getApplicationContext());
+                SharedPref.setObdWriteCallTime(Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
             }
         }
     }
@@ -982,9 +1037,10 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     void callRuleWithStatusWise(String currentHighPrecisionOdometer, String savedDate, String vin, String timeStamp, int speed, double calculatedSpeedFromOdo){
 
         try{
-            String currentLogDate = global.GetCurrentDateTime();
+
+            String currentLogDate = global.GetDriverCurrentDateTime(global, getApplicationContext());
             String jobType = SharedPref.getDriverStatusId(getApplicationContext());
-           // double intHighPrecisionOdometerInKm = (Double.parseDouble(currentHighPrecisionOdometer) * 0.001);
+            // double intHighPrecisionOdometerInKm = (Double.parseDouble(currentHighPrecisionOdometer) * 0.001);
             if (jobType.equals(global.DRIVING)) {
 
                 timeDuration = Constants.SocketTimeout10Sec;
@@ -994,7 +1050,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                 }
 
-                if(speed >= 8 && LastObdSpeed < 8){
+                if (speed >= 8 && LastObdSpeed < 8) {
                     sendBroadcastUpdateObd(true);
                 }
 
@@ -1006,53 +1062,53 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                         get18DaysLogArrayLocally();
 
                         boolean isYardMove = hMethods.isPCYM(EldFragment.driverLogArray);
-                        if(isYardMove){
+                        if (isYardMove) {
                             //String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getApplicationContext());
-                            String CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getApplicationContext()), getApplicationContext());
-                            if(speed >= 8 && (CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2))) {   // In Yard move
+                            String CurrentCycleId = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getApplicationContext()), getApplicationContext());
+                            if (speed >= 8 && (CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2))) {   // In Yard move
                                 timeDuration = Constants.SocketTimeout6Sec;
                                 saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "OnDutyYM Speed: " + speed);
-                            }else{
+                            } else {
                                 // call ELD rule after 1 minute to improve performance
                                 if (constants.minDiff(savedDate, global, false, getApplicationContext()) > 0) {
                                     saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "OnDutyYM Speed: " + speed);
                                 }
                                 timeDuration = Constants.SocketTimeout5Sec;
                             }
-                        }else{
+                        } else {
                             timeDuration = Constants.SocketTimeout15Sec;
                             saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "OnDuty Speed: " + speed);
                         }
 
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
                 } else {
 
-                    if(truckRPM.equals("0")){
+                    if (truckRPM.equals("0")) {
                         speed = 0;
                         timeDuration = Constants.SocketTimeout10Sec;
-                    }else{
-                        if(speed == 0){
+                    } else {
+                        if (speed == 0) {
                             timeDuration = Constants.SocketTimeout3Sec;
                         }
                     }
 
                     //boolean isYmPcAlertShown = SharedPref.GetTruckStartLoginStatus(getApplicationContext());
                     // call ELD rule after 1 minute to improve performance
-                    if (constants.minDiff(savedDate, global, false, getApplicationContext()) > 0 ) {    //||  (isYmPcAlertShown && isYardMove())
-                        saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "OnDuty Speed: "+speed);
+                    if (constants.minDiff(savedDate, global, false, getApplicationContext()) > 0) {    //||  (isYmPcAlertShown && isYardMove())
+                        saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "OnDuty Speed: " + speed);
                     }
                 }
 
             } else {
 
                 // =================== For OFF Duty & Sleeper case =====================
-               // boolean isYmPcAlertShown = SharedPref.GetTruckStartLoginStatus(getApplicationContext());
+                // boolean isYmPcAlertShown = SharedPref.GetTruckStartLoginStatus(getApplicationContext());
 
-                if (speed <= 0 && calculatedSpeedFromOdo <= 0 ) {
-                    if(speed == 0)
+                if (speed <= 0) { //&& calculatedSpeedFromOdo <= 0
+                    if (speed == 0)
                         timeDuration = Constants.SocketTimeout3Sec;
 
                     // call ELD rule after 1 minute to improve performance
@@ -1061,50 +1117,77 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                     }
 
                 } else {
-                    if (speed >= 8 && calculatedSpeedFromOdo >= 8  && !truckRPM.equals("0")) {    // if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
+                    if (speed >= 8 && !truckRPM.equals("0")) {    // && calculatedSpeedFromOdo >= 8 if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
 
-                        if(jobType.equals(global.SLEEPER)){
+                        if (jobType.equals(global.SLEEPER)) {
                             timeDuration = Constants.SocketTimeout15Sec;
-                            saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "Sleeper-Speed: "+speed);
-                        }else{
+                            saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "Sleeper-Speed: " + speed);
+                        } else {
                             get18DaysLogArrayLocally();
 
                             boolean isPersonal = hMethods.isPCYM(EldFragment.driverLogArray);
-                            if(isPersonal){
-                                double AccumulativePersonalDistance = constants.getAccumulativePersonalDistance(DriverId, offsetFromUTC, Globally.GetCurrentJodaDateTime(),
-                                        Globally.GetCurrentUTCDateTime(), hMethods, dbHelper, getApplicationContext());
+                            if (isPersonal) {
+                                String puSavedTime = SharedPref.getPuExceedCheckDate(getApplicationContext());
+                                if (puSavedTime.length() > 10) {
+                                    int secDiff = constants.getSecDifference(puSavedTime, Globally.GetCurrentUTCTimeFormat());
+                                    if (secDiff > 30) {
+                                        SharedPref.setPuExceedCheckDate(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
 
-                                if(AccumulativePersonalDistance > 75 || Constants.isPcYmAlertButtonClicked){
+                                        checkPuExceedStatus(currentLogDate, speed);
+                                    } else {
+                                        if (secDiff < 0) {
+                                            SharedPref.setPuExceedCheckDate(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
+                                        }
+                                    }
+                                } else {
+                                    SharedPref.setPuExceedCheckDate(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
 
-                                    // check PU status exceeding status if 75km exceeded showing popup
-                                    checkPUExceedStatus(null, AccumulativePersonalDistance);
+                                    checkPuExceedStatus(currentLogDate, speed);
 
-                                    saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "PersonalUse-Speed: "+speed);
-                                    timeDuration = Constants.SocketTimeout15Sec;
-                                }else{
-                                    timeDuration = Constants.SocketTimeout5Sec;
-                                    SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
                                 }
 
-                            }else{
+
+                            } else {
                                 timeDuration = Constants.SocketTimeout15Sec;
-                                saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "OffDuty-Speed: "+speed);
+                                saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "OffDuty-Speed: " + speed);
                             }
 
                         }
 
-                    }else{
+                    } else {
                         SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
                     }
 
                 }
             }
+
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
 
+    private void checkPuExceedStatus(String currentLogDate, int speed){
+        try{
+            double AccumulativePersonalDistance = constants.getAccumulativePersonalDistance(DriverId, offsetFromUTC,
+                    Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getApplicationContext()),
+                    Globally.GetCurrentUTCDateTime(), hMethods, dbHelper, getApplicationContext());
+
+            if(AccumulativePersonalDistance > 75 || Constants.isPcYmAlertButtonClicked){
+
+                // check PU status exceeding status if 75km exceeded showing popup
+                checkPUExceedStatus(null, AccumulativePersonalDistance);
+
+                saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "PersonalUse-Speed: "+speed);
+                timeDuration = Constants.SocketTimeout15Sec;
+            }else{
+                timeDuration = Constants.SocketTimeout5Sec;
+                SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     private JSONArray get18DaysLogArrayLocally(){
         if (EldFragment.driverLogArray == null || EldFragment.driverLogArray.length() == 0) {
@@ -1131,22 +1214,15 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     }
 
 
-    String parseObdDatainHtml(String vin, int speed, double calculatedSpeed){
+    String parseObdDataInHtml(String vin, int speed){
 
-        if(calculatedSpeed < 0){
-            return "<b>ignitionStatus:</b> " + ignitionStatus + "<br/>" +  "<b>Truck RPM:</b> " + truckRPM + "<br/>" +  "<b>Odometer:</b> " + obdOdometer + "<br/>" +
-                    "<b>currentHighPrecisionOdometer:</b> " + currentHighPrecisionOdometer + "<br/>" +
-                    "<b>Speed:</b> " + speed + "<br/>" +
-                    "<b>VIN:</b> " + vin + "<br/>" +
-                    "<b>Trip Distance:</b> " + obdTripDistance + "<br/>" +
-                    "<b>EngineHours:</b> " + obdEngineHours + "<br/>" ;
-        }else{
-            return  "<b>ignitionStatus:</b> " + ignitionStatus + "<br/>" +  "<b>Truck RPM:</b> " + truckRPM + "<br/>" +   "<b>Odometer:</b> " + obdOdometer + "<br/>" +
-                    "<b>currentHighPrecisionOdometer:</b> " + currentHighPrecisionOdometer + "<br/>" +   "<b>Speed:</b> " + speed + "<br/>" +
-                    "<b>Calculated Speed:</b> " + calculatedSpeed + "<br/>" +  "<b>VIN:</b> " + vin + "<br/>" +
-                    "<b>Trip Distance:</b> " + obdTripDistance + "<br/>" +   "<b>EngineHours:</b> " + obdEngineHours + "<br/>" ;
-        }
-
+        return "<b>IgnitionStatus:</b> " + ignitionStatus + "<br/>" +
+                "<b>Truck RPM:</b> " + truckRPM + "<br/>" +
+                "<b>HighPrecisionOdometer:</b> " + currentHighPrecisionOdometer + "<br/>" +
+                "<b>Speed:</b> " + speed + "<br/>" +
+                "<b>VIN:</b> " + vin + "<br/>" +
+                "<b>Trip Distance:</b> " + obdTripDistance + "<br/>" +
+                "<b>EngineHours:</b> " + obdEngineHours + "<br/>" ;
     }
 
 
@@ -1183,7 +1259,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                             String savedOnReceiveTime = SharedPref.getBleOnReceiveTime(getApplicationContext());
                             if (savedOnReceiveTime.length() > 10) {
-                                int timeInSec = constants.getSecDifference(savedOnReceiveTime, Globally.GetCurrentDateTime());
+                                int timeInSec = constants.getSecDifference(savedOnReceiveTime, Globally.GetDriverCurrentDateTime(global, getApplicationContext()));
                                 if (timeInSec > 1) {
                                     SharedPref.setBleOnReceiveTime(getApplicationContext());
 
@@ -1199,7 +1275,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                             // write BLE logs when connected
                                             writeBleConnectDisconnectLog(true);
 
-                                            SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(),
+                                            SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
                                                     global.GetCurrentUTCTimeFormat(), getApplicationContext());
                                             SharedPref.SetIgnitionOffCalled(false, getApplicationContext());
                                             SharedPref.setObdStatusAfterLogin(true, getApplicationContext());
@@ -1212,7 +1288,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                                         getString(R.string.obd_ble), 2081);
 
                                                 constants.saveBleLog("Data receive after connected",
-                                                        Globally.GetCurrentDateTime(), getApplicationContext(), dbHelper,
+                                                        Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext(), dbHelper,
                                                         driverPermissionMethod, obdUtil);
 
 
@@ -1224,13 +1300,17 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                                         getBleData(decodedDataArray);
 
-                                        obdCallBackObservable(obdVehicleSpeed, decodedDataArray[13], global.GetCurrentDateTime());
+                                        obdCallBackObservable(obdVehicleSpeed, decodedDataArray[13], global.GetDriverCurrentDateTime(global, getApplicationContext()));
 
 
                                     } /*else {
                                             disconnectBleObd();
                                         }*/
 
+                                }else{
+                                    if(timeInSec < 0){
+                                        SharedPref.setBleOnReceiveTime(getApplicationContext());
+                                    }
                                 }
                             } else {
                                 SharedPref.setBleOnReceiveTime(getApplicationContext());
@@ -1258,7 +1338,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                         if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
 
 
-                            SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(),
+                            SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
                                     global.GetCurrentUTCTimeFormat(), getApplicationContext());
 
 
@@ -1299,11 +1379,11 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         try {
 
             // bluetooth OBD data
-            obdEngineHours = "0"; currentHighPrecisionOdometer = "0"; obdOdometer = "0"; obdTripDistance = "0";
+            obdEngineHours = "0"; currentHighPrecisionOdometer = "0";  obdTripDistance = "0";   //obdOdometer = "0";
             ignitionStatus = "OFF"; truckRPM = "0";
 
             obdVehicleSpeed = Integer.valueOf(decodedDataArray[9]);
-            obdOdometer = decodedDataArray[11];
+            //obdOdometer = decodedDataArray[11];
             obdTripDistance = decodedDataArray[16];
             truckRPM = decodedDataArray[10];
             obdEngineHours = decodedDataArray[12];
@@ -1335,6 +1415,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 }
 
             }else{
+
                 SharedPref.SetLocReceivedFromObdStatus(true, getApplicationContext());
             }
 
@@ -1451,8 +1532,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 if(isEngineSyncMalAllowed || isEngineSyncDiaAllowed) {
                     SharedPref.saveEngSyncDiagnstcStatus(true, getApplicationContext());
                     constants.saveDiagnstcStatus(getApplicationContext(), true);
-                    SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
-                    SharedPref.setEngSyncClearEventCallTime(Globally.GetCurrentDateTime(), getApplicationContext());
+                    SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
+                    SharedPref.setEngSyncClearEventCallTime(Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
 
                     String EventType = "", MalfunctionDefinition = "";
                     if (timeDiff > Constants.PowerEngSyncMalOccTime) {
@@ -1532,7 +1613,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                     if ((isEngineSyncMalAllowed || isEngineSyncDiaAllowed) && lastIgnitionStatus.equals("ON")) {
 
                         DateTime disconnectTime = global.getDateTimeObj(SharedPref.getObdLastStatusTime(getApplicationContext()), false);
-                        DateTime currentTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
+                        DateTime currentTime = global.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getApplicationContext());
 
                         if (disconnectTime != null && currentTime != null) {
                             int timeInSec = (int) Constants.getDateTimeDuration(disconnectTime, currentTime).getStandardSeconds();
@@ -1545,6 +1626,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                 String currentDate = global.GetCurrentUTCTimeFormat();
 
                                 boolean isEngSyncDiaOccurred = SharedPref.isEngSyncDiagnstc(getApplicationContext());
+
+
                                 if (!isEngSyncDiaOccurred && isEngineSyncDiaAllowed) {
 
                                     obdUtil.syncObdSingleLog(getApplicationContext(), DriverId, getDriverName(), 10);
@@ -1552,8 +1635,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                                     SharedPref.saveEngSyncDiagnstcStatus(true, getApplicationContext());
                                     constants.saveDiagnstcStatus(getApplicationContext(), true);
-                                    SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
-                                    SharedPref.setEngSyncClearEventCallTime(Globally.GetCurrentDateTime(), getApplicationContext());
+                                    SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
+                                    SharedPref.setEngSyncClearEventCallTime(Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
 
                                     // save occurred event in malfunction/diagnostic table
                                     saveMalfunctionEventInTable(Constants.EngineSyncDiagnosticEvent,
@@ -1587,8 +1670,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                             "disconnectTime: " +disconnectTime + ", Current: " +currentTime,
                                             currentHighPrecisionOdometer, currentHighPrecisionOdometer,
                                             "", ignitionStatus, truckRPM, String.valueOf(speed),
-                                            "", obdEngineHours, global.GetCurrentDateTime(), "",
-                                            DriverId, dbHelper, driverPermissionMethod, obdUtil);
+                                            "", obdEngineHours, global.GetDriverCurrentDateTime(global, getApplicationContext()), "",
+                                            DriverId, dbHelper, driverPermissionMethod, obdUtil, getApplicationContext());
 
                                 } else {
 
@@ -1596,18 +1679,18 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                                         String clearEventLastCallTime = SharedPref.getEngSyncMalEventCallTime(getApplicationContext());
                                         if (clearEventLastCallTime.length() == 0) {
-                                            SharedPref.setEngSyncMalEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+                                            SharedPref.setEngSyncMalEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
                                         }
 
                                         // Checking after 1 min
                                         int minDiffMalfunction = constants.minDiffMalfunction(clearEventLastCallTime, global, getApplicationContext());
                                         if (minDiffMalfunction > 0) {
                                             // update call time
-                                            SharedPref.setEngSyncMalEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+                                            SharedPref.setEngSyncMalEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
 
                                             double last24HrEngSyncEventTime = malfunctionDiagnosticMethod.getLast24HrEngSyncEvents(dbHelper);  //Constants.EngineSyncDiagnosticEvent,"", 0.0, constants, driverPermissionMethod, obdUtil,
 //                                            int minDiff = constants.getMinDifference(SharedPref.getObdLastStatusTime(getApplicationContext()),
-//                                                    global.GetCurrentDateTime());
+//                                                    global.GetDriverCurrentDateTime(global, getApplicationContext()));
 //                                            double totalEngSyncMissingMin = last24HrEngSyncEventTime;
                                             Logger.LogDebug("last24HrEng", String.valueOf(last24HrEngSyncEventTime));
                                             if (last24HrEngSyncEventTime >= Constants.PowerEngSyncMalOccTime) {
@@ -1616,15 +1699,15 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                                         "EngSyncMal@@ - lastIgnitionStatus: " + lastIgnitionStatus,
                                                         "", currentHighPrecisionOdometer,
                                                         currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(speed),
-                                                        "", obdEngineHours, global.GetCurrentDateTime(), "",
-                                                        DriverId, dbHelper, driverPermissionMethod, obdUtil);
+                                                        "", obdEngineHours, global.GetDriverCurrentDateTime(global, getApplicationContext()), "",
+                                                        DriverId, dbHelper, driverPermissionMethod, obdUtil, getApplicationContext());
 
                                                 obdUtil.syncObdSingleLog(getApplicationContext(), DriverId, getDriverName(), 10);
 
 
                                                 SharedPref.saveEngSyncMalfunctionStatus(true, getApplicationContext());
                                                 constants.saveMalfncnStatus(getApplicationContext(), true);
-                                                SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+                                                SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
 
                                                 // save occurred event in malfunction/diagnostic table
                                                 saveMalfunctionEventInTable(Constants.EngineSyncMalfunctionEvent,
@@ -1658,7 +1741,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                                         }else {
                                             if(minDiffMalfunction < 0){
-                                                SharedPref.setEngSyncMalEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+                                                SharedPref.setEngSyncMalEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
                                             }
                                         }
 
@@ -1671,7 +1754,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                             }else{
                                 if(timeInSec < 0){
-                                    SharedPref.SaveObdStatus(SharedPref.getObdStatus(getApplicationContext()), global.getCurrentDate(),
+                                    SharedPref.SaveObdStatus(SharedPref.getObdStatus(getApplicationContext()), global.GetDriverCurrentDateTime(global, getApplicationContext()),
                                             global.GetCurrentUTCTimeFormat(), getApplicationContext());
                                 }
                             }
@@ -1689,69 +1772,6 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
 
     public void checkEngSyncClearEvent(){
-        try{
-
-            if(SharedPref.isEngSyncDiagnstc(getApplicationContext())) {
-
-                String EngineClearEventCallTime = SharedPref.getEngineClearEventCallTime(getApplicationContext());
-                if(EngineClearEventCallTime.length() == 0){
-                    EngineClearEventCallTime = global.getCurrentDate();
-                    SharedPref.setEngineClearEventCallTime(EngineClearEventCallTime, getApplicationContext());
-                }
-
-                int callTimeMinDiff = constants.getMinDifference(EngineClearEventCallTime, global.getCurrentDate());
-
-                // this check is used to avoid clear method calling after 3 sec each because checkEngSyncClearEvent is calling after 3 sec when data coming from obd
-                if ( callTimeMinDiff >= 0 ) {
-                    SharedPref.setEngineClearEventCallTime(global.getCurrentDate(), getApplicationContext());
-
-                    boolean HasEngSyncEventForClear = malfunctionDiagnosticMethod.HasEngSyncEventForClear(Constants.EngineSyncDiagnosticEvent,
-                            dbHelper, constants, global, getApplicationContext());
-                    if (HasEngSyncEventForClear) {  //SharedPref.isEngSyncDiagnstc(getApplicationContext()) ||
-                        ClearEventUpdate(DriverId, Constants.EngineSyncDiagnosticEvent,
-                                "Auto clear engine sync diagnostic event", 0);
-
-
-                        if (!SharedPref.isLocDiagnosticOccur(getApplicationContext()) && !SharedPref.isEngSyncDiagnstc(getApplicationContext())) {
-                            SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(getApplicationContext()),
-                                    SharedPref.isMalfunctionOccur(getApplicationContext()),
-                                    false,
-                                    SharedPref.isSuggestedEditOccur(getApplicationContext()), getApplicationContext());
-                        }
-
-
-                        global.ShowLocalNotification(getApplicationContext(),
-                                getString(R.string.event_cleared),
-                                getString(R.string.eng_sync_dia_clear_desc), 2090);
-
-
-                        malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(DriverId, global, constants, dbHelper, getApplicationContext());
-                        updateMalDiaInfoWindowAtHomePage();
-
-                        // update malfunction & diagnostic Fragment screen
-                        updateMalDiaFragment(true);
-
-                        SharedPref.saveEngSyncDiagnstcStatus(false, getApplicationContext());
-                        SharedPref.saveEngSyncMalfunctionStatus(SharedPref.isEngSyncMalfunction(getApplicationContext()), getApplicationContext());
-
-                    }
-
-                }
-
-
-
-
-            }
-
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-
-
-    public void checkEngSyncClearEventAtLogout(){
         try{
 
             if(SharedPref.isEngSyncDiagnstc(getApplicationContext()) || isTeamDriverLogin) {
@@ -1816,7 +1836,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                         // Engine sync event occurred with idle truck
                         if(SharedPref.isAlsoSaveEngSyncDiaEvent(getApplicationContext())){
-                            SharedPref.saveEngSyncEventAlso(false, Globally.GetCurrentDateTime(), getApplicationContext());
+                            SharedPref.saveEngSyncEventAlso(false, Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
 
                             String[] timeArray = PowerEventStatus.split(",");
                             if(timeArray.length > 0) {
@@ -1834,13 +1854,13 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                                     // save power diagnostic event also when malfunction occurred
                                     savePowerDiagnosticRecordInTable(currentDate, false);
-                                    SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+                                    SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
                                 }
                                 currentDate = global.GetCurrentUTCTimeFormat();
 
                                 // updated values after save diagnostic with truck ignition status because in this case we are saving last ignition time in diagnostic
                                 SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, Constants.WiredOBD,
-                                        global.getCurrentDate(), currentDate,
+                                        global.GetDriverCurrentDateTime(global, getApplicationContext()), currentDate,
                                         SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, getApplicationContext()),
                                         SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, getApplicationContext()),
                                         getApplicationContext());
@@ -1857,16 +1877,20 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                                 // update mal/dia status for enable disable according to log
                                 malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(DriverId, global, constants, dbHelper, getApplicationContext());
-                                SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+                                SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
 
                             }
                         }
+
+                        // reset api call count
+                        failedApiTrackMethod.isAllowToCallOrReset(dbHelper, APIs.MALFUNCTION_DIAGNOSTIC_EVENT,
+                                true, global, getApplicationContext());
 
 
                     }
 
                     // save updated values with truck ignition status
-                    SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, Constants.WiredOBD, global.getCurrentDate(),
+                    SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, Constants.WiredOBD, global.GetDriverCurrentDateTime(global, getApplicationContext()),
                             global.GetCurrentUTCTimeFormat(),
                             SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, getApplicationContext()),
                             SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, getApplicationContext()),
@@ -1881,7 +1905,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 isEventOccurred = true;
                 String PowerClearEventCallTime = SharedPref.getPowerClearEventCallTime(getApplicationContext());
                 if(PowerClearEventCallTime.length() == 0){
-                    PowerClearEventCallTime = global.getCurrentDate();
+                    PowerClearEventCallTime = global.GetDriverCurrentDateTime(global, getApplicationContext());
                     SharedPref.setPowerClearEventCallTime(PowerClearEventCallTime, getApplicationContext());
                 }
                 String dateee = SharedPref.getPowerMalOccTime(getApplicationContext());
@@ -1890,7 +1914,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                 // clear Power Diagnostic event after 2 min automatically when ECM is connected.
                 if (minDiff > 1 && callTimeSecDiff > 18) {  // callTimeMinDiff this check is used to avoid clear method calling after 3 sec each because checkPowerMalDiaEvent is calling after 3 sec when data coming from obd
-                    SharedPref.setPowerClearEventCallTime(global.getCurrentDate(), getApplicationContext());
+                    SharedPref.setPowerClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
                     String eventOccuredDriverId = "";
                     powerEventInputArray = new JSONArray();
 
@@ -1908,7 +1932,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
 
                     if(powerEventInputArray.length() == 0){
-                        DateTime clearEventCallTime = Globally.GetCurrentJodaDateTime().plusSeconds(40);
+                        DateTime clearEventCallTime = Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getApplicationContext()).plusSeconds(40);
                         SharedPref.setPowerClearEventCallTime(clearEventCallTime.toString(), getApplicationContext());
 
                         if (global.isConnected(getApplicationContext())) {
@@ -1919,8 +1943,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                 constants.saveObdData(constants.getObdSource(getApplicationContext()),
                                         "PowerClearEvent@@: " + savedEvents,
                                         "", "", currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + obdVehicleSpeed,
-                                        "", obdEngineHours, Globally.GetCurrentDateTime(), "",
-                                        DriverId, dbHelper, driverPermissionMethod, obdUtil);
+                                        "", obdEngineHours, Globally.GetDriverCurrentDateTime(global, getApplicationContext()), "",
+                                        DriverId, dbHelper, driverPermissionMethod, obdUtil, getApplicationContext());
 
 
                             }else {
@@ -1929,8 +1953,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                 constants.saveObdData(constants.getObdSource(getApplicationContext()),
                                         "PowerClearSavedEvent@@: Event Api called",
                                         "", "", currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + obdVehicleSpeed,
-                                        "", obdEngineHours, Globally.GetCurrentDateTime(), "",
-                                        DriverId, dbHelper, driverPermissionMethod, obdUtil);
+                                        "", obdEngineHours, Globally.GetDriverCurrentDateTime(global, getApplicationContext()), "",
+                                        DriverId, dbHelper, driverPermissionMethod, obdUtil, getApplicationContext());
 
 
                             }
@@ -1946,8 +1970,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                         constants.saveObdData(constants.getObdSource(getApplicationContext()),
                                 "PowerClearEvent: " + powerEventInputArray,
                                 "", "", currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + obdVehicleSpeed,
-                                "", obdEngineHours, Globally.GetCurrentDateTime(), "",
-                                DriverId, dbHelper, driverPermissionMethod, obdUtil);
+                                "", obdEngineHours, Globally.GetDriverCurrentDateTime(global, getApplicationContext()), "",
+                                DriverId, dbHelper, driverPermissionMethod, obdUtil, getApplicationContext());
 
 
                         malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(DriverId, global, constants, dbHelper, getApplicationContext());
@@ -1973,7 +1997,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                     // update EndTime with TotalMinutes instantly but not cleared, because we are clearing it after 5 min
                     //  malfunctionDiagnosticMethod.updateTimeInPowerDiagnoseDia(dbHelper, getApplicationContext());
                     if(callTimeSecDiff < 0){
-                        SharedPref.setPowerClearEventCallTime(global.getCurrentDate(), getApplicationContext());
+                        SharedPref.setPowerClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
                     }
                 }
 
@@ -1982,7 +2006,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             // this case is for engine sync event because of truck ignition was not updated if power event was already occurred
             if(!isEventOccurred){
                 SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, SharedPref.getObdSourceName(getApplicationContext()),
-                        global.getCurrentDate(), currentDate,
+                        global.GetDriverCurrentDateTime(global, getApplicationContext()), currentDate,
                         obdEngineHours, HighResolutionDistance, getApplicationContext());
             }
         }catch (Exception e){
@@ -2074,7 +2098,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         try{
             SharedPref.savePowerMalfunctionOccurStatus(true,
                     SharedPref.isPowerDiagnosticOccurred(getApplicationContext()),
-                    currentDate, getApplicationContext()); //global.getCurrentDate()
+                    currentDate, getApplicationContext()); //global.GetDriverCurrentDateTime(global, getApplicationContext())
 
             // save occurred event in malfunction table
             saveMalfunctionEventInTable(constants.PowerComplianceMalfunction,
@@ -2092,7 +2116,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(DriverId, global, constants, dbHelper, getApplicationContext());
 
             constants.saveMalfncnStatus(getApplicationContext(), true);
-            SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+            SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
 
             writePowerEventLog();
 
@@ -2110,8 +2134,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 constants.saveObdData(constants.getObdSource(getApplicationContext()), "Power Event: "+ eventObj,
                         "", "",
                         currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, ""+obdVehicleSpeed,
-                        "", obdEngineHours, Globally.GetCurrentDateTime(), Globally.GetCurrentDateTime(),
-                        DriverId, dbHelper, driverPermissionMethod, obdUtil);
+                        "", obdEngineHours, Globally.GetDriverCurrentDateTime(global, getApplicationContext()), Globally.GetDriverCurrentDateTime(global, getApplicationContext()),
+                        DriverId, dbHelper, driverPermissionMethod, obdUtil, getApplicationContext());
 
             }
         }catch (Exception e){
@@ -2142,7 +2166,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                             String currentDate = global.GetCurrentUTCTimeFormat();
                             if (Globally.LATITUDE.length() < 5 && SharedPref.getEcmObdLatitude(getApplicationContext()).length() > 4) {
                                 SharedPref.setEcmObdLocationWithTime(Globally.LATITUDE, Globally.LONGITUDE,
-                                        currentHighPrecisionOdometer, global.GetCurrentDateTime(),
+                                        currentHighPrecisionOdometer, global.GetDriverCurrentDateTime(global, getApplicationContext()),
                                         currentDate, getApplicationContext());
                             }
 
@@ -2150,7 +2174,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                             String locMalDiaEvent = constants.isPositionMalfunctionEvent( DriverId, malfunctionDiagnosticMethod,
                                     dbHelper, driverPermissionMethod, obdUtil, getApplicationContext());
                             if (locMalDiaEvent.length() > 0) {
-                                SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+                                SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
                                 if (locMalDiaEvent.equals("M")) {   // && SharedPref.isLocMalfunctionOccur(getApplicationContext()) == false
 
                                     // save occurred event in malfunction/diagnostic table
@@ -2166,7 +2190,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                     // update mal/dia status for enable disable according to log
                                     malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(DriverId, global, constants, dbHelper, getApplicationContext());
 
-                                    SharedPref.saveLocMalfunctionOccurStatus(true, global.getCurrentDate(),
+                                    SharedPref.saveLocMalfunctionOccurStatus(true, global.GetDriverCurrentDateTime(global, getApplicationContext()),
                                             currentDate, getApplicationContext());
                                     constants.saveMalfncnStatus(getApplicationContext(), true);
 
@@ -2198,7 +2222,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                         // check Positioning Diagnostic Clear Event
                         if (Globally.LATITUDE.length() > 4 && SharedPref.isLocDiagnosticOccur(getApplicationContext())) {
-                            malfunctionDiagnosticMethod.updateTimeOnLocationReceived(dbHelper); //Constants.ConstLocationMissing,
+                            malfunctionDiagnosticMethod.updateTimeOnLocationReceived(dbHelper, getApplicationContext()); //Constants.ConstLocationMissing,
                             SharedPref.saveLocDiagnosticStatus(false, "", "", getApplicationContext());
                         }
 
@@ -2246,8 +2270,6 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                     updateMalDiaInfoWindowAtHomePage();
                     // update malfunction & diagnostic Fragment screen
                     updateMalDiaFragment(true);
-
-
 
                 }
 
@@ -2299,7 +2321,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 // save malfunction entry in duration table
                 malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, DriverId,
                         Globally.GetCurrentUTCTimeFormat(), Globally.GetCurrentUTCTimeFormat(),
-                        Constants.MissingDataDiagnostic, type, "",  //Constants.getLocationType(getApplicationContext())
+                        Constants.MissingDataDiagnostic, type, "",
                         type, constants, getApplicationContext());
 
                 SharedPref.saveMissingDiaStatus(true, getApplicationContext());
@@ -2330,22 +2352,63 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
 
 
+    private void saveTimingMalfunctionEvent(String remarks, String currentDateTime){
+        try {
 
-    private void CheckEventsForClear(String EventCode, boolean isUpdate, int minDiff){
+            String eventType = "Timing compliance malfunction event";
+            // save malfunction occur event to server with few inputs
+            JSONObject newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
+                    DriverId, DeviceId, SharedPref.getVINNumber(getApplicationContext()),
+                    SharedPref.getTruckNumber(getApplicationContext()),   //DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
+                    DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
+                    constants.get2DecimalEngHour(getApplicationContext()), //SharedPref.getObdEngineHours(getApplicationContext()),
+                    SharedPref.getObdOdometer(getApplicationContext()),
+                    SharedPref.getObdOdometer(getApplicationContext()),
+                    currentDateTime, Constants.TimingComplianceMalfunction,
+                    remarks + " " + eventType,
+                    false, "", "",
+                    "", "", eventType);
+
+            // save Occurred event locally until not posted to server
+            JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(dbHelper);
+            malArray.put(newOccuredEventObj);
+            malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(dbHelper, malArray);
+
+
+            // Clear warning time after event creation.
+            SharedPref.saveTimingMalfunctionWarningTime("", getApplicationContext());
+
+            SharedPref.saveTimingMalfunctionStatus(true, currentDateTime, getApplicationContext());
+
+            global.ShowLocalNotification(getApplicationContext(), getString(R.string.timing_comp_mal_event),  getString(R.string.timing_comp_mal_desc), 20910);
+
+
+            // save malfunction entry in duration table
+            malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, DriverId,
+                    currentDateTime, currentDateTime,
+                    Constants.TimingComplianceMalfunction, eventType, "", eventType,
+                    constants, getApplicationContext());
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void CheckEventsForClear(String DriverId, String EventCode, boolean isUpdate, int minDiff){
         try{
-            int dayInMinDuration = 1440;
+
             if(SharedPref.isMalfunctionOccur(getApplicationContext()) || SharedPref.isDiagnosticOccur(getApplicationContext()) ){
 
                 String clearEventLastCallTime = SharedPref.getClearEventCallTime(getApplicationContext());
                 if (clearEventLastCallTime.length() == 0) {
-                    SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+                    SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
                 }
 
                 // Checking after 60 sec
                 int secDiff = constants.secDiffMalfunction(clearEventLastCallTime, global, getApplicationContext());
                 if (secDiff >= 30) {
                     // update call time
-                    SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+                    SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
 
                     JSONArray clearEventArray = malfunctionDiagnosticMethod.updateAutoClearEvent(dbHelper, DriverId, EventCode, true, isUpdate, getApplicationContext());
                     ClearEventType = EventCode;
@@ -2405,7 +2468,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 }else{
                     if(secDiff < 0){
                         // update call time
-                        SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+                        SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
                     }
 
                     if(EventCode.equals(Constants.MissingDataDiagnostic)){
@@ -2419,13 +2482,13 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 if(isTeamDriverLogin && SharedPref.isCoDriverEngSyncDia(getApplicationContext())){
                     String clearEventLastCallTime = SharedPref.getClearEventCallTime(getApplicationContext());
                     if (clearEventLastCallTime.length() == 0) {
-                        SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+                        SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
                     }
 
                     // Checking after 1 min
                     if (constants.minDiffMalfunction(clearEventLastCallTime, global, getApplicationContext()) > 0) {
                         // update call time
-                        SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+                        SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
 
                         JSONArray clearEventArray = malfunctionDiagnosticMethod.updateAutoClearEvent(dbHelper, CoDriverId, EventCode,
                                 true, isUpdate, getApplicationContext());
@@ -2484,15 +2547,15 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 constants.saveObdData(constants.getObdSource(getApplicationContext()), "Clear Event:- " +
                                 dataDiagnostic, "Unposted Event Count: " + malArray.length(), "",
                         currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + obdVehicleSpeed,
-                        "", obdEngineHours, global.GetCurrentDateTime(), "",
-                        DriverId, dbHelper, driverPermissionMethod, obdUtil);
+                        "", obdEngineHours, global.GetDriverCurrentDateTime(global, getApplicationContext()), "",
+                        DriverId, dbHelper, driverPermissionMethod, obdUtil, getApplicationContext());
 
                 if(dataDiagnostic.equals(Constants.PowerComplianceDiagnostic)){
                     powerEventInputArray = malArray;
                 }
 
             } else {
-                CheckEventsForClear(dataDiagnostic, true, dayInMin);
+                CheckEventsForClear(DriverId, dataDiagnostic, true, dayInMin);
             }
 
         }catch (Exception e){
@@ -2665,7 +2728,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
     void saveDayStartOdometer(String currentHighPrecisionOdometer){
         String savedDate = SharedPref.getDayStartSavedTime(getApplicationContext());
-        String currentLogDate = global.GetCurrentDeviceDate();
+        String currentLogDate = global.GetCurrentDeviceDate(null, global, getApplicationContext());
         try {
             currentHighPrecisionOdometer = currentHighPrecisionOdometer.split("\\.")[0];
 
@@ -2676,7 +2739,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 if (savedDate.length() > 0) {
                     // int dayDiff = constants.getDayDiff(savedDate, currentLogDate);
                     String savedOdo = SharedPref.getDayStartOdometerKm(getApplicationContext());
-                    if (!global.GetCurrentDeviceDate().equals(savedDate) || savedOdo.equals("0")) {
+                    if (!global.GetCurrentDeviceDate(null, global, getApplicationContext()).equals(savedDate) || savedOdo.equals("0")) {
                         SharedPref.setDayStartOdometer(odometerInKm, odometerInMiles, currentLogDate, getApplicationContext());
 
                     }
@@ -2701,7 +2764,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         curentOdometer = curentOdometer * 1000;
 
         double odometerDistance = curentOdometer - previousOdometer;
-        String currentDate = Globally.GetCurrentDateTime();
+        String currentDate = Globally.GetDriverCurrentDateTime(global, getApplicationContext());
 
         if(savedTime.length() > 10 && previousOdometer > 0) {
             try{
@@ -2726,6 +2789,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     void callEldRuleForWired( int speed){   //, double calculatedSpeedFromOdo
         // call cycle rule
         try {
+            getDriverIDs();
             get18DaysLogArrayLocally();
 
             int obdType = constants.WIRED_OBD;
@@ -2782,7 +2846,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 //  checkEngSyncClearEvent();
 
                 /*SharedPref.SaveObdStatus(SharedPref.getObdStatus(getApplicationContext()),
-                        global.getCurrentDate(),
+                        global.GetDriverCurrentDateTime(global, getApplicationContext()),
                         global.GetCurrentUTCTimeFormat(), getApplicationContext());
 */
 
@@ -2801,12 +2865,12 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 Constants.ClearMissingEventTime = "";
                 Constants.ClearMissingEventStatus = "";
             }else {
-                driverLogArray = constants.GetDriversSavedArray(getApplicationContext(), MainDriverPref, CoDriverPref);
+                /*driverLogArray = constants.GetDriversSavedArray(getApplicationContext(), MainDriverPref, CoDriverPref);
                 if (driverLogArray.length() > 0) {
                     saveActiveDriverData();
                 } else {
                     postAllOfflineSavedData();
-                }
+                } */
             }
         }else if(pingStatus.equals("device")){
              startBleService();
@@ -2830,7 +2894,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
                     int ObdStatus = SharedPref.getObdStatus(getApplicationContext());
                     if (ObdStatus != Constants.BLE_CONNECTED) {
-                        SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(),
+                        SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
                                 global.GetCurrentUTCTimeFormat(), getApplicationContext());
                     }
 
@@ -2878,7 +2942,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                     int ObdStatus = SharedPref.getObdStatus(getApplicationContext());
                     if (ObdStatus != Constants.WIRED_CONNECTED && ObdStatus != Constants.WIRED_ERROR) {
-                        SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, global.getCurrentDate(),
+                        SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
                                 global.GetCurrentUTCTimeFormat(), getApplicationContext());
                     }
 
@@ -2886,6 +2950,9 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                     if (EldFragment.IsTruckChange) {
                         disconnectBleObd();
+
+                       constants.TurnOffDeviceBluetooth(getApplicationContext());
+
                     }
 
                 } else {
@@ -2893,6 +2960,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                     PingWithWifiObd(wifiConfig.IsAlsNetworkConnected(getApplicationContext()));
                     if (EldFragment.IsTruckChange) {
                         disconnectBleObd();
+                        constants.TurnOffDeviceBluetooth(getApplicationContext());
                     }
                 }
             }
@@ -2904,8 +2972,12 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         // getLocation(false);
 
         if (Constants.isDriverSwitchEvent) {
+            getDriverIDs();
             boolean isCoDriverEngSyncDia = malfunctionDiagnosticMethod.getCoDriverEngSyncDiaStatus(dbHelper, CoDriverId);
             SharedPref.saveCoDriverEngSyncDiaStatus(isCoDriverEngSyncDia, getApplicationContext());
+
+            // update mal/dia status for enable disable according to log
+            malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(DriverId, global, constants, dbHelper, getApplicationContext());
         }
 
         Constants.isDriverSwitchEvent = false;
@@ -2971,7 +3043,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                         } else {
                             String obdLastCallDate = SharedPref.getWiredObdServerCallTime(getApplicationContext());
                             if (obdLastCallDate.length() > 10) {
-                                int lastCalledDiffInSec = constants.getSecDifference(obdLastCallDate, Globally.GetCurrentDateTime());
+                                int lastCalledDiffInSec = constants.getSecDifference(obdLastCallDate, Globally.GetDriverCurrentDateTime(global, getApplicationContext()));
                                 if (lastCalledDiffInSec >= 30) {
                                     StartStopServer(constants.WiredOBD);
                                 }
@@ -3003,11 +3075,11 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                             ignitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
                             obdEngineHours = "0";
                             currentHighPrecisionOdometer = "0";
-                            obdOdometer = "0";
+                           // obdOdometer = "0";
                             obdTripDistance = "--";
 
                             sendBroadCast("", "");
-                            obdCallBackObservable(-1, SharedPref.getVehicleVin(getApplicationContext()), global.GetCurrentDateTime());
+                            obdCallBackObservable(-1, SharedPref.getVehicleVin(getApplicationContext()), global.GetDriverCurrentDateTime(global, getApplicationContext()));
                         }
 
                     }else{
@@ -3041,17 +3113,31 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                             if (global.isWifiOrMobileDataEnabled(getApplicationContext())) {
 
+
                                 if (constants.IsAlsServerResponding) {
                                     if (SpeedCounter == HalfSpeedCounter) {
-                                        driverLogArray = constants.GetDriversSavedArray(getApplicationContext(),
-                                                MainDriverPref, CoDriverPref);
-                                        if (driverLogArray.length() == 0) {   // This check is used to save offline saved data to server first then online status will be changed.
+
+                                        int offlineDataLength = constants.OfflineData(getApplicationContext(), MainDriverPref,
+                                                                    CoDriverPref, global.isSingleDriver(getApplicationContext()));
+                                        if (offlineDataLength == 0 ) {   // This check is used to save offline saved data to server first then online status will be changed.
                                             String VIN = SharedPref.getVINNumber(getApplicationContext());
                                             UpdateOfflineDriverLog(DriverId, CoDriverId, DeviceId, VIN,
                                                     String.valueOf(obdVehicleSpeed), isGpsEnabled);
                                         } else {
-                                            if (!Constants.IS_ACTIVE_ELD) {
-                                                saveActiveDriverData();
+                                            driverLogArray = constants.GetDriversSavedArray(getApplicationContext(),
+                                                    MainDriverPref, CoDriverPref);
+
+                                            if (!Constants.IS_ACTIVE_ELD ) {
+                                                if(driverLogArray.length() > 0) {
+                                                    saveActiveDriverData();
+                                                }else{
+                                                    SaveCoDriverData();
+                                                }
+                                            }else{
+                                                // we are handling co driver data upload functionality in bg service only
+                                                if(driverLogArray.length() == 0) {
+                                                    SaveCoDriverData();
+                                                }
                                             }
                                         }
                                     }
@@ -3079,7 +3165,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                     }
 
                     // check positioning malfunction event ..
-                    checkPositionMalfunction(currentHighPrecisionOdometer, global.GetCurrentDateTime());
+                    checkPositionMalfunction(currentHighPrecisionOdometer, global.GetDriverCurrentDateTime(global, getApplicationContext()));
 
                     boolean isObdConnectedWithELD = constants.isObdConnectedWithELD(getApplicationContext());
                     if (isObdConnectedWithELD) {
@@ -3107,13 +3193,13 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                         String savedDate = SharedPref.getHighPrecesionSavedTime(getApplicationContext());
                         if (savedDate.length() == 0 && Double.parseDouble(currentHighPrecisionOdometer) > 0) {
-                            savedDate = global.GetCurrentDateTime();
+                            savedDate = global.GetDriverCurrentDateTime(global, getApplicationContext());
                             SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer,
-                                                global.GetCurrentDateTime(), getApplicationContext());
+                                                savedDate, getApplicationContext());
                         }
 
                         callRuleWithStatusWise(currentHighPrecisionOdometer, savedDate,
-                                SharedPref.getVINNumber(getApplicationContext()), global.GetCurrentDateTime(), -1, -1);
+                                SharedPref.getVINNumber(getApplicationContext()), global.GetDriverCurrentDateTime(global, getApplicationContext()), -1, -1);
 
                     }
 
@@ -3143,7 +3229,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                         if (distanceMilesFormat > Constants.AgricultureDistanceInMiles) {
 
                                             // send broadcast to setting screen
-                                            SaveAgricultureRecord(global.getCurrentDateLocal(), Globally.GetCurrentUTCTimeFormat(),
+                                            SaveAgricultureRecord( Globally.GetCurrentUTCTimeFormat(),
                                                     SharedPref.getTruckNumber(getApplicationContext()), DriverId,
                                                     DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
                                                     SharedPref.getAgricultureRecord("AgricultureAddress", getApplicationContext()),
@@ -3183,6 +3269,69 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                 }
                             }
 
+                            // clear timing compliance malfunction
+                            if( SharedPref.IsTimingMalfunction(getApplicationContext())) {
+                                boolean IsValidTime = global.isCorrectTime(getApplicationContext(), false );
+                                if (constants.isObdConnectedWithELD(getApplicationContext()) && IsValidTime) {
+                                   // int minDiff = getTimeDiff(SharedPref.getTimingMalTime(getApplicationContext()));
+                                    long minDiff = constants.getTimeDiffInMin(SharedPref.getTimingMalTime(getApplicationContext()),
+                                                                                global.GetCurrentUTCDateTime());
+                                    if (minDiff >= dayInMinDuration) { // 24 hour
+                                        ClearEventUpdate(DriverId, Constants.TimingComplianceMalfunction,
+                                                getResources().getString(R.string.timing_mal_clear_desc), 0);
+                                    }
+                                }
+                            }else {
+                                // Confirm valid time if time diff is 10 min then first show warning notification to user.
+                                // After 5 min min create timing malfunction
+                                boolean isTimingMalAllowed = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.TimingCompMal, getApplicationContext());
+                                boolean timingMalStatus = SharedPref.IsTimingMalfunction(getApplicationContext());
+                                if (isTimingMalAllowed && !timingMalStatus) {
+                                    boolean IsValidTime = global.isCorrectTime(getApplicationContext(), false);
+                                    String warningTime = SharedPref.getTimingMalWarningTime(getApplicationContext());
+                                    if (!IsValidTime) {
+                                        if (warningTime.length() == 0) {
+                                            // save warning time because we are creating timing mal after 5 min
+                                            warningTime = global.GetCurrentUTCTimeFormat();
+                                            SharedPref.saveTimingMalfunctionWarningTime(warningTime, getApplicationContext());
+                                            Globally.PlayNotificationSound(getApplicationContext());
+                                            global.ShowLocalNotification(getApplicationContext(), getString(R.string.timing_mal_alert), getString(R.string.timing_mal_alert_desc), 20910);
+
+                                            Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
+                                            intent.putExtra(ConstantsKeys.PersonalUse75Km, false);
+                                            intent.putExtra(ConstantsKeys.IsInvalidTime, true);
+                                            LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
+
+                                        }
+
+                                       // int minDiff = getTimeDiff(warningTime);
+                                        int minDiff = constants.getTimeDiffInMin(warningTime, global.GetCurrentUTCDateTime());
+                                        if (minDiff >= 5) {
+                                            // save Timing Compliance Malfunction
+                                            if(Globally.isConnected(getApplicationContext())) {
+                                                String currentUtc = Globally.GetCurrentUTCTimeFormat();
+                                                if(minDiff > 10){
+                                                    // this check is used when driver was offline and we were not sure their time was correct.
+                                                    // So when driver comes online we compare device time with server time. If we found incorrect time
+                                                    // then we are creating timing mal event with that time when driver get time set alert.
+                                                    currentUtc = String.valueOf(Globally.GetCurrentJodaDateTime().minusMinutes(minDiff-5));
+                                                }
+
+                                                saveTimingMalfunctionEvent(getString(R.string.timing_comp_mal_desc),
+                                                        currentUtc);
+                                            }
+                                        }
+                                    }else{
+                                        // dismiss timing mal alert notification and clear warning time
+                                        if(warningTime.length() > 0) {
+                                            SharedPref.saveTimingMalfunctionWarningTime("", getApplicationContext());
+                                            mNotificationManager.dismissNotification(getApplicationContext(), 20910);
+                                        }
+                                    }
+                                }
+
+                            }
+
                         }
 
 
@@ -3193,7 +3342,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                     if (SpeedCounter >= MaxSpeedCounter) {
                         SpeedCounter = 10;
-
+                        isMalfncDataAlreadyPosting = false;
                         // Update UTC date time after 60 seconds
                         global.updateCurrentUtcTime(getApplicationContext());
 
@@ -3213,6 +3362,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
         }
     };
+
 
 
     void checkMissingDiaEvent(boolean isObdConnectedWithELD){
@@ -3294,7 +3444,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             if (isAlsNetworkConnected) {    // check ALS SSID connection with IsOBDPingAllowed permission
                 if (SharedPref.isOBDPingAllowed(getApplicationContext())) {
                     tcpClient.sendMessage("123456,can");
-                    SharedPref.SaveConnectionInfo(constants.WifiOBD, Globally.GetCurrentDeviceDate(), getApplicationContext());
+                    SharedPref.SaveConnectionInfo(constants.WifiOBD,
+                            Globally.GetCurrentDeviceDate(null, global, getApplicationContext()), getApplicationContext());
                 }else{
                     SharedPref.setVehilceMovingStatus(false, getApplicationContext());
                 }
@@ -3306,11 +3457,13 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                             getString(R.string.wifi_obd),
                             getString(R.string.obd_device_disconnected), 2081);
 
-                    SharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED, global.getCurrentDate(),
+                    SharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
                             global.GetCurrentUTCTimeFormat(), getApplicationContext());
                     SharedPref.SaveConnectionInfo(constants.DataMalfunction, "", getApplicationContext());
                     SharedPref.setVehilceMovingStatus(false, getApplicationContext());
 
+                }else{
+                    wifiConfig.testConnect(getApplicationContext());
                 }
             }
         }
@@ -3387,12 +3540,12 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         String driverName = "",  mainDriverName = "";
         try {
             mainDriverName = DriverConst.GetDriverDetails( DriverConst.DriverName, getApplicationContext());
-            if(Slidingmenufunctions.usernameTV != null) {driverName = Slidingmenufunctions.usernameTV.getText().toString();}
+            if(Slidingmenufunctions.usernameTV != null) {
+                driverName = Slidingmenufunctions.usernameTV.getText().toString();
+            }
         }catch (Exception e){
             e.printStackTrace();
-
             driverName = getDriverName();
-            //  Logger.LogDebug("driverName", "--driverName: " + driverName);
         }
 
 
@@ -3415,20 +3568,20 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 }
 
                 SharedPref.setDriverId(DriverId, getApplicationContext());
-
+                SelectedDriverId = DriverId;
             }
 
             if (SharedPref.getCurrentDriverType(getApplicationContext()).equals(DriverConst.StatusSingleDriver)) {
                 DriverType      = Constants.MAIN_DRIVER_TYPE;
             }else{
-                DriverType =Constants.CO_DRIVER_TYPE;
+                DriverType      = Constants.CO_DRIVER_TYPE;
             }
         }catch (Exception e){
             e.printStackTrace();
         }
 
 
-        //   Logger.LogDebug(ConstantsKeys.DriverId, "DriverId: " + DriverId);
+         //  Logger.LogDebug(ConstantsKeys.DriverId, "getDriverIDs-DriverId: " + DriverId);
 
     }
 
@@ -3463,9 +3616,9 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             currentSavedDate = currentSavedDate.plusMinutes(1);
             SharedPref.setCurrentDate(currentSavedDate.toString(), getApplicationContext());
         }else{
-            offsetFromUTC = (int) global.GetTimeZoneOffSet();
+            offsetFromUTC = (int) global.GetDriverTimeZoneOffSet(getApplicationContext());
             if(offsetFromUTC == offSetFromServer) {
-                currentSavedDate = global.getDateTimeObj(global.GetCurrentDateTime(), false); //GetCurrentUTCTimeFormat
+                currentSavedDate = global.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getApplicationContext()); //GetCurrentUTCTimeFormat
                 SharedPref.setCurrentDate(currentSavedDate.toString(), getApplicationContext());
             }
         }
@@ -3518,7 +3671,6 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
 
-                // disconnectBleObd();
                 isReceiverInit = false;
             }
 
@@ -3545,11 +3697,10 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         try {
 
             HTBleSdk.Companion.getInstance().stopHTBleScan();
-
-            if (HTBleSdk.Companion.getInstance().isAllConnected())
-                HTBleSdk.Companion.getInstance().disAllConnect();
-
             HTBleSdk.Companion.getInstance().unRegisterCallBack();
+
+            if (!HTBleSdk.Companion.getInstance().isAllConnected())
+                HTBleSdk.Companion.getInstance().disAllConnect();
 
         }catch (Exception e){
             e.printStackTrace();
@@ -3582,7 +3733,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             }
 
             MalDiaEventsApiInProcess = true;
-            String startEventDate = Globally.GetCurrentJodaDateTime().minusDays(14).toString();
+            String startEventDate = Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getApplicationContext()).minusDays(14).toString();
 
             params = new HashMap<String, String>();
             params.put(ConstantsKeys.UnitNo, SharedPref.getTruckNumber(getApplicationContext()));
@@ -3626,10 +3777,10 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         if(recapApiAttempts < 2) {
             IsRecapApiCalled = true;
 
-            DateTime currentDateTime = Globally.GetCurrentJodaDateTime();
+            DateTime currentDateTime = Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getApplicationContext());
             DateTime startDateTime = global.GetStartDate(currentDateTime, 15);
             String StartDate = global.ConvertDateFormatMMddyyyy(String.valueOf(startDateTime));
-            String EndDate = global.GetCurrentDeviceDate();  // current Date
+            String EndDate = global.GetCurrentDeviceDate(null, global, getApplicationContext());  // current Date
 
             params = new HashMap<String, String>();
             params.put(ConstantsKeys.DriverId, DriverId);
@@ -3659,11 +3810,14 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     }
 
 
-    void SaveAgricultureRecord(final String EventDateTime,final String EventDateTimeInUtc,final String Truck,final String DriverId,final String CompanyId,
+    void SaveAgricultureRecord(final String EventDateTimeInUtc,final String Truck,final String DriverId,final String CompanyId,
                                final String SourceAddress,final String SourceLatitude,final String SourceLongitude,final String Odometer,final String EngineHours,final String IsEnabled){
 
+        String driverZoneCurrentTime = Globally.GetDriverCurrentDateTime(global, getApplicationContext());
+        driverZoneCurrentTime = driverZoneCurrentTime.replaceAll("T", " ");
+
         params = new HashMap<String, String>();
-        params.put(ConstantsKeys.EventDateTime, EventDateTime);
+        params.put(ConstantsKeys.EventDateTime, driverZoneCurrentTime);
         params.put(ConstantsKeys.EventDateTimeInUtc, EventDateTimeInUtc);
         params.put(ConstantsKeys.Truck, Truck);
         params.put(ConstantsKeys.DriverId, DriverId);
@@ -3693,9 +3847,11 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     void UploadSavedShipmentData(){
 
         try{
-            shipmentArray = shipmentHelper.getSavedShipmentArray(Integer.valueOf(global.PROJECT_ID), dbHelper);
-            if(shipmentArray.length() > 0 ){
-                postRequest.PostListingData(shipmentArray, APIs.SAVE_SHIPPING_DOC_NUMBER, SaveShippingOffline);
+            if(global.isConnected(getApplicationContext())) {
+                shipmentArray = shipmentHelper.getSavedShipmentArray(Integer.valueOf(global.PROJECT_ID), dbHelper);
+                if(shipmentArray.length() > 0 ){
+                    postRequest.PostListingData(shipmentArray, APIs.SAVE_SHIPPING_DOC_NUMBER, SaveShippingOffline);
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -3706,39 +3862,46 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     void UploadSavedOdometerData(){
         try{
             odometerArray = new JSONArray();
-            odometerArray = odometerHelper.getSavedOdometerArray(Integer.valueOf(DriverId), dbHelper);
 
-            if(odometerArray.length() > 0 ){
-                SharedPref.SetOdoSavingStatus(true, getApplicationContext());
-                postRequest.PostListingData(odometerArray, APIs.SAVE_ODOMETER_OFFLINE, SaveOdometerOffline );
+            if(global.isConnected(getApplicationContext())) {
+
+                odometerArray = odometerHelper.getSavedOdometerArray(Integer.valueOf(DriverId), dbHelper);
+                if (odometerArray.length() > 0) {
+                    SharedPref.SetOdoSavingStatus(true, getApplicationContext());
+                    postRequest.PostListingData(odometerArray, APIs.SAVE_ODOMETER_OFFLINE, SaveOdometerOffline);
+                }
+
+
+                String id = "";
+                if(SharedPref.getDriverType(getApplicationContext()).equals(DriverConst.TeamDriver)) {
+                    if (SharedPref.getCurrentDriverType(getApplicationContext()).equals(DriverConst.StatusSingleDriver)) {
+                        // Current active driver is Main Driver. So we need co driver details and we are getting co driver's details.
+                        id = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getApplicationContext());
+                    } else {
+                        // Current active driver is Co Driver. So we need main driver details and we are getting main driver's details.
+                        id = DriverConst.GetDriverDetails(DriverConst.DriverID, getApplicationContext());
+                    }
+
+                    if(id.length() > 0) {
+                        SecondDriver = Integer.valueOf(id);
+                        try {
+                            JSONArray odometerArray = odometerHelper.getSavedOdometerArray(SecondDriver, dbHelper);
+                            if (odometerArray.length() > 0) {
+                                postRequest.PostListingData(odometerArray, APIs.SAVE_ODOMETER_OFFLINE, Save2ndDriverOdoData);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
             }
 
         }catch (Exception e){
             e.printStackTrace();
         }
 
-        String id = "";
-        if(SharedPref.getDriverType(getApplicationContext()).equals(DriverConst.TeamDriver)) {
-            if (SharedPref.getCurrentDriverType(getApplicationContext()).equals(DriverConst.StatusSingleDriver)) {
-                // Current active driver is Main Driver. So we need co driver details and we are getting co driver's details.
-                id = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getApplicationContext());
-            } else {
-                // Current active driver is Co Driver. So we need main driver details and we are getting main driver's details.
-                id = DriverConst.GetDriverDetails(DriverConst.DriverID, getApplicationContext());
-            }
 
-            if(id.length() > 0) {
-                SecondDriver = Integer.valueOf(id);
-                try {
-                    JSONArray odometerArray = odometerHelper.getSavedOdometerArray(SecondDriver, dbHelper);
-                    if (odometerArray.length() > 0) {
-                        postRequest.PostListingData(odometerArray, APIs.SAVE_ODOMETER_OFFLINE, Save2ndDriverOdoData);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
 
     }
 
@@ -3804,7 +3967,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 global.ShowLocalNotification(getApplicationContext(),
                         getString(R.string.wifi_obd),
                         getString(R.string.obd_device_connected), 2081);
-                SharedPref.SaveObdStatus(Constants.WIFI_CONNECTED, global.getCurrentDate(),
+                SharedPref.SaveObdStatus(Constants.WIFI_CONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
                                             global.GetCurrentUTCTimeFormat(), getApplicationContext());
             }*/
 
@@ -3861,7 +4024,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                 Globally.LATITUDE = wifiConfig.checkJsonParameter(canObj, "GPSLatitude", "");
                                 Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(wifiConfig.checkJsonParameter(canObj, "GPSLongitude", ""));
                                 HighResolutionDistance = wifiConfig.checkJsonParameter(canObj, "HighResolutionTotalVehicleDistanceInKM", "-1");
-                                obdOdometer = HighResolutionDistance;
+                               // obdOdometer = HighResolutionDistance;
                                 currentHighPrecisionOdometer = HighResolutionDistance;
                                 obdEngineHours = wifiConfig.checkJsonParameter(canObj, "EngineHours", "0");
 
@@ -3900,15 +4063,15 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                     }
 
                                     Globally.IS_OBD_IGNITION = true;
-                                    continueStatusPromtForPcYm("ON", constants.WifiOBD, global.getCurrentDate(), Constants.WIFI_CONNECTED);
-                                    SharedPref.SaveObdStatus(Constants.WIFI_CONNECTED, global.getCurrentDate(),
+                                    continueStatusPromtForPcYm("ON", constants.WifiOBD, global.GetDriverCurrentDateTime(global, getApplicationContext()), Constants.WIFI_CONNECTED);
+                                    SharedPref.SaveObdStatus(Constants.WIFI_CONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
                                             global.GetCurrentUTCTimeFormat(), getApplicationContext());
 
                                     obdVehicleSpeed = (int) WheelBasedVehicleSpeed;
 
                                     calculateWifiObdData(HighResolutionDistance, rawResponse, true);
 
-                                    sendBroadCast(parseObdDatainHtml(vin, (int)WheelBasedVehicleSpeed, -2), message);
+                                    sendBroadCast(parseObdDataInHtml(vin, (int)WheelBasedVehicleSpeed), message);
 
 
 
@@ -3916,7 +4079,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                     if(obdEngineHours.length() > 0 && !obdEngineHours.equals("0") && !obdEngineHours.equals("0.00")) {
                                         ClearMissingDiagnostics();
                                         checkPowerMalDiaEvent();   // checking Power Data Compliance Mal/Dia event
-                                        checkEngSyncClearEventAtLogout();  // checking EngineSyncDataCompliance Mal/Dia clear event if already occurred
+                                        checkEngSyncClearEvent();  // checking EngineSyncDataCompliance Mal/Dia clear event if already occurred
 
 
                                     }
@@ -3968,7 +4131,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                     sendBroadcastUpdateObd(false);
                                     //   sendEcmBroadcast(true);
                                     //   Globally.PlayNotificationSound(getApplicationContext());
-                                    SharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED, global.getCurrentDate(),
+                                    SharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
                                             global.GetCurrentUTCTimeFormat(), getApplicationContext());
                                 }
                             }
@@ -3999,7 +4162,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
     void restartObd(){
         RestartObdFlag = true;
-        SharedPref.SetOBDRestartTime( global.getCurrentDate(), getApplicationContext());
+        SharedPref.SetOBDRestartTime( global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
         tcpClient.sendMessage("123456,rst");
     }
 
@@ -4027,7 +4190,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
         }
 
-        SharedPref.SetWifiObdOdometer(HighResolutionDistance, Globally.GetCurrentDateTime(), rawResponse.trim(), getApplicationContext());
+        SharedPref.SetWifiObdOdometer(HighResolutionDistance, Globally.GetDriverCurrentDateTime(global, getApplicationContext()), rawResponse.trim(), getApplicationContext());
 
     }
 
@@ -4037,7 +4200,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         int DrivingSpeedLimit   = DriverConst.getDriverConfiguredTime(DriverConst.DrivingSpeed, getApplicationContext());
         double speedCalculated = -1;
         String savedTime = SharedPref.GetWifiObdSavedTime(getApplicationContext());
-        String currentLogDate = global.GetCurrentDateTime();
+        String currentLogDate = global.GetDriverCurrentDateTime(global, getApplicationContext());
 
         if(rawResponse.contains("CAN")) {
             if(SharedPref.isOdoCalculationAllowed(getApplicationContext()) || obdVehicleSpeed > 200) {
@@ -4182,7 +4345,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                         JSONArray ctPatInsp18DaysArray = ctPatInspectionMethod.getCtPat18DaysInspectionArray(Integer.valueOf(DriverId), dbHelper);
                         if (ctPatInsp18DaysArray.length() == 0 && !Is18DaysLogApiCalled) {
-                            String SelectedDate = global.GetCurrentDeviceDate();
+                            String SelectedDate = global.GetCurrentDeviceDate(null, global, getApplicationContext());
                             if(!IsCtPatApiCalled) {
                                 IsCtPatApiCalled = true;
                                 if (isTeamDriver) {
@@ -4201,7 +4364,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
 
             JSONArray recapArray = recapViewMethod.getSavedRecapView18DaysArray(Integer.valueOf(DriverId), dbHelper);
-            JSONObject hasCurrentDatObj = recapViewMethod.GetSelectedRecapData(recapArray, Globally.GetCurrentDeviceDate()) ;
+            JSONObject hasCurrentDatObj = recapViewMethod.GetSelectedRecapData(recapArray, Globally.GetCurrentDeviceDate(null, global, getApplicationContext())) ;
             if(recapArray == null || recapArray.length() == 0 || hasCurrentDatObj == null) {
                 if(!IsRecapApiCalled) {
                     if(isTeamDriver){
@@ -4223,11 +4386,14 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
     void SaveDriverRecordLogUpdates(){
         try {
-            if (DriverId.length() > 0) {
-                JSONArray recordsLogArray = logRecordMethod.getSavedLogRecordArray(Integer.valueOf(DriverId), dbHelper);
-                if (recordsLogArray.length() > 0) {
-                    SAVE_DRIVER_RECORD_LOG(recordsLogArray, false, false, Constants.SocketTimeout30Sec);
+            if(global.isConnected(getApplicationContext())) {
+                if (DriverId.length() > 0) {
+                    JSONArray recordsLogArray = logRecordMethod.getSavedLogRecordArray(Integer.valueOf(DriverId), dbHelper);
+                    if (recordsLogArray.length() > 0) {
+                        SAVE_DRIVER_RECORD_LOG(recordsLogArray, false, false, Constants.SocketTimeout30Sec);
+                    }
                 }
+
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -4236,16 +4402,50 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
     void SaveCertifyLog(){
         try{
-            if(DriverId.length() > 0) {
-                JSONArray certifyLogArray = certifyLogMethod.getSavedCertifyLogArray(Integer.valueOf(DriverId), dbHelper);
-                if (certifyLogArray.length() > 0) {
-                    saveDriverLogPost.PostDriverLogData(certifyLogArray, APIs.CERTIFY_LOG_OFFLINE, Constants.SocketTimeout30Sec, false, false, 1, SaveCertifyLog);
+            if(global.isConnected(getApplicationContext())) {
+                if (DriverId.length() > 0) {
+                    JSONArray certifyLogArray = certifyLogMethod.getSavedCertifyLogArray(Integer.valueOf(DriverId), dbHelper);
+                    if (certifyLogArray.length() > 0) {
+                        saveDriverLogPost.PostDriverLogData(certifyLogArray, APIs.CERTIFY_LOG_OFFLINE, Constants.SocketTimeout30Sec,
+                                false, false, 1, SaveCertifyLog);
 
+                    }
+                }
+
+                if (SharedPref.getDriverType(getApplicationContext()).equals(DriverConst.TeamDriver)) {
+                    if (CoDriverId.length() > 0) {
+                        JSONArray certifyLogArray = certifyLogMethod.getSavedCertifyLogArray(Integer.valueOf(CoDriverId), dbHelper);
+                        if (certifyLogArray.length() > 0) {
+                            saveDriverLogPost.PostDriverLogData(certifyLogArray, APIs.CERTIFY_LOG_OFFLINE, Constants.SocketTimeout30Sec,
+                                    false, false, 1, SaveCertifyLogCo);
+
+                        }
+                    }
                 }
             }
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+
+    void saveNotifications(){
+        JSONArray notificationArray = notificationMethod.getSaveToNotificationArray(Integer.valueOf(DriverId), dbHelper);
+
+        if(notificationArray.length() > 0){
+            saveNotificationReq.PostDriverLogData(notificationArray, APIs.SAVE_NOTIFICATION,
+                    constants.SocketTimeout20Sec, false, false, DriverType, MainDriverNotification);
+        }
+
+        if(SharedPref.getDriverType(getApplicationContext()).equals(DriverConst.TeamDriver)){
+
+            JSONArray saveToCoDriverSaveToArray = notificationMethod.getSaveToNotificationArray(Integer.valueOf(CoDriverId), dbHelper);
+            if(saveToCoDriverSaveToArray.length() > 0){
+                saveNotificationReq.PostDriverLogData(saveToCoDriverSaveToArray, APIs.SAVE_NOTIFICATION, constants.SocketTimeout20Sec,
+                        false, false, DriverType, CoDriverNotification);
+            }
+        }
+
     }
 
 
@@ -4368,6 +4568,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
 
                             SharedPref.SetTruckIgnitionStatusForContinue(obdCurrentIgnition, type, time, getApplicationContext());
+                        }else{
+                            SharedPref.SetTruckIgnitionStatusForContinue(obdCurrentIgnition, type, time, getApplicationContext());
                         }
                     }
                 } catch (Exception e) {
@@ -4474,13 +4676,13 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     private void checkLogMissingIdStatus(){
 
         driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
-        yesterdayDate = Globally.getDateTimeObj(global.ConvertDateFormat(Globally.GetCurrentDeviceDate()), false).minusDays(1);
+        yesterdayDate = Globally.getDateTimeObj(global.ConvertDateFormat(Globally.GetCurrentDeviceDate(null, global, getApplicationContext())), false).minusDays(1);
         twoDaysLogArray = hMethods.twoDaysLogArray( driverLogArray, yesterdayDate);
 
-        IsLogIdMissing = hMethods.IsLogIdMissing(twoDaysLogArray);
+        IsLogIdMissing = hMethods.IsLogIdMissing(twoDaysLogArray, getApplicationContext());
         if(IsLogIdMissing != -1){
             if(IsLogIdMissing == 0){
-                GetDriverLogs(DriverId, Globally.GetCurrentDeviceDate());
+                GetDriverLogs(DriverId, Globally.GetCurrentDeviceDate(null, global, getApplicationContext()));
             }else{
                 GetRecapView18DaysData(DriverId, DeviceId, GetRecapViewFlagMain);
             }
@@ -4539,6 +4741,10 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         }else if(ClearEventType.equals(Constants.PositionComplianceMalfunction)){
             notificationDesc =  getString(R.string.data_rec_mal_cleared_def);
             notificationId = 2098;
+        }else if(ClearEventType.equals(Constants.TimingComplianceMalfunction)){
+            notificationDesc =  getString(R.string.timing_mal_clear_desc);
+            notificationId = 20910;
+
         }
 
         malfunctionDiagnosticMethod.updateAutoClearEvent(dbHelper, DriverId, ClearEventType, true, true, getApplicationContext());
@@ -4561,6 +4767,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             // -------- upload offline locally saved data ---------
             UploadSavedShipmentData();
             SaveCertifyLog();
+            saveNotifications();
             SaveMalfnDiagnstcLogToServer(null, DriverId);
 
             if (!SharedPref.GetOdoSavingStatus(getApplicationContext()))
@@ -4639,7 +4846,6 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
 
 
-
     VolleyRequest.VolleyCallback ResponseCallBack = new VolleyRequest.VolleyCallback(){
 
         @Override
@@ -4671,7 +4877,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                 String logModel = dataObj.getString("DriverLogModel");
                                 if(!logModel.equals("null")) {
                                     JSONArray selectedArray = new JSONArray(logModel);
-                                    DateTime selectedDateTime = Globally.getDateTimeObj(global.ConvertDateFormat(Globally.GetCurrentDeviceDate()), false);
+                                    DateTime selectedDateTime = Globally.getDateTimeObj(global.ConvertDateFormat(Globally.GetCurrentDeviceDate(null, global, getApplicationContext())), false);
                                     JSONArray logArrayBeforeSelectedDate = hMethods.GetArrayBeforeSelectedDate(driverLogArray, selectedDateTime);
 
                                     for(int i = 0 ; i < selectedArray.length() ; i++){
@@ -4861,67 +5067,61 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                             updateOfflineApiRejectionCount = 0;
                             constants.IsAlsServerResponding = true;
 
-                            if (status.equalsIgnoreCase("false")) {
-                                if (message.equalsIgnoreCase("Device Logout")) {
-                                    DeviceLogout(message);
-                                }
-                            } else {
+                            // -------- Save date time Locally -------------
+                            try {
+                                JSONObject dataObj = new JSONObject(obj.getString(ConstantsKeys.Data));
+                                String UtcCurrentDate = dataObj.getString(ConstantsKeys.UTCDateTime);
+                                DateTime utcCurrentDateTime = global.getDateTimeObj(UtcCurrentDate, false);
 
-                                // -------- Save date time Locally -------------
                                 try {
-                                    JSONObject dataObj = new JSONObject(obj.getString(ConstantsKeys.Data));
-                                    String UtcCurrentDate = dataObj.getString(ConstantsKeys.UTCDateTime);
-                                    DateTime utcCurrentDateTime = global.getDateTimeObj(UtcCurrentDate, false);
+                                    SharedPref.setCurrentUTCTime(UtcCurrentDate, getApplicationContext());
+                                    boolean isSuggestedEdit = dataObj.getBoolean(ConstantsKeys.SuggestedEdit);
+                                    boolean isSuggestedRecall;
 
-                                    try {
-                                        SharedPref.setCurrentUTCTime(UtcCurrentDate, getApplicationContext());
-                                        boolean isSuggestedEdit = dataObj.getBoolean(ConstantsKeys.SuggestedEdit);
-                                        boolean isSuggestedRecall;
-
-                                        if (DriverType == Constants.MAIN_DRIVER_TYPE) {
-                                            isSuggestedRecall = SharedPref.isSuggestedRecall(getApplicationContext());
-                                        } else {
-                                            isSuggestedRecall = SharedPref.isSuggestedRecallCo(getApplicationContext());
-                                        }
-
-                                        if ((isSuggestedEdit && isSuggestedRecall)) {   // || IsCycleRequestIsELDNotification
-                                            try {
-                                                Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
-                                                intent.putExtra(ConstantsKeys.SuggestedEdit, isSuggestedEdit);
-                                                LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
+                                    if (DriverType == Constants.MAIN_DRIVER_TYPE) {
+                                        isSuggestedRecall = SharedPref.isSuggestedRecall(getApplicationContext());
+                                    } else {
+                                        isSuggestedRecall = SharedPref.isSuggestedRecallCo(getApplicationContext());
                                     }
 
-                                    SharedPref.setOnlineStatus(true, getApplicationContext());
+                                    constants.saveSuggestedStatus(getApplicationContext(), isSuggestedEdit);
 
-                                    // Sync app usage log to server (SAVE sync data service)
-                                    obdUtil.syncAppUsageLog(getApplicationContext(), DriverId);
-
-                                    // need to move in permission api
-                                   // if (dataObj.has(ConstantsKeys.IsOdometerFromOBD))
-                                    //    SharedPref.SetOdometerFromOBD(dataObj.getBoolean(ConstantsKeys.IsOdometerFromOBD), getApplicationContext());
-
-                                    if (dataObj.has(ConstantsKeys.CycleId) && !dataObj.getString(ConstantsKeys.CycleId).equals("null")){
-                                        int CycleId = dataObj.getInt(ConstantsKeys.CycleId);
-
-                                        // Save Driver Cycle With Current Date
-                                        constants.SaveCycleWithCurrentDate(CycleId, utcCurrentDateTime.toString(), "UpdateOfflineDriverLog_api",
-                                                global, getApplicationContext());
+                                    if ((isSuggestedEdit && isSuggestedRecall)) {   // || IsCycleRequestIsELDNotification
+                                        try {
+                                            Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
+                                            intent.putExtra(ConstantsKeys.SuggestedEdit, isSuggestedEdit);
+                                            LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
                                     }
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
 
-                                postAllOfflineSavedData();
+                                SharedPref.setOnlineStatus(true, getApplicationContext());
 
+                                // Sync app usage log to server (SAVE sync data service)
+                                obdUtil.syncAppUsageLog(getApplicationContext(), DriverId);
+
+                                // need to move in permission api
+                                // if (dataObj.has(ConstantsKeys.IsOdometerFromOBD))
+                                //    SharedPref.SetOdometerFromOBD(dataObj.getBoolean(ConstantsKeys.IsOdometerFromOBD), getApplicationContext());
+
+                                if (dataObj.has(ConstantsKeys.CycleId) && !dataObj.getString(ConstantsKeys.CycleId).equals("null")){
+                                    int CycleId = dataObj.getInt(ConstantsKeys.CycleId);
+
+                                    // Save Driver Cycle With Current Date
+                                    constants.SaveCycleWithCurrentDate(CycleId, utcCurrentDateTime.toString(), "UpdateOfflineDriverLog_api",
+                                            global, getApplicationContext());
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
+
+                            postAllOfflineSavedData();
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -5024,7 +5224,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                    /* case SaveDriverDeviceUsageLog:
                         try {
-                            SharedPref.setLastUsageDataSavedTime(global.getCurrentDate(), getApplicationContext());
+                            SharedPref.setLastUsageDataSavedTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -5063,11 +5263,23 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 }
             }else{
 
-                if(flag == GetMalDiaEventDuration) {
-                    Constants.isCallMalDiaEvent = false;
-                    MalDiaEventsApiInProcess = false;
-                }else if(flag == GetDriverLog18Days || flag == GetCoDriverLog18Days){
-                    Is18DaysLogApiCalled = false;
+                if (message.equalsIgnoreCase("Device Logout")) {
+                    driverLogArray = constants.GetDriversSavedArray(getApplicationContext(), MainDriverPref, CoDriverPref);
+                    if (driverLogArray.length() == 0) {
+                        postAllOfflineSavedData();
+
+                        DeviceLogout(message);
+
+                    }else{
+                        SyncUserData();
+                    }
+                }else {
+                    if (flag == GetMalDiaEventDuration) {
+                        Constants.isCallMalDiaEvent = false;
+                        MalDiaEventsApiInProcess = false;
+                    } else if (flag == GetDriverLog18Days || flag == GetCoDriverLog18Days) {
+                        Is18DaysLogApiCalled = false;
+                    }
                 }
             }
         }
@@ -5148,6 +5360,10 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                     Logger.LogDebug("Sync", msgTxt );
 
+                    if(isDriverLogout){
+                       isDriverLogout = false;
+                        DeviceLogout("Device Logout");
+                    }
                 }else {
                     if(syncingFile != null && syncingFile.exists())
                         syncingFile.delete();
@@ -5161,6 +5377,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             }
         }
     };
+
 
 
 
@@ -5188,7 +5405,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                             SharedPref.SetOdoSavingStatus(false, getApplicationContext());
                             odometerHelper.OdometerHelper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
 
-                            String SelectedDate = Globally.GetCurrentDeviceDate();
+                            String SelectedDate = Globally.GetCurrentDeviceDate(null, global, getApplicationContext());
                             DriverId   = SharedPref.getDriverId(getApplicationContext());
                             String CompanyId     = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
 
@@ -5262,7 +5479,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 if(msg.equals(Constants.AobrdWarning)){
                     global.ShowNotificationWithSound(getApplicationContext(), "AOBRD", "Your current status is "+ status +" but your vehicle is running.", mNotificationManager);
                 }else if(msg.contains(getString(R.string.als_alert))){
-                    global.ShowNotificationWithSound(getApplicationContext(), "ALS Alert", status, mNotificationManager);
+                    global.ShowNotificationWithSound(getApplicationContext(), "Eld Alert", status, mNotificationManager);
                 }else {
                     if (SharedPref.IsReadViolation(getApplicationContext()) == false) {
                         if (RulesObj.isViolation() ) {
@@ -5290,6 +5507,27 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     };
 
 
+
+    void ClearLogBeforeResend() {
+
+        // Get posted data as list model
+        List<EldDataModelNew> driverLogList = constants.getLogInList(driverLogArray);
+
+        if (DriverType == Constants.MAIN_DRIVER_TYPE) { // Single Driver Type and Position is 0
+            MainDriverPref.ClearLocFromList(getApplicationContext());
+
+            //  Save data for Main Driver
+            MainDriverPref.SaveDriverLoc(getApplicationContext(), driverLogList);
+        }else {
+            CoDriverPref.ClearLocFromList(getApplicationContext());
+
+            //  Save data for Co Driver
+            CoDriverPref.SaveDriverLoc(getApplicationContext(), driverLogList);
+        }
+
+
+        driverLogArray = new JSONArray();
+    }
 
 
     /* ---------------------- Save Log Request Response ---------------- */
@@ -5342,7 +5580,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                         EldFragment.IsSaveOperationInProgress = false;
                          BackgroundLocationService.IsAutoChange = false;
                         driverLogArray = constants.GetDriversSavedArray(getApplicationContext(), MainDriverPref, CoDriverPref);
-                        boolean IsDuplicateStatusAllowed = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.IsDuplicateStatusAllowed, getApplicationContext());
+                        //boolean IsDuplicateStatusAllowed = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.IsDuplicateStatusAllowed, getApplicationContext());
                         boolean IsEditedData = SharedPref.IsEditedData(getApplicationContext());
                         SharedPref.SetEditedLogStatus(false, getApplicationContext());
 
@@ -5358,8 +5596,16 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                     String DriverLogId = obj.getString(ConstantsKeys.DriverLogId);
                                     hMethods.UpdateLastLogOfDriver(ConstantsKeys.DriverLogId, DriverLogId,
                                             DriverId, dbHelper);
+
+                                    if(EldFragment.IsSaveJobException){
+                                        EldFragment.IsSaveJobException = false;
+                                       // SelectedDriverId = getSelectedDriverId(driver_id);
+                                        DataRequest18Days(SelectedDriverId, GetDriverLog18Days);
+                                    }
+
                                 }else{
-                                    SelectedDriverId = ""+driver_id;
+
+                                   // SelectedDriverId = getSelectedDriverId(driver_id);
                                     DataRequest18Days(SelectedDriverId, GetDriverLog18Days);
                                 }
 
@@ -5388,17 +5634,30 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                         if (driverLogArray.length() > 0) {    //SaveRequestCount < 2 || IsDuplicateStatusAllowed
                                             saveActiveDriverData();
                                             RePostDataCountMain++;
+                                            ClearLogBeforeResend();
                                         } else {
                                             ClearLogAfterSuccess(driver_id);
+
+                                            // save Co Driver Data if login with co driver
+                                            SaveCoDriverData();
+
                                         }
 
 
 
                                     }
+
+                                    if(EldFragment.IsSaveJobException){
+                                        EldFragment.IsSaveJobException = false;
+                                       // SelectedDriverId = getSelectedDriverId(driver_id);
+                                        DataRequest18Days(SelectedDriverId, GetDriverLog18Days);
+                                    }
+
                                 } else {
                                     if (RePostDataCountMain > 2) {
                                         ClearLogAfterSuccess(driver_id);
                                         RePostDataCountMain = 0;
+                                        ClearLogBeforeResend();
 
                                         // save Co Driver Data if login with co driver
                                         SaveCoDriverData();
@@ -5412,6 +5671,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                         if (driverLogArray.length() > 0) {    //SaveRequestCount < 2 || IsDuplicateStatusAllowed
                                             saveActiveDriverData();
                                             RePostDataCountMain++;
+
+                                            ClearLogBeforeResend();
                                         } else {
                                             ClearLogAfterSuccess(driver_id);
                                         }
@@ -5428,23 +5689,19 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                     case SaveCoDriverLogData:
                         EldFragment.IsSaveOperationInProgress = false;
+                        ClearLogAfterSuccess(driver_id);
+                        RePostDataCountCo = 0;
+                       // SelectedDriverId = getSelectedDriverId(driver_id);
+                        DataRequest18Days(CoDriverId, GetCoDriverLog18Days);
 
-                      //  boolean IsDuplicateStatusAllow = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.IsDuplicateStatusAllowed, getApplicationContext());
-
-                      //  if(RePostDataCountCo > 1 || !IsDuplicateStatusAllow){
-                       // syncingMethod.SyncingLogVersion2Helper(Integer.valueOf(driver_id), dbHelper, new JSONArray());
-
-                            ClearLogAfterSuccess(driver_id);
-                            RePostDataCountCo = 0;
-                            SelectedDriverId = ""+driver_id;
-                            DataRequest18Days(SelectedDriverId, GetDriverLog18Days);
-
-
-                       /* }else {
-                            SaveCoDriverData();
-                            RePostDataCountCo ++;
-                        }*/
-
+                        // call update offline api if data posted to server
+                        int offlineDataLength = constants.OfflineData(getApplicationContext(), MainDriverPref,
+                                CoDriverPref, global.isSingleDriver(getApplicationContext()));
+                        if (offlineDataLength == 0 ) {   // This check is used to save offline saved data to server first then online status will be changed.
+                            String VIN = SharedPref.getVINNumber(getApplicationContext());
+                            UpdateOfflineDriverLog(DriverId, CoDriverId, DeviceId, VIN,
+                                    String.valueOf(obdVehicleSpeed), true);
+                        }
 
                         break;
 
@@ -5463,6 +5720,10 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                         break;
 
+                    case SaveCertifyLogCo:
+                        // ------------ Clear Certify Log Record File locally ------------
+                        certifyLogMethod.CertifyLogHelper(Integer.valueOf(CoDriverId), dbHelper, new JSONArray());
+                        break;
 
                     case SaveInspectionMain:
                     case SaveInspectionCo:
@@ -5493,6 +5754,21 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                     case SaveVehPwrEventLog:
                         vehiclePowerEventMethod.VehPowerEventHelper(dbHelper, new JSONArray());
                         break;
+
+
+                    case MainDriverNotification:
+                    // Clear un posted logs from array
+                    notificationMethod.SaveToNotificationHelper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
+
+                    break;
+
+
+                    case CoDriverNotification:
+                        // Clear un posted logs from array
+                        notificationMethod.SaveToNotificationHelper(Integer.valueOf(CoDriverId), dbHelper, new JSONArray());
+
+                        break;
+
                 }
             }else {
 
@@ -5506,6 +5782,14 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                         if(flag == SaveMainDriverLogData){
                             SaveCoDriverData();
                         }
+                    }else if(Message.equals("Device Logout")){
+                        driverLogArray = constants.GetDriversSavedArray(getApplicationContext(), MainDriverPref, CoDriverPref);
+                        if (driverLogArray.length() == 0) {
+                            DeviceLogout(Message);
+                        }else{
+                            SyncUserData();
+                        }
+
                     }
                 }else if(flag == SaveDriverLog){
                     if(Message.equals("Record Not Found")) {
@@ -5517,6 +5801,9 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                     IsMissingDiaInProgress = false;
                     if(Message.equals("Exception is occcured")) {
                         updateClearEvent(false);
+                    }else if(Message.equals("Record Clearance is failed")){
+                        GetMalDiaEventsDurationList();
+                        global.ShowLocalNotification(getApplicationContext(), "Timing Malfunction", Message, 20910);
                     }
                 }else if(flag == SaveDeferralMain){
                     isDeferralAlreadyPosting = false;
@@ -5524,6 +5811,11 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                     isDeferralAlreadyPostingCo = false;
                 }else if(flag == SaveMalDiagnstcEvent){
                     IsMissingDiaInProgress = false;
+                    isMalfncDataAlreadyPosting = false;
+                    if(Message.equals("Record Clearance is failed")){
+                        GetMalDiaEventsDurationList();
+                        global.ShowLocalNotification(getApplicationContext(), "Timing Malfunction", Message, 20910);
+                    }
                 }
 
             }
@@ -5546,6 +5838,60 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
         }
     };
+
+
+    void SyncUserData(){
+
+
+        if(global.isSingleDriver(getApplicationContext())) {
+            JSONArray syncArray = syncingMethod.getSavedSyncingArray(Integer.valueOf(DriverId), dbHelper);
+            if(syncArray.length() > 0) {
+                SyncDriverData(DriverId, syncArray, false);
+            }else{
+                DeviceLogout("Device Logout");
+            }
+        }else{
+            JSONArray MainDriverSyncArray = syncingMethod.getSavedSyncingArray(Integer.valueOf(DriverId), dbHelper);
+            JSONArray CoDriverSyncArray = syncingMethod.getSavedSyncingArray(Integer.valueOf(CoDriverId), dbHelper);
+
+            if(MainDriverSyncArray.length() == 0 && CoDriverSyncArray.length() == 0 ) {
+                DeviceLogout("Device Logout");
+            }else{
+
+                if(MainDriverSyncArray.length() > 0) {
+                    SyncDriverData(DriverId, MainDriverSyncArray, false);
+                }
+
+                if(CoDriverSyncArray.length() > 0) {
+                    SyncDriverData(CoDriverId, CoDriverSyncArray, true);
+                }
+
+            }
+        }
+
+
+    }
+
+
+    private void SyncDriverData(String DriverId, JSONArray syncArray, boolean isCoDriver){
+
+        if(syncArray.length() > 0) {
+            String filePrefix = "Sync_";
+            if(isCoDriver){
+                filePrefix = "SyncCo_";
+            }
+            File driverSyncFile = Globally.SaveFileInSDCard(filePrefix, syncArray.toString(), false, getApplicationContext());
+
+            isDriverLogout = true;
+            // Sync driver log API data to server with SAVE_LOG_TEXT_FILE (SAVE sync data service)
+            SyncDataUpload syncDataUpload = new SyncDataUpload(getApplicationContext(), DriverId, driverSyncFile,
+                    null, null, false, asyncResponse );
+            syncDataUpload.execute();
+        }
+    }
+
+
+
 
 
 
@@ -5587,15 +5933,21 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         driverLogArray = new JSONArray();
         //syncingMethod.SyncingLogVersion2Helper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
 
-        if (driverType == 0) // Single Driver Type and Position is 0
+        if (driverType == 0) { // Single Driver Type and Position is 0
             MainDriverPref.ClearLocFromList(getApplicationContext());
-        else
+        }else{
             CoDriverPref.ClearLocFromList(getApplicationContext());
-
+        }
     }
 
 
-
+    private String getSelectedDriverId(int driverType){
+        if (driverType == 0) { // Single Driver Type and Position is 0
+            return DriverConst.GetDriverDetails(DriverConst.DriverID, getApplicationContext());
+        }else{
+            return DriverConst.GetDriverDetails(DriverConst.DriverID, getApplicationContext());
+        }
+    }
     /* ------------ Save Co-Driver Data those data was saved in offline mode -------------- */
     void SaveCoDriverData() {
         JSONArray LogArray = new JSONArray();
@@ -5731,7 +6083,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     private void StartStopServer(final String value){
         if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED ) { //  || SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE
 
-            SharedPref.SetWiredObdServerCallTime(Globally.GetCurrentDateTime(), getApplicationContext());
+            SharedPref.SetWiredObdServerCallTime(Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
 
             if (isBound) {
 
@@ -5799,7 +6151,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             }else{
 
                 if(AccumulativePersonalDistance == -1){
-                    AccumulativePersonalDistance = constants.getAccumulativePersonalDistance(DriverId, offsetFromUTC, Globally.GetCurrentJodaDateTime(),
+                    AccumulativePersonalDistance = constants.getAccumulativePersonalDistance(DriverId, offsetFromUTC,
+                            Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getApplicationContext()),
                             Globally.GetCurrentUTCDateTime(), hMethods, dbHelper, getApplicationContext());
                 }
 

@@ -114,6 +114,8 @@ public class ConstantsKeys {
     public static String IsPersonal             = "IsPersonal";
     public static String IsYardMoveCo           = "IsYardMoveCo";
     public static String IsPersonalCo           = "IsPersonalCo";
+    public static String truckno                = "truckno";
+    public static String companyid              = "companyid";
 
     public static String SendLog                = "SendLog";
     public static String ViewCertifyDays        = "ViewCertifyDays";
@@ -125,7 +127,7 @@ public class ConstantsKeys {
     public static String IsSignCopy             = "IsSignCopy";
     public static String SignedCopyDate         = "SignedCopyDate";
     public static String IsCertifyMandatory     = "IsCertifyMandatory";
-    public static String IsNotificationAllowed  = "IsAutoDutyNotificationAllowed";
+    public static String IsAutoDutyNotificationAllowed  = "IsAutoDutyNotificationAllowed";
 
     public static String EditedReason           = "EditedReason";
     public static String TruckIssues            = "TruckIssues";
@@ -297,6 +299,7 @@ public class ConstantsKeys {
     public static String DrivingAllowedStatusTime       = "DrivingAllowedStatusTime";
     public static String IsEldEcmALert                  = "IsEldEcmALert";
     public static String IsUnIdenLocMissing             = "IsUnIdenLocMissing";
+    public static String IsInvalidTime                  = "IsInvalidTime";
     public static String IsOBDStatusUpdate              = "IsOBDStatusUpdate";
     public static String IsPcYmAlertChangeStatus        = "IsPcYmAlertChangeStatus";
     public static String IsNeedToUpdate18DaysLog        = "IsNeedToUpdate18DaysLog";
@@ -347,12 +350,15 @@ public class ConstantsKeys {
     public static String PowerComplianceMal             = "PowerComplianceMal";
     public static String EnginSyncMal                   = "EnginSyncMal";
     public static String PostioningComplMal             = "PostioningComplMal";
+    public static String TimingComplianceMal            = "TimingComplianceMal";
 
     public static String PowerDataDiag                  = "PowerDataDiag";
     public static String EnginSyncDiag                  = "EnginSyncDiag";
     public static String UnidentifiedDataDiag           = "UnidentifiedDataDiag";
     public static String UnidentifiedOccTime            = "UnidentifiedOccTime";
 
+    public static String TimingComplianceMalTime        = "TimingComplianceMalTime";
+    public static String TimingMalWarningTime           = "TimingMalWarningTime";
     public static String StartOdometerInKm              = "StartOdometerInKm";
     public static String EndOdometerInKm                = "EndOdometerInKm";
 
@@ -530,7 +536,8 @@ public class ConstantsKeys {
 
     public static String CurrentDateTime                = "CurrentDateTime";
     public static String CurrentUTCTime                 = "CurrentUTCTime";
-    public static String  OffsetFromUTC                 = "OffsetFromUTC";
+    public static String OffsetFromUTC                  = "OffsetFromUTC";
+    public static String OffsetFromUtc                  = "OffsetFromUtc";
     public static String IsSingleDriver                 = "IsSingleDriver";
     public static String DriverJobStatus                = "DriverJobStatus";
     public static String IsOldRecord                    = "IsOldRecord";
@@ -653,6 +660,7 @@ public class ConstantsKeys {
     public static String IsELDNotification              = "IsELDNotification";
     public static String IsELDNotificationAlert         = "IsELDNotificationAlert";
     public static String ObdPreference                  = "ObdPreference";
+    public static String HighPrecisionUnit              = "HighPrecisionUnit";
     public static String StartLocationKm                = "StartLocationKm";
     public static String IsOdoCalculationAllowed        = "IsOdoCalculationAllowed";
     public static String IsEngineRestarted              = "IsEngineRestarted";
@@ -662,6 +670,7 @@ public class ConstantsKeys {
     public static String LocReceivedFromObd             = "LocReceivedFromObd";
     public static String IsCycleChanged                 = "IsCycleChanged";
     public static String LocationSource                 = "LocationSource";
+    public static String IsDriverLogout                 = "IsDriverLogout";
 
     public static String IsDismissDialog                = "IsDismissDialog";
     public static String ChangedToOthers                = "ChangedToOthers";

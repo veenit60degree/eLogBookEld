@@ -111,7 +111,7 @@ public class NotificationHistoryRecylerAdapter extends RecyclerView.Adapter<Noti
             holder.deleteHistoryBtn.setImageResource(R.drawable.change_cycle);
 
         }else {
-            CurrentDate  =  global.getCurrentDate();
+            CurrentDate  =  global.GetDriverCurrentDateTime(global, context);
             if (title.equals(context.getResources().getString(R.string.violation))) {
                 holder.historyTitleTV.setTextColor(context.getResources().getColor(R.color.colorVoilation));
             } else if (title.equals(context.getResources().getString(R.string.warning))) {

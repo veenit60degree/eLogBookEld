@@ -218,7 +218,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(DriverId, globally, constants, dbHelper, getActivity());
 
         getDriverInfo();
-        DateTime currentDate    = globally.getDateTimeObj(globally.GetCurrentDateTime(), false);
+        DateTime currentDate    = globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), globally, getActivity());
         String CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getActivity()), getActivity());
 
         try {
@@ -543,7 +543,8 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                                     new MalfunctionDiagnosticListener());
                             malfunctionDialog.show();
                         }else{
-                            globally.EldScreenToast(confirmCertifyBtn, getString(R.string.stop_vehicle_alert),
+                            globally.EldScreenToast(confirmCertifyBtn, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                            getString(R.string.stop_vehicle_alert),
                                     getResources().getColor(R.color.colorVoilation));
                         }
                     }else{
@@ -1034,53 +1035,6 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
             diagnosticChildHashMap      = new HashMap<>();
             malfunctionChildList        = new ArrayList<>();
 
-           /* if(!IsClearEvent) {
-                if (DetectionDataEventCode.equals(Constants.MissingDataDiagnostic)) {
-                } else if (DetectionDataEventCode.equals(Constants.PowerComplianceDiagnostic)) {
-
-                        SharedPref.savePowerMalfunctionOccurStatus(
-                                SharedPref.isPowerMalfunctionOccurred(context),
-                                true, EventEndDateTime, context);
-                        constants.saveDiagnstcStatus(context, true);
-                    }
-
-                } else if (DetectionDataEventCode.equals(Constants.EngineSyncDiagnosticEvent) ) {
-
-                        SharedPref.saveEngSyncDiagnstcStatus(true, context);
-                        constants.saveDiagnstcStatus(context, true);
-                    }
-
-                } else if (DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction)) {
-
-                        SharedPref.saveLocMalfunctionOccurStatus(true, driverZoneDate.toString(), EventDateTime, context);
-                        constants.saveMalfncnStatus(context, true);
-                    }
-
-                } else if (DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction)) {
-
-                        SharedPref.savePowerMalfunctionOccurStatus(true,
-                                SharedPref.isPowerDiagnosticOccurred(context),
-                                EventEndDateTime, context);
-                        constants.saveMalfncnStatus(context, true);
-                    }
-
-                } else if (DetectionDataEventCode.equals(Constants.EngineSyncMalfunctionEvent)) {
-
-                        SharedPref.saveEngSyncMalfunctionStatus(true, context);
-                        constants.saveMalfncnStatus(context, true);
-                    }
-                }else if(DetectionDataEventCode.equals(Constants.UnIdentifiedDrivingDiagnostic)){
-
-                        constants.saveDiagnstcStatus(context, true);
-                    }
-                } else if (DetectionDataEventCode.equals(Constants.DataRecordingComplianceMalfunction)) {
-
-                        constants.saveMalfncnStatus(context, true);
-                    }
-                }
-            }*/
-
-
             // Adding same type events in single group for Expandable ListView with permission check
             if(SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PowerDataDiag, getActivity())) {   // check power dia permission
                 parseListInHashMap(malDiaArray, Constants.PowerComplianceDiagnostic);
@@ -1118,10 +1072,14 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
             if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.UnidentifiedDiag, getActivity())) {      // check unidentified dia permission
                 parseListInHashMap(malDiaArray, Constants.UnIdentifiedDrivingDiagnostic);
             }
+
             if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.DataRecComMal, getActivity())) {     // check data rec mal permission
                 parseListInHashMap(malDiaArray, Constants.DataRecordingComplianceMalfunction);
             }
 
+            if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.TimingCompMal, getActivity())) {     // check Timing compliance mal permission
+                parseListInHashMap(malDiaArray, Constants.TimingComplianceMalfunction);
+            }
 
             setPagerAdapter(position, false);
 
@@ -1152,7 +1110,8 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                             DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction) ||
                             DetectionDataEventCode.equals(Constants.DataTransferMalfunction) ||
                             DetectionDataEventCode.equals(Constants.UnIdentifiedDrivingDiagnostic) ||
-                            DetectionDataEventCode.equals(Constants.DataRecordingComplianceMalfunction)) {
+                            DetectionDataEventCode.equals(Constants.DataRecordingComplianceMalfunction) ||
+                            DetectionDataEventCode.equals(Constants.TimingComplianceMalfunction)) {
                         parseData(mainObj);
                     } else {
                         if (DrId.equals(DriverId) || DrId.equals("0")) {
@@ -1234,7 +1193,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
                 if(EventType.equals(Constants.PowerComplianceDiagnostic) || EventType.equals(Constants.PowerComplianceMalfunction) ||
                           EventType.equals(Constants.UnIdentifiedDrivingDiagnostic) || EventType.equals(Constants.MissingDataDiagnostic) ||
-                        EventType.equals(Constants.DataRecordingComplianceMalfunction)){
+                        EventType.equals(Constants.DataRecordingComplianceMalfunction) || EventType.equals(Constants.TimingComplianceMalfunction)){
                     if(mainObj.has(ConstantsKeys.TotalMinutes)){
                         TotalMinutes = mainObj.getString(ConstantsKeys.TotalMinutes);
                     }

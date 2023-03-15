@@ -106,7 +106,7 @@ public class NotificationNewsDialog extends Dialog {
         }
 
 
-        Button notificationOkBtn = (Button)findViewById(R.id.notificationOkBtn);
+        TextView notificationOkBtn = (TextView)findViewById(R.id.notificationOkBtn);
         notificationOkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

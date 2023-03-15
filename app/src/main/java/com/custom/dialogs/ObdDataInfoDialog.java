@@ -27,7 +27,7 @@ import java.util.TimerTask;
 public class ObdDataInfoDialog extends Dialog {
 
     String DriverId;
-    int offsetFromUTC;
+    //int offsetFromUTC;
     HelperMethods hMethods;
     DBHelper dbHelper;
 
@@ -59,7 +59,7 @@ public class ObdDataInfoDialog extends Dialog {
         dbHelper = new DBHelper(context);
         globally = new Globally();
 
-        offsetFromUTC = (int) globally.GetTimeZoneOffSet();
+      //  offsetFromUTC = (int) globally.GetDriverTimeZoneOffSet(getContext());
 
         obdInfo = (TextView) findViewById(R.id.malfDefTxtView);
 

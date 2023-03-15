@@ -107,7 +107,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     TextView unIdnfdmalfStatusCTV, unIdnfdeldIdCTV, unIdnfdeldProviderCTV, unIdnfdeldCerCTV, unIdnfdeldAuthCTV;
     TextView unidentifiedTitleTv;
 
-    RelativeLayout eldMenuLay, rightMenuBtn, scrollUpBtn, scrollDownBtn, otherOptionBtn;
+    RelativeLayout eldMenuLay, rightMenuBtn, scrollUpBtn, scrollDownBtn, otherOptionBtn, canGraphLayout;
     LinearLayout canDotViewMorelay , unIdnfdcanDotViewMorelay, unidentifiedLayout;
     ImageView eldMenuBtn, nextDateBtn, previousDateBtn; // canDotModeImgVw;
 
@@ -355,6 +355,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         scrollUpBtn         = (RelativeLayout)view.findViewById(R.id.scrollUpBtn);
         scrollDownBtn       = (RelativeLayout)view.findViewById(R.id.scrollDownBtn);
         otherOptionBtn      = (RelativeLayout)view.findViewById(R.id.otherOptionBtn);
+        canGraphLayout      = (RelativeLayout)view.findViewById(R.id.canGraphLayout);
 
         eldMenuBtn          = (ImageView)view.findViewById(R.id.eldMenuBtn);
         nextDateBtn         = (ImageView)view.findViewById(R.id.nextDateBtn);
@@ -434,6 +435,26 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         dotSwitchBtn.setTrackDrawable(new SwitchTrackTextDrawable(getActivity(),"CAN", "US"));
 */
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                int graphLayoutHeight = canGraphLayout.getMeasuredHeight();
+                int graphWebHeight = canDotGraphWebView.getMeasuredHeight();
+                int heightCheck;
+                if (global.isTablet(getActivity())) {
+                    heightCheck = constants.intToPixel(getActivity(), 200 );
+                }else{
+                    heightCheck = constants.intToPixel(getActivity(), 160 );
+                }
+
+                if(graphLayoutHeight < 200 || graphWebHeight < 200) {
+                    canGraphLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, heightCheck));
+                    canDotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, heightCheck));
+                }
+            }
+        }, 800);
+
+
         eldMenuLay.setOnClickListener(this);
         viewMoreTV.setOnClickListener(this);
         unIdnfdviewMoreTV.setOnClickListener(this);
@@ -483,9 +504,9 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
         private void getBundleData() {
 
-            CurrentDate             = global.GetCurrentDeviceDate();
+            CurrentDate             = global.GetCurrentDeviceDate(null, new Globally(), getActivity());
             DeviceId                = SharedPref.GetSavedSystemToken(getActivity());
-            DriverId               = SharedPref.getDriverId( getActivity());
+            DriverId                = SharedPref.getDriverId( getActivity());
 
             try {
                 Bundle getBundle = this.getArguments();
@@ -503,7 +524,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             }catch (Exception e){
                 e.printStackTrace();
             }
-            CurrentDate = global.GetCurrentDeviceDate();
+            CurrentDate = global.GetCurrentDeviceDate(null, new Globally(), getActivity());
 
             try {
                 DBHelper dbHelper = new DBHelper(getActivity());
@@ -524,7 +545,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
             if(LogDate.length() > 1) {
                 EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " ( " + DayName + " )");
-           }
+            }
 
             try {
                 StatePrefManager statePrefManager  = new StatePrefManager();
@@ -1064,13 +1085,13 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             public void run() {
                 String data = ConstantHtml.GraphHtml + htmlAppendedText + closeTag;
                 canDotGraphWebView.loadDataWithBaseURL("" , data, "text/html", "UTF-8", "");
-                if(global.isTablet(getActivity())){
+               /* if(global.isTablet(getActivity())){
                     canDotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                             constants.dpToPx(getActivity(), 250)) );
                 }else{
                     canDotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                             constants.dpToPx(getActivity(), 160)) );
-                }
+                }*/
 
 
             }
@@ -1088,13 +1109,13 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             public void run() {
                 String data = ConstantHtml.GraphHtml + htmlUnidentifiedAppendedText + closeTag;
                 unIdnfdcanDotGraphWebView.loadDataWithBaseURL("" , data, "text/html", "UTF-8", "");
-                if(global.isTablet(getActivity())){
+               /* if(global.isTablet(getActivity())){
                     unIdnfdcanDotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                             constants.dpToPx(getActivity(), 250)) );
                 }else{
                     unIdnfdcanDotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                             constants.dpToPx(getActivity(), 160)) );
-                }
+                }*/
 
 
             }
@@ -1142,10 +1163,10 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 String endDateTime = logObj.getString("EndTime");
 
                 if (endDateTime.equals("null")) {
-                    endDateTime = global.GetCurrentDateTime();
+                    endDateTime = global.GetDriverCurrentDateTime(global, getActivity());
                 }else{
                     if(driverLogJsonArray.length() == 1 && LogDate.equals(CurrentDate)){
-                        endDateTime = global.GetCurrentDateTime();
+                        endDateTime = global.GetDriverCurrentDateTime(global, getActivity());
                     }
                 }
 
@@ -1159,7 +1180,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
                 if (logCount > 0 && logCount == driverLogJsonArray.length() - 1) {
                     if (LogDate.equals(CurrentDate)) {
-                        endDateTime = global.GetCurrentDateTime();
+                        endDateTime = global.GetDriverCurrentDateTime(global, getActivity());
                     } else {
                         if (endDateTime.length() > 16 && endDateTime.substring(11, 16).equals("00:00")) {
                             endDateTime = endDateTime.substring(0, 11) + "23:59" + endDateTime.substring(16, endDateTime.length());
@@ -1184,6 +1205,10 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
                 int VerticalLineX = constants.VerticalLine(OldStatus);
                 int VerticalLineY = constants.VerticalLine(DRIVER_JOB_STATUS);
+
+                Logger.LogDebug("HorizontalLine","----HorizontalLine: "+hLineX1 + " - " +hLineX2);
+                Logger.LogDebug("VerticalLineY","----VerticalLineY: "+VerticalLineY );
+
 
                 if (hLineX2 > hLineX1) {
                     if (OldStatus != -1) {
@@ -1250,7 +1275,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 String endDateTime = eventModel.getEndDateTime();   //logObj.getString("EndDateTime");
 
                 if (endDateTime.equals("null")) {
-                    endDateTime = global.GetCurrentDateTime();
+                    endDateTime = global.GetDriverCurrentDateTime(global, getActivity());
                 }
 
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(global.DateFormat);  //:SSSZ
@@ -1263,7 +1288,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
              /*   if (logCount > 0 && logCount == driverLogJsonArray.length() - 1) {
                     if (LogDate.equals(CurrentDate)) {
-                        endDateTime = global.GetCurrentDateTime();
+                        endDateTime = global.GetDriverCurrentDateTime(global, getActivity());
                     } else {
                         if (endDateTime.length() > 16 && endDateTime.substring(11, 16).equals("00:00")) {
                             endDateTime = endDateTime.substring(0, 11) + "23:59" + endDateTime.substring(16, endDateTime.length());
@@ -1765,7 +1790,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                                 String selectedDateStr = global.ConvertDateFormat(LogDate);
                                // dotUnidentifdLogArray = constants.setUnidentifiedGraphData(selectedDateStr, DaysDiff, dotUnidentifdLogArray);
 
-                                ArrayList<UnidentifiedEventModel> UnidentifiedEventList = constants.getUnidentifiedEventList(selectedDateStr, DaysDiff, dotUnidentifdLogArray);
+                                ArrayList<UnidentifiedEventModel> UnidentifiedEventList = constants.getUnidentifiedEventList(selectedDateStr, DaysDiff, dotUnidentifdLogArray, getActivity());
                                 ParseUnidentifiedGraphData(UnidentifiedEventList);
 
                                 JSONArray dutyStatusArray = constants.checkNullArray(dataObj, ConstantsKeys.dutyStatusChangesList);
@@ -1780,7 +1805,18 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                                 VerifyLoginLogoutList = constants.parseCanadaDotInList(loginLogoutArray, true);
                                 VerifyCommentsRemarksList = constants.parseCanadaDotInList(commentsRemarksArray, false);
 
-                                UnIdnfdDutyStatusList = constants.parseCanadaDotInList(dotUnidentifdLogArray2, true);
+                                if(dotUnidentifdLogArray2.length() == 1){
+                                    JSONObject obbb = (JSONObject) dotUnidentifdLogArray2.get(0);
+                                    int EventType = obbb.getInt("EventCode");
+
+                                    String DateTimeWithMins = obbb.getString(ConstantsKeys.DateTimeWithMins).substring(11, 16);
+                                    if(!DateTimeWithMins.equals("00:00") && EventType != Constants.OFF_DUTY){
+                                        UnIdnfdDutyStatusList = constants.parseCanadaDotInList(dotUnidentifdLogArray2, true);
+                                    }
+                                }else{
+                                    UnIdnfdDutyStatusList = constants.parseCanadaDotInList(dotUnidentifdLogArray2, true);
+                                }
+
                                 UnIdnfdEnginePowerList = constants.parseCanadaDotInList(UnIdnfdEnginePowerArray, true);
 
 

@@ -266,11 +266,16 @@
 
         <service
             android:name="com.background.service.BackgroundLocationService"
+
             android:exported="true" />
+        <!--android:foregroundServiceType="dataSync"-->
 
         <service
             android:name="com.background.service.AfterLogoutService"
+
             android:exported="true" />
+        <!--android:foregroundServiceType="dataSync"-->
+
         <service
             android:name="com.constants.DownloadAppService"
             android:exported="false" />
@@ -279,9 +284,11 @@
             android:exported="false" />
         <service
             android:name="com.background.service.LocationListenerService"
+            android:foregroundServiceType="location"
             android:exported="true" />
         <service
             android:name="com.background.service.BleDataService"
+            android:foregroundServiceType="connectedDevice"
             android:exported="true" />
 
     </application>

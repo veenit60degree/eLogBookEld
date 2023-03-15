@@ -480,7 +480,7 @@ public class OdometerHelperMethod {
 
         JSONArray odometer18DaysArray = getSavedOdometer18DaysArray(Integer.valueOf(DriverId), dbHelper);
         try {
-            String CreatedDate      = Globally.GetCurrentDeviceDateTime();
+            String CreatedDate      = Globally.ConvertDateFormatMMddyyyyHHmm(Globally.GetDriverCurrentDateTime(new Globally(), context));
             String VIN_NUMBER       = SharedPref.getVINNumber(context);
             String TRUCK_NUMBER     = SharedPref.getTruckNumber(context); //DriverConst.GetDriverTripDetails(DriverConst.Truck, context);
 

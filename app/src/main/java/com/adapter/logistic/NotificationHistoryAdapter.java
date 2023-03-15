@@ -77,7 +77,7 @@ public class NotificationHistoryAdapter extends BaseAdapter {
         holder.historyDescTV.setText(itemModel.getMessage());
 
       //  holder.historyDurationTV.setText();
-        String CurrentDate  =  global.getCurrentDate();
+        String CurrentDate  =  global.GetDriverCurrentDateTime(global, context);
         String selectedDate =  String.valueOf(itemModel.getSendDate());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Globally.DateFormat);  //:SSSZ
         Date DateCurrent = new Date();

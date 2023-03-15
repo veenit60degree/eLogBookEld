@@ -427,9 +427,31 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                     data = decoder.DecodeTextAndSave(message, new OBDDeviceData());
                     JSONObject simObj = new JSONObject(data.toString());
 
-                }catch (Exception e){
+                }catch (Exception e){`
                     e.printStackTrace();
                 }*/
+                /*if(SharedPref.getObdStatus(getActivity()) == Constants.WIRED_CONNECTED) {
+
+                    // disconnect it
+                    SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, globally.GetDriverCurrentDateTime(globally, getActivity()),
+                            globally.GetCurrentUTCTimeFormat(), getActivity());
+                    SharedPref.SetTruckIgnitionStatusForContinue("OFF", constants.WiredOBD,
+                            globally.GetDriverCurrentDateTime(globally, getActivity()), getActivity());
+
+                    // save truck info to check power compliance mal/dia later.
+                    SharedPref.SaveTruckInfoOnIgnitionChange("OFF", "wired_obd",
+                            globally.GetDriverCurrentDateTime(globally, getActivity()), globally.GetCurrentUTCTimeFormat(),
+                            SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, getActivity()),
+                            SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, getActivity()),
+                            getActivity());
+
+
+                }else{
+                    SharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, globally.GetDriverCurrentDateTime(globally, getActivity()),
+                            globally.GetCurrentUTCTimeFormat(), getActivity());
+
+                }
+*/
 
 
 

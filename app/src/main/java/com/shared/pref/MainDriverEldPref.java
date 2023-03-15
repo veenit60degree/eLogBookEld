@@ -4,8 +4,13 @@ package com.shared.pref;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.constants.Constants;
 import com.google.gson.Gson;
+import com.local.db.ConstantsKeys;
 import com.models.EldDataModelNew;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +50,7 @@ public class MainDriverEldPref {
 
     public static ArrayList<EldDataModelNew> LoadSavedLoc(Context context) {
         SharedPreferences settings;
-        List<EldDataModelNew> favorites;
+        List<EldDataModelNew> favorites = new ArrayList<>();
         ArrayList<EldDataModelNew> emptyList = new ArrayList<EldDataModelNew>();
 
         settings = context.getSharedPreferences(PREFS_NAME,Context.MODE_PRIVATE);
@@ -92,6 +97,10 @@ public class MainDriverEldPref {
         SaveDriverLoc(context, favorites);
         return (ArrayList<EldDataModelNew>) favorites;
     }
+
+
+
+
 
 
 

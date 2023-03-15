@@ -86,10 +86,10 @@ public class OriginalLogFragment extends Fragment {
         suggestedLogFragment = new SuggestedLogFragment();
         DeviceId            = SharedPref.GetSavedSystemToken(getActivity());
         DriverId            =  SharedPref.getDriverId( getActivity());
-        offsetFromUTC       = (int) suggestedLogFragment.globally.GetTimeZoneOffSet();
+        offsetFromUTC       = (int) suggestedLogFragment.globally.GetDriverTimeZoneOffSet(getActivity());
 
         selectedArray       = suggestedLogFragment.hMethods.GetSingleDateArray( SuggestedLogFragment.driverLogArray, suggestedLogFragment.selectedDateTime, suggestedLogFragment.currentDateTime,
-                                        suggestedLogFragment.selectedUtcTime, false, offsetFromUTC );
+                                        suggestedLogFragment.selectedUtcTime, false, offsetFromUTC, getActivity() );
 
         if(selectedArray.length() > 0){
             loadData();
@@ -104,7 +104,7 @@ public class OriginalLogFragment extends Fragment {
 
 
     void loadData(){
-        suggestedLogFragment.LoadDataOnWebView(editLogWebView, selectedArray, SuggestedLogFragment.LogDate, false);
+        suggestedLogFragment.LoadDataOnWebView(editLogWebView, selectedArray, SuggestedLogFragment.LogDate, false, getActivity());
 
         if(SuggestedLogFragment.originalLogList.size() > 0) {
             EditedLogAdapter adapter = new EditedLogAdapter(getActivity(), SuggestedLogFragment.originalLogList);

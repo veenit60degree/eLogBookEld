@@ -44,6 +44,7 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.AlertDialogEld;
 import com.constants.Constants;
@@ -341,7 +342,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
 
 
     void setMinMaxDateOnView(int MaxDays, boolean isOnCreate){
-        String currentDate = globally.GetCurrentDeviceDate();
+        String currentDate = globally.GetCurrentDeviceDate(null, globally, getContext());
         String currentDateStr = globally.ConvertDateFormat(currentDate);
         DateTime selectedDateTime = globally.getDateTimeObj(currentDateStr, false);
         selectedDateTime = selectedDateTime.minusDays(MaxDays);
@@ -506,7 +507,8 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                     }
                 }
             }else{
-                globally.EldScreenToast(shareDriverLogBtn,  getContext().getResources().getString(R.string.stop_vehicle_alert),
+                globally.EldScreenToast(shareDriverLogBtn,  "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                getContext().getResources().getString(R.string.stop_vehicle_alert),
                        getContext().getResources().getColor(R.color.colorVoilation));
             }
         }
@@ -640,7 +642,8 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                 cycleId = "3";
             }
 
-            dateDialog = new DatePickerDialog(getContext(), cycleId + ",sendLog", globally.GetCurrentDeviceDate(), new DateListener(), false);
+            dateDialog = new DatePickerDialog(getContext(), cycleId + ",sendLog",
+                    globally.GetCurrentDeviceDate(null, globally, getContext()), new DateListener(), false);
             dateDialog.show();
         } catch (final IllegalArgumentException e) {
             e.printStackTrace();
@@ -720,11 +723,18 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                                 SharedPref.getTimeZone(getContext()));
                     }else{
                         if(insComments.length() == 0) {
-                            statusEndConfDialog.ShowAlertDialog(getContext().getString(R.string.Confirmation_suggested),
-                                    getContext().getString(R.string.confirm_witout_comment),
-                                    getContext().getString(R.string.yes), getContext().getString(R.string.no),
-                                    0, positiveCallBack, negativeCallBack);
 
+                             if(inspectorCommentLay.getVisibility() == View.VISIBLE) {
+                                 statusEndConfDialog.ShowAlertDialog(getContext().getString(R.string.Confirmation_suggested),
+                                         getContext().getString(R.string.confirm_witout_comment),
+                                         getContext().getString(R.string.yes), getContext().getString(R.string.no),
+                                         0, positiveCallBack, negativeCallBack);
+                             }else{
+                                 SendDriverLog(DRIVER_ID, DeviceId, startDateTv.getText().toString(),
+                                         endDateTv.getText().toString(), email, insComments,
+                                         MailCheck, ServiceCheck, Globally.LATITUDE, Globally.LONGITUDE,
+                                         SharedPref.getTimeZone(getContext()));
+                             }
                         }else if(insComments.length() < 4){
                             globally.EldScreenToast(shareDriverLogBtn, "Enter minimum 4 char", getContext().getResources().getColor(R.color.colorVoilation));
                             inspCmntEditTxt.setError("Enter minimum 4 char");
@@ -886,6 +896,9 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                                 dismiss();
 
                             }else{
+                                if(message.equals("null")){
+                                    message = "Error";
+                                }
                                 globally.EldToastWithDuration4Sec(shareDriverLogBtn, message, getContext().getResources().getColor(R.color.colorVoilation));
                             }
                         }catch (Exception e){

@@ -128,7 +128,7 @@ public class OtherOptionsDialog extends Dialog {
             Globally Global = new Globally();
             JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DriverId), dbHelper);
             List<RecapSignModel> signList   = constants.GetCertifySignList(recapViewMethod, DriverId, hMethods, dbHelper,
-                    Global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj, Global, getContext());
+                    Global.GetCurrentDeviceDate(null, Global, getContext()), CurrentCycleId, logPermissionObj, Global, getContext());
             boolean isMissingLoc = false;
             for(int i = 0 ; i < signList.size() ; i++){
                 if(signList.get(i).isMissingLocation()){
@@ -136,7 +136,8 @@ public class OtherOptionsDialog extends Dialog {
                     break;
                 }
             }
-            boolean isUncertifyLog = constants.GetCertifyLogSignStatus(recapViewMethod, DriverId, dbHelper, Global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj);
+            boolean isUncertifyLog = constants.GetCertifyLogSignStatus(recapViewMethod, DriverId, dbHelper,
+                    Global.GetCurrentDeviceDate(null, Global, getContext()), CurrentCycleId, logPermissionObj);
 
             otherOptionList = constants.getOtherOptionsList(getContext(), isAllowMalfunction, isAllowUnIdentified, isMissingLoc, isUncertifyLog);
             OtherOptionsAdapter adapter = new OtherOptionsAdapter(getContext(), isPendingNotification, pendingNotificationCount, isGps, otherOptionList);

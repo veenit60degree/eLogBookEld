@@ -269,6 +269,10 @@ public class TrailorDialog extends Dialog {
                         ReasonEditText.setHint(getContext().getResources().getString(R.string.yard_move_desc));
                         ShowHideTrailerField(Trailor, isStart);
 
+                    }else if(spinnerSelection.equals("Pre-Trip + Trailer Pickup")){
+
+                        radioEnterTrailer.performClick();
+                        ReasonEditText.setText(spinnerSelection);
                     } else {
                         ShowHideTrailerField(tempTrailerNo, isStart);
                         ReasonEditText.setVisibility(View.GONE);
@@ -442,6 +446,8 @@ public class TrailorDialog extends Dialog {
 
                             if(updatedReason.equals("Select")){
                                 Global.EldScreenToast(btnLoadingJob, ConstantsEnum.SELECT_ONDUTY_REASON, getContext().getResources().getColor(R.color.red_eld));
+                            }else if(updatedReason.equals("Pre-Trip + Trailer Pickup") && Trailer.length() == 0 && Trailor.equals(getContext().getString(R.string.no_trailer))){
+                                Global.EldScreenToast(btnLoadingJob, ConstantsEnum.NO_TRAILER_ALERT_WITH_PICKUP, getContext().getResources().getColor(R.color.red_eld));
                             }else if (updatedReason.equals("Trailer Drop") && (Trailor.length() == 0 || Trailor.equals(getContext().getString(R.string.no_trailer)))) {
                                 Global.EldScreenToast(btnLoadingJob, ConstantsEnum.NO_TRAILER_ALERT, getContext().getResources().getColor(R.color.red_eld));
 

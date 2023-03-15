@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 
+import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.AlertDialogEld;
 import com.constants.Constants;
@@ -149,7 +150,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
             }
 
             LinearLayout malfunctionChildLay = (LinearLayout)convertView.findViewById(R.id.malfunctionChildLay);
-            if(childPosition == _listDataChild.get(_listDataHeader.get(groupPosition).getEventCode()).size() -1 ) {
+        /*    if(childPosition == _listDataChild.get(_listDataHeader.get(groupPosition).getEventCode()).size() -1 ) {
                 if(DriverId.equals("0")){
                     if(UILApplication.getInstance().isNightModeEnabled()) {
                         malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.ripple_effect_dark_gray));
@@ -163,7 +164,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
                         malfunctionChildLay.setBackgroundResource(R.drawable.malfunction_child_selector);
                     }
                 }
-            }else{
+            }else{*/
                 if(DriverId.equals("0")){
                     if(UILApplication.getInstance().isNightModeEnabled()) {
                         malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.ripple_effect_dark_gray));
@@ -178,7 +179,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
                     }
 
                 }
-            }
+           // }
 
 
             int sizePadding =  constants.intToPixel(_context, 5);
@@ -392,7 +393,8 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
                             new MalfunctionDiagnosticListener());
                     malfunctionDialog.show();
                 }else{
-                    globally.EldScreenToast(view, _context.getResources().getString(R.string.stop_vehicle_alert),
+                    globally.EldScreenToast(view, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                    _context.getResources().getString(R.string.stop_vehicle_alert),
                             _context.getResources().getColor(R.color.colorVoilation));
                 }
 

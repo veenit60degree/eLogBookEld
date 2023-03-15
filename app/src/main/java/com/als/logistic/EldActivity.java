@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.background.service.BackgroundLocationService;
 import com.constants.Constants;
 import com.constants.ExitStrategy;
 import com.constants.SharedPref;
@@ -247,7 +248,8 @@ public class EldActivity extends FragmentActivity  {
 
                     }
                 }else{
-                    Globally.EldScreenToast(DOTButton, getString(R.string.stop_vehicle_alert),
+                    Globally.EldScreenToast(DOTButton, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                    getString(R.string.stop_vehicle_alert),
                             getResources().getColor(R.color.colorVoilation));
                 }
 

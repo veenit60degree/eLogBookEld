@@ -277,7 +277,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
             e.printStackTrace();
         }
 
-        DateTime currenDateTime = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
+        DateTime currenDateTime = Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, mContext);
         DateTime startDateTime ,endDateTime ;
         if(position == 0){
             startDateTime   = Globally.getDateTimeObj(EditLogFragment.oDriverLogDetail.get(0).getStartDateTime().toString(), false);
@@ -313,6 +313,12 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
             boolean isLast = false;
             if(position == driverLogList.size() -1){
                 isLast = true;
+                if(!IsCurrentDate){
+                    String endTimeStr = endDateTime.toString().substring(11,16);
+                    if(!endTimeStr.equals("23:59")) {
+                        endDateTime = endDateTime.minusSeconds(1);
+                    }
+                }
             }
 
 
@@ -755,7 +761,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
 
     void CheckTimeInLogEditing(DateTime startDate, DateTime endDate, View view, boolean IsPreviousEndAndNewStart,   DateTime selectedDateTime, boolean isLast ){
 
-        int LastJobTotalMin = endDate.getMinuteOfDay() - startDate.getMinuteOfDay();
+        long LastJobTotalMin = Constants.getDateTimeDuration(startDate, endDate).getStandardMinutes();
         if(IsPreviousEndAndNewStart){
 
             if (LastJobTotalMin == 0) {    //== 0         // || LastJobTotalMin == 1         //compareDate.equals(viewDate)
@@ -814,7 +820,8 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
         DriverLogModel logModel = list.get(position);
         // logModel.setDriverStatusId(DriverStatus);
 
-        logModel.setTotalMinutes(endDateTime.getMinuteOfDay() - startDateTime.getMinuteOfDay());
+        int LastJobTotalMin = (int) Constants.getDateTimeDuration(utcStartDateTime, utcEndDateTime).getStandardMinutes();
+        logModel.setTotalMinutes(LastJobTotalMin);
         logModel.setStartDateTime(startDateTime);
         logModel.setEndDateTime(endDateTime);
 
@@ -836,9 +843,10 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
 
 
         DriverLogModel logModel = list.get(position);
-        DateTime endDateTime = Globally.getDateTimeObj(logModel.getEndDateTime().toString(), false);
+        DateTime UtcEndDateTime = Globally.getDateTimeObj(logModel.getUtcEndDateTime().toString(), false);
 
-        logModel.setTotalMinutes(endDateTime.getMinuteOfDay() - startDateTime.getMinuteOfDay());
+        int TotalMinutes = (int) Constants.getDateTimeDuration(utcStartDateTime, UtcEndDateTime).getStandardMinutes();
+        logModel.setTotalMinutes(TotalMinutes);
         logModel.setStartDateTime(startDateTime);
         // logModel.setEndDateTime(endDateTime);
 

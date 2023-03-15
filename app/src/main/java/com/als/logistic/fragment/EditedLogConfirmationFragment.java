@@ -77,9 +77,9 @@ public class EditedLogConfirmationFragment extends Fragment {
         suggestedLogFragment = new SuggestedLogFragment();
         DeviceId            = SharedPref.GetSavedSystemToken(getActivity());
         DriverId            = SharedPref.getDriverId( getActivity());
-        offsetFromUTC       = (int) suggestedLogFragment.globally.GetTimeZoneOffSet();
+        offsetFromUTC       = (int) suggestedLogFragment.globally.GetDriverTimeZoneOffSet(getActivity());
 
-        suggestedLogFragment.LoadDataOnWebView(editLogWebView, SuggestedLogFragment.editedLogArray, SuggestedLogFragment.LogDate, true);
+        suggestedLogFragment.LoadDataOnWebView(editLogWebView, SuggestedLogFragment.editedLogArray, SuggestedLogFragment.LogDate, true, getActivity());
 
         if(SuggestedLogFragment.editedLogList.size() > 0) {
             EditedLogAdapter adapter = new EditedLogAdapter(getActivity(), SuggestedLogFragment.editedLogList);

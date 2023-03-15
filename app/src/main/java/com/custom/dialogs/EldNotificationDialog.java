@@ -38,7 +38,7 @@ public class EldNotificationDialog extends Dialog  {
 
     private String DriverId, DeviceId, VehicleId, eldNotification, MainDriverId, message = "";
     ViewPager viewpager;
-    Button notificationOkBtn;
+    TextView notificationOkBtn;
     SaveDriverLogPost saveDriverLogPost;
     Constants constants;
     JSONArray notiArray;
@@ -74,7 +74,7 @@ public class EldNotificationDialog extends Dialog  {
 
         final TextView notificationDescTV = (TextView) findViewById(R.id.notificationDescTV);
 
-        notificationOkBtn       = (Button)findViewById(R.id.notificationOkBtn);
+        notificationOkBtn       = (TextView)findViewById(R.id.notificationOkBtn);
         viewpager               = (ViewPager)findViewById(R.id.viewpager);
 
         viewpager.setVisibility(View.GONE);

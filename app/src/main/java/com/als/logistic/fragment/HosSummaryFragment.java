@@ -1,12 +1,15 @@
 package com.als.logistic.fragment;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,6 +86,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     ImageView eldMenuBtn,hosFlagImgView;
     LoadingSpinImgView loadingSpinEldIV;
     RelativeLayout eldMenuLay, obdHosInfoImg, malfunctionLay;
+    RelativeLayout shiftLeftLay, perDayLeftLay, jobMiddleLowerLay, jobRightUpperLay, jobRightLowerLay;
+    LinearLayout jobMiddleUpperLay;
     CircleProgressView breakCircularView, shiftCircularView, perShiftCurrentDrivingCircularView,perShiftCurrentOnDutyCircularView,perShiftCurrentOffDutyCircularView,perDayCurrentDrivingCircularView,perDayCurrentOnDutyCircularView,perDayCurrentOffDutyCircularView,cycleCircularView,hosUsaCycleCircularView;
     CardView hosDistanceCardView, hosLocationCardView,sendLogHosBtn,hosPerDayDrivingCardView,hosPerDayOnDutyCardView,hosPerDayOffDutyCardView,hosCycleCardView,hosPerShiftDrivingCardView,hosPerShiftOnDutyCardView,hosPerShiftBreakCardView;
     RelativeLayout rightMenuBtn;
@@ -136,7 +141,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     int minOffDutyUsedHours = 0;
     int rulesVersion;
 
-    boolean IsAOBRDAutomatic = true, isSingleDriver;
+    boolean IsAOBRDAutomatic = true, isSingleDriver, isOnCreate = true;
     boolean isRefreshBtnClicked = false, isMinOffDutyHoursSatisfied = false;
 
     DateTime currentDateTime , currentUTCTime;
@@ -195,7 +200,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             e.printStackTrace();
         }
 
-// can 16, us 14
+
         initView(rootView);
 
         return rootView;
@@ -241,6 +246,15 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         eldMenuLay              = (RelativeLayout)v.findViewById(R.id.eldMenuLay);
         obdHosInfoImg           = (RelativeLayout)v.findViewById(R.id.obdHosInfoImg);
         malfunctionLay          = (RelativeLayout)v.findViewById(R.id.malfunctionLay);
+
+        shiftLeftLay            = (RelativeLayout)v.findViewById(R.id.shiftLeftLay);
+        perDayLeftLay           = (RelativeLayout)v.findViewById(R.id.perDayLeftLay);
+        jobMiddleLowerLay       = (RelativeLayout)v.findViewById(R.id.jobMiddleLowerLay);
+        jobRightUpperLay        = (RelativeLayout)v.findViewById(R.id.jobRightUpperLay);
+        jobRightLowerLay        = (RelativeLayout)v.findViewById(R.id.jobRightLowerLay);
+
+        jobMiddleUpperLay       = (LinearLayout)v.findViewById(R.id.jobMiddleUpperLay);
+
 
         eldMenuBtn              = (ImageView)v.findViewById(R.id.eldMenuBtn);
 
@@ -428,7 +442,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                 if (buttonView.isPressed()) {
 
                     if (global.isSingleDriver(getActivity()) && SharedPref.IsAppRestricted(getActivity()) && SharedPref.isVehicleMoving(getActivity())) {
-                        Globally.EldScreenToast(eldMenuLay, getString(R.string.stop_vehicle_alert),
+                        Globally.EldScreenToast(eldMenuLay, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                        getString(R.string.stop_vehicle_alert),
                                 getResources().getColor(R.color.colorVoilation));
 
                         if(buttonView.isChecked()){
@@ -476,6 +491,9 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                 }
             }, Constants.SocketTimeout5Sec);
         }
+
+        checkScreenPixel();
+
     }
 
 
@@ -486,9 +504,97 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         outState.clear();
     }
 
+    boolean isWiredTablet(){
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        int width = display.getWidth();
+        Logger.LogDebug("width","width: " +width);
+
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int densityDpi = (int)(metrics.density * 160f);
+        Logger.LogDebug("densityDpi","densityDpi: " +densityDpi);
+
+        if(!Globally.isTablet(getActivity()) && width <= 1280 && densityDpi <= 320){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
+
+    private void checkScreenPixel(){
+
+        if(isWiredTablet()){
+            int height = constants.intToPixel(getActivity(), 140);
+
+            shiftLeftLay.setLayoutParams(new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, height));
+            perDayLeftLay.setLayoutParams(new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, height));
+            jobMiddleLowerLay.setLayoutParams(new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, height));
+            jobRightUpperLay.setLayoutParams(new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, height));
+            jobRightLowerLay.setLayoutParams(new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, height));
+            jobMiddleUpperLay.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height));
+
+            cycleCircularView.setBarWidth(9);
+            cycleCircularView.setRimWidth(9);
+
+            breakCircularView.setBarWidth(9);
+            breakCircularView.setRimWidth(9);
+
+            shiftCircularView.setBarWidth(9);
+            shiftCircularView.setRimWidth(9);
+
+            perShiftCurrentDrivingCircularView.setBarWidth(9);
+            perShiftCurrentDrivingCircularView.setRimWidth(9);
+
+            perShiftCurrentOnDutyCircularView.setBarWidth(9);
+            perShiftCurrentOnDutyCircularView.setRimWidth(9);
+
+            perDayCurrentDrivingCircularView.setBarWidth(9);
+            perDayCurrentDrivingCircularView.setRimWidth(9);
+
+            perDayCurrentOnDutyCircularView.setBarWidth(9);
+            perDayCurrentOnDutyCircularView.setRimWidth(9);
+
+            perDayCurrentOffDutyCircularView.setBarWidth(9);
+            perDayCurrentOffDutyCircularView.setRimWidth(9);
+
+
+            perShiftUsedDrivingTV.setTextSize(25);
+            perShiftUsedOnDutyTV.setTextSize(25);
+            perShiftUsedOffDutyTV.setTextSize(25);
+            perShiftUsedTimeTV.setTextSize(25);
+
+            perDayUsedDrivingTV.setTextSize(25);
+            perDayUsedOnDutyTV.setTextSize(25);
+            perDayUsedOffDutyTV.setTextSize(25);
+            cycleUsedTimeTV.setTextSize(25);
+
+          /*  perShiftDrivingTV.setPadding(0,0,0,30);
+            perShiftOnDutyTV.setPadding(0,0,0,30);
+            perShiftUsedOffDutyTV.setPadding(0,0,0,30);
+            perShiftUsedTimeTV.setPadding(0,0,0,30);
+
+            perDayUsedDrivingTV.setPadding(0,0,0,30);
+            perDayUsedOnDutyTV.setPadding(0,0,0,30);
+            perDayUsedOffDutyTV.setPadding(0,0,0,30);
+            cycleUsedTimeTV.setPadding(0,0,0,30);
+*/
+
+          /*  if(perShiftNextBreakTV.getText().toString().equals("Off Duty")){
+                perShiftNextBreakTV.setTextSize(17);
+                perShiftNextBreakTV.setPadding(0,0,0,30);
+
+            }*/
+
+        }
+
+    }
+
+
     void setAccPersonalDistanceOnView(){
         try {
-            double AccumulativePersonalDistance = constants.getAccumulativePersonalDistance(DriverId, offsetFromUTC, Globally.GetCurrentJodaDateTime(),
+            double AccumulativePersonalDistance = constants.getAccumulativePersonalDistance(DriverId, offsetFromUTC,
+                    Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getActivity()),
                     Globally.GetCurrentUTCDateTime(), hMethods, dbHelper, getActivity());
             accPerDistanceTv.setText(constants.Convert2DecimalPlacesDouble(AccumulativePersonalDistance) + " km");
         }catch (Exception e){
@@ -611,6 +717,13 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
         eldMenuLay.setEnabled(true);
         RestartTimer();
+
+        if(!isOnCreate){
+            resetAllBar();
+            CycleTimeCalculation(true, true);
+        }
+
+        isOnCreate = false;
 
     }
 
@@ -932,7 +1045,11 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                         }
                     }
 
+
                     perShiftNextBreakTV.setText("Next Break");
+                    perShiftNextBreakTV.setTextSize(14);
+                    perShiftNextBreakTV.setPadding(0,0,0,0);
+
                 }else if((DRIVER_JOB_STATUS == SLEEPER || DRIVER_JOB_STATUS == OFF_DUTY)){
                     int sbUsed = (int) usedAndRemainingTimeSB.getSleeperUsedMinutes();
                     int sbRemaining = (int) usedAndRemainingTimeSB.getSleeperRemainingMinutes();
@@ -946,6 +1063,9 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     }
 
                     perShiftNextBreakTV.setText("Break Time");
+                    perShiftNextBreakTV.setTextSize( 14);
+                    perShiftNextBreakTV.setPadding(0,0,0,0);
+
                     perShiftUsedOffDutyTV.setText(Html.fromHtml(getHtmlText("U " + global.FinalValue(sbUsed), "R " + global.FinalValue((int) usedAndRemainingTimeSB.getSleeperRemainingMinutes()))));
 
 
@@ -969,6 +1089,14 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 //                    remainingTime = CanadaBreakHour;
 //                }
                 perShiftNextBreakTV.setText("Off Duty");
+                perShiftNextBreakTV.setTextSize(16);
+
+                if(isWiredTablet()) {
+                    perShiftNextBreakTV.setPadding(0, 28, 0, 0);
+                }else{
+                    perShiftNextBreakTV.setPadding(0, 15, 0, 0);
+                }
+
                 perShiftUsedOffDutyTV.setText(Html.fromHtml(getHtmlTextDayWise("U " + global.FinalValue(UsedOffDutyHoursInt), "R " + global.FinalValue(0) )));
                 breakCircularView.setMaxValue(TotalOffDutyHour); // 8 * 60 = 480 (8 hours)
                 breakCircularView.setValue(UsedOffDutyHoursInt);
@@ -1039,7 +1167,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         String usedTimeStr = "<html> " + usedTime;
         String remainingTimeStr = "";
         if(remainedTime.length() > 0) {
-            remainingTimeStr = "<br/>" + "<small> <font  color='\"+ HOS_REMAIN_COLOR +\"'>" + remainedTime + "</font> </html>";
+            remainingTimeStr = "<br/>" + "<medium> <font  color='\" "+ HOS_REMAIN_COLOR +" \"'>" + remainedTime + "</font> </html>";
         }
         return usedTimeStr + remainingTimeStr;
     }
@@ -1048,7 +1176,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         String usedTimeStr = "<html> " + usedTime;
         String remainingTimeStr = "";
         if(!remainedTime.equals("R 00:00")){
-            remainingTimeStr = "<br/>"+"<small> <font  color='\"+ HOS_REMAIN_COLOR +\"'>"+ remainedTime +"</font> </html>";
+            remainingTimeStr = "<br/>"+"<medium> <font  color='\" "+ HOS_REMAIN_COLOR +" \"'>"+ remainedTime +"</font> </html>";
         }
         return usedTimeStr + remainingTimeStr;
     }
@@ -1188,7 +1316,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             final String currentOdometerStr   = SharedPref.getObdOdometer(getContext());
 
             if(dayStartSavedDate.length() > 0) {
-                if (dayStartSavedDate.equals(global.GetCurrentDeviceDate())) {
+                if (dayStartSavedDate.equals(global.GetCurrentDeviceDate(null, global, getActivity()))) {
 
                     distanceInKm = Double.parseDouble(currentOdometerStr) - Double.parseDouble(dayStartOdometerStr);
 
@@ -1245,10 +1373,11 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                 }
             }
 
-            currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);    // Current Date Time
             currentUTCTime = global.getDateTimeObj(global.GetCurrentUTCTimeFormat(), true);
+            currentDateTime = global.GetDriverCurrentTime(currentUTCTime.toString(), global, getActivity());
 
-            currentDayArray = hMethods.GetSingleDateArray(driverLogArray, currentDateTime, currentDateTime, currentUTCTime, true, offsetFromUTC);
+            currentDayArray = hMethods.GetSingleDateArray(driverLogArray, currentDateTime, currentDateTime, currentUTCTime,
+                    true, offsetFromUTC, getActivity());
             rulesVersion = SharedPref.GetRulesVersion(getActivity());
 
             List<DriverLog> oDriverLogDetail = hMethods.getSavedLogList(Integer.valueOf(DriverId), currentDateTime, currentUTCTime, dbHelper);
@@ -1426,6 +1555,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     private class HosTimerTask extends TimerTask {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         public void run() {
+
             if(global.isSingleDriver(getActivity()) && SharedPref.isVehicleMoving(getActivity())) {
                 resetAllBar();
                 resetCycle();
@@ -1476,7 +1606,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     ObdDataInfoDialog obdDialog = new ObdDataInfoDialog(getActivity(), DriverId);
                     obdDialog.show();
                 }else {
-                    Globally.EldScreenToast(eldMenuLay, getString(R.string.stop_vehicle_alert),
+                    Globally.EldScreenToast(eldMenuLay, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                    getString(R.string.stop_vehicle_alert),
                             getResources().getColor(R.color.colorVoilation));
                 }
 
@@ -1495,7 +1626,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     eldMenuLay.setEnabled(false);
                     getParentFragmentManager().popBackStack();
                 }else{
-                    Globally.EldScreenToast(eldMenuLay, getString(R.string.stop_vehicle_alert),
+                    Globally.EldScreenToast(eldMenuLay, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                    getString(R.string.stop_vehicle_alert),
                             getResources().getColor(R.color.colorVoilation));
                 }
 
@@ -1514,7 +1646,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                                 Globally.EldScreenToast(sendLogHosBtn, getString(R.string.chnge_dr_to_othr),
                                         getResources().getColor(R.color.colorVoilation));
                             }else {
-                                global.EldScreenToast(sendLogHosBtn, getString(R.string.stop_vehicle_alert),
+                                global.EldScreenToast(sendLogHosBtn, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                                getString(R.string.stop_vehicle_alert),
                                         getResources().getColor(R.color.colorVoilation));
                             }
                         }
@@ -1523,7 +1656,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                         global.EldToastWithDuration(sendLogHosBtn, getResources().getString(R.string.share_not_allowed), getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
-                    Globally.EldScreenToast(eldMenuLay, getString(R.string.stop_vehicle_alert),
+                    Globally.EldScreenToast(eldMenuLay, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                    getString(R.string.stop_vehicle_alert),
                             getResources().getColor(R.color.colorVoilation));
                 }
 
@@ -1552,7 +1686,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                         }
                     }, Constants.SocketTimeout1Sec);
                 }else{
-                    Globally.EldScreenToast(eldMenuLay, getString(R.string.stop_vehicle_alert),
+                    Globally.EldScreenToast(eldMenuLay, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                    getString(R.string.stop_vehicle_alert),
                             getResources().getColor(R.color.colorVoilation));
                 }
 
@@ -1616,13 +1751,13 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         String VIN          = SharedPref.getVINNumber(getActivity()); //DriverConst.GetDriverTripDetails(DriverConst.VIN, getActivity());
 
         // get device current date and day start UTC date
-        String currentDateStr = global.GetCurrentDateTime();
+        String currentDateStr = global.GetDriverCurrentDateTime(global, getActivity());
         currentDateTime     = global.getDateTimeObj(currentDateStr, false);    // Current Date Time
         String cDate = currentDateStr;
         cDate = cDate.split("T")[0]+"T00:00:00";
         DateTime currentStartUtcDate = new DateTime(cDate);
         String utcDateStr = String.valueOf(new DateTime(Globally.getDateTimeObj(currentStartUtcDate.toString(), false)) );
-        Logger.LogDebug("cDate","cDate11: " +  utcDateStr);
+       // Logger.LogDebug("cDate","cDate11: " +  utcDateStr);
 
 
 

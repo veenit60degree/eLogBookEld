@@ -29,7 +29,8 @@ import com.als.logistic.Globally;
 public class LocationListenerService extends Service  implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    private static final long MIN_TIME_LOCATION_UPDATES = 3 * 1000;   // 1 sec
+    private static final long MIN_TIME_LOCATION_UPDATES = 2 * 1000;   // 2 sec
+    int MIN_DISTANCE_METER = 10;
     public static LocationRequest locationRequest;
     public static GoogleApiClient mGoogleApiClient;
     protected LocationManager locationManager;
@@ -90,7 +91,7 @@ public class LocationListenerService extends Service  implements GoogleApiClient
             }
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                     MIN_TIME_LOCATION_UPDATES,
-                    10, locationListenerGPS);
+                    MIN_DISTANCE_METER, locationListenerGPS);
             Location loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (loc != null) {
                 Globally.LATITUDE = "" + loc.getLatitude();
@@ -116,9 +117,9 @@ public class LocationListenerService extends Service  implements GoogleApiClient
             Globally.GPS_LATITUDE = "" + location.getLatitude();
             Globally.GPS_LONGITUDE = "" + location.getLongitude();
 
-            global.ShowLocalNotification(getApplicationContext(), "LocationListener",
+          /*  global.ShowLocalNotification(getApplicationContext(), "LocationListener",
                     "Latitude: " + location.getLatitude() + ",Longitude: " + location.getLongitude(), 5001);
-
+*/
 
             if(!SharedPref.IsLocReceivedFromObd(getApplicationContext())) {
 

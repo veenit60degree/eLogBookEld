@@ -89,12 +89,6 @@ public class AppUpdateDialog extends Dialog {
         String downloadDesc = context.getResources().getString(R.string.new_version) + newAppVersion +
                 context.getResources().getString(R.string.update_app_desc);
 
-        /*if(updateType.equals("play_store")){
-            if(isPlayStoreExist()){
-                isPlayStoreDownload = true;
-            }
-        }*/
-
         if(isPlayStoreDownload) {
             appVersionDescTV.setText(downloadDesc + " " + context.getResources().getString(R.string.play_store));
         }else{
@@ -105,7 +99,7 @@ public class AppUpdateDialog extends Dialog {
             @Override
             public void onClick(View v) {
                 btnIgnore.setEnabled(false);
-                SharedPref.SetUpdateAppDialogTime(Globally.GetCurrentDeviceDate(), context);
+                SharedPref.SetUpdateAppDialogTime(Globally.GetCurrentDeviceDate(null, new Globally(), context), context);
 
                 ignoreUpdate(DriverId, DeviceId, currentVersion);
 
@@ -130,7 +124,7 @@ public class AppUpdateDialog extends Dialog {
         @Override
         public void onClick(View v) {
            // updateListener.UpdateReady( startTimeTextView, endTimeTextView, viewType, timePicker );
-            SharedPref.SetUpdateAppDialogTime(Globally.GetCurrentDeviceDate(), context);
+            SharedPref.SetUpdateAppDialogTime(Globally.GetCurrentDeviceDate(null, new Globally(), context), context);
 
             if(isPlayStoreDownload){
                 launchPlayStore();

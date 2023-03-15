@@ -1,5 +1,6 @@
 package com.local.db;
 
+import android.annotation.SuppressLint;
 import android.database.Cursor;
 
 import org.json.JSONArray;
@@ -22,7 +23,7 @@ public class DriverPermissionMethod {
         try {
             if (rs != null && rs.getCount() > 0) {
                 rs.moveToFirst();
-                String logList = rs.getString(rs.getColumnIndex(DBHelper.PERMISSION_LIST));
+                @SuppressLint("Range") String logList = rs.getString(rs.getColumnIndex(DBHelper.PERMISSION_LIST));
                 try {
                     logJObject = new JSONObject(logList);
                 } catch (JSONException e) {
@@ -34,7 +35,7 @@ public class DriverPermissionMethod {
                 rs.close();
             }
         }catch (Exception e){
-            e.printStackTrace();
+           // e.printStackTrace();
         }
         return logJObject;
 

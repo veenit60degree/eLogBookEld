@@ -19,6 +19,7 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.DriverLogResponse;
@@ -256,9 +257,16 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
 
     String getTime(String date){
-        DateTime dateTime = Globally.getDateTimeObj(date, false);
-        int monthOfYear = dateTime.getMonthOfYear();
-        return dateTime.getDayOfMonth() + " " + Globally.MONTHS[monthOfYear - 1] + " " + Globally.Convert12HourFormatTime(date);
+        if(date != null && date.length() > 10) {
+            DateTime dateTime = Globally.getDateTimeObj(date, false);
+            int monthOfYear = dateTime.getMonthOfYear();
+            return dateTime.getDayOfMonth() + " " + Globally.MONTHS[monthOfYear - 1] + " " + Globally.Convert12HourFormatTime(date);
+        }else{
+            if(date != null)
+                return date;
+            else
+                return "";
+        }
 
     }
 
@@ -286,10 +294,13 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
                     if(constant.isActionAllowed(getContext())) {
 
-                        remarksDialog = new AdverseRemarksDialog(getActivity(), false, false,false,false,false,false, isCompanyAssigned,null,null,new RemarksListener());
+                        remarksDialog = new AdverseRemarksDialog(getActivity(), false, false,
+                                false,false,false,false,
+                                isCompanyAssigned,null,null,new RemarksListener());
                         remarksDialog.show();
                     }else{
-                        Globally.EldScreenToast(rejectRecordBtn, getString(R.string.stop_vehicle_alert),
+                        Globally.EldScreenToast(rejectRecordBtn, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                        getString(R.string.stop_vehicle_alert),
                                 getResources().getColor(R.color.colorVoilation));
                     }
                 } catch (Exception e) {
@@ -325,7 +336,8 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
                         }
 
                     }else{
-                        Globally.EldScreenToast(rejectRecordBtn, getString(R.string.stop_vehicle_alert),
+                        Globally.EldScreenToast(rejectRecordBtn, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                        getString(R.string.stop_vehicle_alert),
                                 getResources().getColor(R.color.colorVoilation));
                     }
 

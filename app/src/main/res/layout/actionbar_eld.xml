@@ -24,17 +24,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@drawable/green_with_corner_drawable"
-                android:backgroundTint="?attr/actionbar_color"
-                android:paddingLeft="@dimen/margin_short_6"
+                android:paddingLeft="@dimen/margin_short_4"
                 android:paddingTop="@dimen/margin_short_8"
-                android:paddingRight="@dimen/margin_short_6"
+                android:paddingRight="@dimen/margin_short_4"
                 android:paddingBottom="@dimen/margin_short_8"
 
                 >
 
                 <ImageView
                     android:id="@+id/eldMenuBtn"
-                    android:layout_width="@dimen/view_height_30"
+                    android:layout_width="@dimen/margin_27"
                     android:layout_height="@dimen/view_height_30"
                     android:layout_centerVertical="true"
                     android:src="@drawable/slide_menu"
@@ -60,43 +59,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_10"
                 android:layout_toRightOf="@+id/eldMenuLay"
                 android:text="@string/als_certificate"
                 android:textColor="@color/whiteee"
-                android:textSize="@dimen/text_size_16" />
+                android:textSize="@dimen/text_size_13" />
 
 
             <RelativeLayout
                 android:id="@+id/settingsMenuBtn"
-                android:layout_width="@dimen/view_height_40"
+                android:layout_width="@dimen/view_height_36"
                 android:layout_height="@dimen/view_height_44"
-                android:layout_marginLeft="@dimen/margin_10"
+                android:layout_marginLeft="@dimen/margin_short_3"
                 android:layout_toRightOf="@+id/eldCodeTV"
                 android:background="@drawable/green_with_corner_drawable"
-                android:backgroundTint="?attr/actionbar_color"
-                android:gravity="center_horizontal"
-                android:visibility="gone">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:padding="@dimen/margin_10"
-                    android:src="@drawable/settings_white" />
-
-
-            </RelativeLayout>
-
-
-            <RelativeLayout
-                android:id="@+id/logoutMenuBtn"
-                android:layout_width="@dimen/view_height_40"
-                android:layout_height="@dimen/view_height_44"
-                android:layout_marginLeft="@dimen/margin_short_2"
-                android:layout_toRightOf="@+id/settingsMenuBtn"
-                android:background="@drawable/green_with_corner_drawable"
-                android:backgroundTint="?attr/actionbar_color"
                 android:gravity="center_horizontal"
                 android:visibility="gone">
 
@@ -105,6 +80,27 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:padding="@dimen/margin_short_8"
+                    android:src="@drawable/settings_white" />
+
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/logoutMenuBtn"
+                android:layout_width="@dimen/view_height_36"
+                android:layout_height="@dimen/view_height_44"
+                android:layout_marginLeft="@dimen/margin_short_1"
+                android:layout_toRightOf="@+id/settingsMenuBtn"
+                android:background="@drawable/green_with_corner_drawable"
+                android:gravity="center_horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:padding="@dimen/margin_short_6"
                     android:src="@drawable/logout_home"
                     android:tint="@color/white" />
 
@@ -114,20 +110,20 @@
 
             <RelativeLayout
                 android:id="@+id/restartBleMenuBtn"
-                android:layout_width="@dimen/view_height_40"
+                android:layout_width="@dimen/view_height_36"
                 android:layout_height="@dimen/view_height_44"
-                android:layout_marginLeft="@dimen/margin_short_2"
+                android:layout_marginLeft="@dimen/margin_short_1"
                 android:layout_toRightOf="@+id/logoutMenuBtn"
                 android:background="@drawable/green_with_corner_drawable"
-                android:backgroundTint="?attr/actionbar_color"
                 android:gravity="center_horizontal"
                 android:visibility="gone">
+                <!--android:backgroundTint="?attr/actionbar_color"-->
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:padding="@dimen/margin_short_8"
+                    android:padding="@dimen/margin_short_6"
                     android:src="@drawable/ble_app_restart"
                     android:tint="@color/white" />
 
@@ -241,12 +237,13 @@
 
         <RelativeLayout
             android:id="@+id/dayNightLay"
-            android:layout_width="@dimen/view_height_40"
+            android:layout_width="@dimen/view_height_36"
             android:layout_height="@dimen/view_height_44"
             android:layout_toLeftOf="@+id/rightCornerLay"
             android:background="@drawable/green_with_corner_drawable"
             android:padding="@dimen/margin_short_6"
-            android:visibility="gone">
+            android:visibility="gone"
+           >
 
             <ImageView
                 android:id="@+id/dayNightButton"
@@ -269,10 +266,9 @@
 
             <RelativeLayout
                 android:id="@+id/rightMenuBtn"
-                android:layout_width="@dimen/view_height_40"
+                android:layout_width="@dimen/view_height_36"
                 android:layout_height="@dimen/view_height_44"
                 android:background="@drawable/green_with_corner_drawable"
-                android:backgroundTint="?attr/actionbar_color"
                 android:gravity="center_horizontal">
 
                 <com.constants.LoadingSpinImgView
@@ -280,7 +276,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:padding="@dimen/margin_short_6" />
+                    android:padding="@dimen/margin_short_4" />
 
                 <TextView
                     android:id="@+id/refreshTitleTV"
@@ -299,13 +295,12 @@
 
             <RelativeLayout
                 android:id="@+id/otherOptionBtn"
-                android:layout_width="@dimen/view_height_40"
+                android:layout_width="@dimen/view_height_36"
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/green_with_corner_drawable"
-                android:backgroundTint="?attr/actionbar_color"
                 android:gravity="center_horizontal"
                 android:visibility="gone">
 
@@ -313,7 +308,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:padding="@dimen/margin_13"
+                    android:padding="@dimen/margin_11"
                     android:src="@drawable/three_dot" />
 
 

@@ -158,7 +158,8 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
         dateActionBarTV.setText(InspectionDateTime);
 
         CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getActivity()), getActivity());
-        CurrentDate         = Globally.GetCurrentDeviceDate();
+        CurrentDate         = Globally.GetCurrentDeviceDate(null, global, getActivity());
+
 
         if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS) ) {
             MaxDays = UsaMaxDays;

@@ -1,9 +1,11 @@
 package com.local.db;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.database.Cursor;
 
 import com.als.logistic.Globally;
+import com.constants.APIs;
 import com.constants.Constants;
 
 import org.joda.time.DateTime;
@@ -59,7 +61,7 @@ public class FailedApiTrackMethod {
     }
 
 
-    public void confirmAndSaveApiTrack(DBHelper dbHelper, String api, boolean isSave){
+    public void confirmAndSaveApiTrack(DBHelper dbHelper, String api, Globally global, Context context){
         try{
             boolean isAlreadyExistApi = false;
             JSONArray failedApiTrackList = getFailedApiTrackList(dbHelper);
@@ -70,18 +72,25 @@ public class FailedApiTrackMethod {
                 if(api.equals(FailedApiName)){
                     isAlreadyExistApi = true;
 
-                    if(isSave){
-                        int FailedApiCount = obj.getInt(ConstantsKeys.FailedApiCount);
-                        saveApiCall(dbHelper, failedApiTrackList, api, FailedApiCount+1, i, true);
-                    }
+                    int FailedApiCount = obj.getInt(ConstantsKeys.FailedApiCount);
+                    updateCountOnly(dbHelper, failedApiTrackList, FailedApiCount+1, i, global, context);
 
                     break;
                 }
             }
 
-            // if api not exist then save his entry
-            if(!isAlreadyExistApi && isSave){
-                saveApiCall(dbHelper, failedApiTrackList, api, 1, 0, false);
+            // if api not exist then add new entry in api list
+            if(!isAlreadyExistApi){
+                JSONObject newApiObj = new JSONObject();
+                newApiObj.put(ConstantsKeys.FailedApiName, api);
+                newApiObj.put(ConstantsKeys.FailedApiCount, 0);
+                newApiObj.put(ConstantsKeys.FailedApiTime, Globally.GetCurrentDateTime(global, context));
+
+                failedApiTrackList.put(newApiObj);
+
+                // update failed api in table
+                FailedApiTrackHelper(dbHelper, failedApiTrackList);
+
             }
 
         }catch (Exception e){
@@ -90,31 +99,30 @@ public class FailedApiTrackMethod {
     }
 
 
-    public void saveApiCall(DBHelper dbHelper, JSONArray failedApiTrackList, String api, int count,
-                             int position, boolean isUpdate){
+    public void updateCountOnly(DBHelper dbHelper, JSONArray failedApiTrackList, int count, int position,
+                                Globally global, Context context){
         try{
-            JSONObject newApiObj = new JSONObject();
-            newApiObj.put(ConstantsKeys.FailedApiName, api);
-            newApiObj.put(ConstantsKeys.FailedApiCount, count);
-            newApiObj.put(ConstantsKeys.FailedApiTime, Globally.GetCurrentDateTime());
+            if(failedApiTrackList.length() > position) {
+                JSONObject newApiObj = (JSONObject) failedApiTrackList.get(position);
+                newApiObj.put(ConstantsKeys.FailedApiCount, count);
+                if(count == 0){
+                    newApiObj.put(ConstantsKeys.FailedApiTime, Globally.GetCurrentDateTime(global, context));
+                }
 
-            if(isUpdate){
                 failedApiTrackList.put(position, newApiObj);
 
-            }else {
-                failedApiTrackList.put(newApiObj);
+                // update api count and save in table
+                FailedApiTrackHelper(dbHelper, failedApiTrackList);
             }
-
-            // update api count and save in table
-            FailedApiTrackHelper(dbHelper, failedApiTrackList);
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
+    public boolean isAllowToCallOrReset(DBHelper dbHelper, String api, boolean isReset, Globally global, Context context){
 
-    public boolean isAllowToCallOrReset(DBHelper dbHelper, String api, boolean isReset){
-
+        boolean isExist = false;
+        int Count = 3;
         boolean isAllowToCall = true;
         JSONArray failedApiTrackList = getFailedApiTrackList(dbHelper);
 
@@ -123,22 +131,41 @@ public class FailedApiTrackMethod {
                 JSONObject obj = (JSONObject) failedApiTrackList.get(i);
                 String FailedApiName = obj.getString(ConstantsKeys.FailedApiName);
                 if (api.equals(FailedApiName)) {
+                    isExist = true;
                     int FailedApiCount = obj.getInt(ConstantsKeys.FailedApiCount);
                     String callTime = obj.getString(ConstantsKeys.FailedApiTime);
 
-                    DateTime callDateTime = Globally.getDateTimeObj(callTime, false);
-                    long minDiff = Constants.getDateTimeDuration(callDateTime, Globally.GetCurrentJodaDateTime()).getStandardMinutes();
+                   // DateTime lastApiCallTime = Globally.getDateTimeObj(callTime, false);
+                    DateTime currentTime = Globally.getDateTimeObj(Globally.GetCurrentDateTime(global, context), false);
+
+                   // long minDiff = Constants.getDateTimeDuration(lastApiCallTime, currentTime).getStandardMinutes();
+                    int minDiff = Constants.getTimeDiffInMin(callTime, currentTime);
 
                     if(isReset){
                         // reset failed api counter after success
-                        saveApiCall(dbHelper, failedApiTrackList, api, 0, i, true);
+                        updateCountOnly(dbHelper, failedApiTrackList, 0, i, global, context);
+
                     }else {
-                        if (FailedApiCount > 4) {
+
+                        if(is18DaysListApis(api)){
+                            Count = 2;
+                        }
+
+                        if (FailedApiCount >= Count) {
                             if (minDiff <= 30) {    // stop failed api call for 30 min
+
+                                if(FailedApiCount > 40){
+                                    // reset failed api count
+                                    updateCountOnly(dbHelper, failedApiTrackList, 0, i, global, context);
+                                }else {
+                                    // update failed api count
+                                    updateCountOnly(dbHelper, failedApiTrackList, FailedApiCount + 1, i, global, context);
+                                }
                                 isAllowToCall = false;
+
                             } else {
-                                // update call time after 1 hour to ignore api call again
-                                saveApiCall(dbHelper, failedApiTrackList, api, FailedApiCount + 1, i, true);
+                                // reset failed api count
+                                updateCountOnly(dbHelper, failedApiTrackList, 0, i, global, context);
                             }
 
                             break;
@@ -146,11 +173,40 @@ public class FailedApiTrackMethod {
                     }
                 }
             }
+
+            if (!isExist && isReset){
+                // save api call count on request time
+                confirmAndSaveApiTrack(dbHelper, api, global, context);
+
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }
         return isAllowToCall;
     }
+
+
+    public int getCallCount(DBHelper dbHelper, String api){
+
+        int FailedApiCount = 0;
+        JSONArray failedApiTrackList = getFailedApiTrackList(dbHelper);
+
+        try {
+            for (int i = 0; i < failedApiTrackList.length(); i++) {
+                JSONObject obj = (JSONObject) failedApiTrackList.get(i);
+                String FailedApiName = obj.getString(ConstantsKeys.FailedApiName);
+                if (api.equals(FailedApiName)) {
+                    FailedApiCount = obj.getInt(ConstantsKeys.FailedApiCount);
+                    break;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return FailedApiCount;
+    }
+
 
     public boolean isSuccess(String response){
 
@@ -171,14 +227,14 @@ public class FailedApiTrackMethod {
     }
 
 
-    public String getFailedInputArrayData(String DriverId, String failedApi, JSONArray data){
+    public String getFailedInputArrayData(String DriverId, String failedApi, JSONArray data, Globally globally, Context context){
 
         JSONObject obj = new JSONObject();
         try{
             obj.put(ConstantsKeys.DriverId, DriverId);
             obj.put(ConstantsKeys.APIName, failedApi);
-            obj.put(ConstantsKeys.APIData, data);
-            obj.put(ConstantsKeys.IssueDateTime, Globally.GetCurrentDateTime());
+          //  obj.put(ConstantsKeys.APIData, data);
+            obj.put(ConstantsKeys.IssueDateTime, Globally.GetCurrentDateTime(globally, context));
 
         }catch (Exception e){
             e.printStackTrace();
@@ -188,14 +244,14 @@ public class FailedApiTrackMethod {
     }
 
 
-    public String getFailedInputObjData(String DriverId, String failedApi, JSONObject data){
+    public String getFailedInputObjData(String DriverId, String failedApi, JSONObject data, Globally globally, Context context){
 
         JSONObject obj = new JSONObject();
         try{
             obj.put(ConstantsKeys.DriverId, DriverId);
             obj.put(ConstantsKeys.APIName, failedApi);
-            obj.put(ConstantsKeys.APIData, data);
-            obj.put(ConstantsKeys.IssueDateTime, Globally.GetCurrentDateTime());
+           // obj.put(ConstantsKeys.APIData, data);
+            obj.put(ConstantsKeys.IssueDateTime, Globally.GetCurrentDateTime(globally, context));
 
         }catch (Exception e){
             e.printStackTrace();
@@ -204,4 +260,13 @@ public class FailedApiTrackMethod {
         return obj.toString();
     }
 
+    private boolean is18DaysListApis(String api){
+        if(api.equals(APIs.GET_DRIVER_LOG_18_DAYS) || api.equals(APIs.GET_DRIVER_LOG_18_DAYS_DETAILS) ||
+                api.equals(APIs.GET_OFFLINE_INSPECTION_LIST) || api.equals(APIs.GET_OFFLINE_17_INSPECTION_LIST) ||
+                api.equals(APIs.GET_SHIPPING_INFO_OFFLINE) || api.equals(APIs.GET_ODOMETER_OFFLINE)){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

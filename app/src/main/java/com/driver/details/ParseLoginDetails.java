@@ -74,7 +74,7 @@ public class ParseLoginDetails {
                         }
 
                         if(FirstTimeLogin){
-                            SharedPref.setFirstLoginTime(Globally.GetCurrentDateTime(), context);
+                            SharedPref.setFirstLoginTime(Globally.GetDriverCurrentDateTime(new Globally(), context), context);
                         }else{
                             SharedPref.setFirstLoginTime("", context);
                         }
@@ -249,6 +249,8 @@ public class ParseLoginDetails {
                         CanCycleName, USCycleName, TimeZone, OffSet, TimeZoneId, context);
                 DriverConst.SetDriverCurrentCycle(CurrentCycle, CurrentCycleId, context);  */
 
+            long offsetInHr = Long.parseLong(OffSet);
+            SharedPref.setDriverTimeZoneOffSet(offsetInHr, context);
 
             if(position == 0) {
                 SharedPref.setUserCountryCycle(

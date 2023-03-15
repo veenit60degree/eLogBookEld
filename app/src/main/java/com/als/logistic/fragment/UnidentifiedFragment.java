@@ -197,7 +197,10 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
     public void onResume() {
         super.onResume();
 
-        CurrentDate             = global.getCurrentDateLocal();
+        String driverZoneCurrentTime = Globally.GetDriverCurrentDateTime(global, getActivity());
+        CurrentDate = driverZoneCurrentTime.replaceAll("T", " ");
+
+      //  CurrentDate             = global.getCurrentDateLocal();
         DriverId                = SharedPref.getDriverId( getActivity());
         VIN                     = SharedPref.getVINNumber(getActivity());
         DriverName              = Slidingmenufunctions.usernameTV.getText().toString();
@@ -271,8 +274,8 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                             global.EldScreenToast(dateActionBarTV, "Select record first", getResources().getColor(R.color.colorVoilation));
                         }
                     }else{
-                        global.EldScreenToast(dateActionBarTV, getString(R.string.stop_vehicle_alert),
-                                getResources().getColor(R.color.colorVoilation));
+                        global.EldScreenToast(dateActionBarTV, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                        getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
                     }
                 }
 
@@ -467,7 +470,11 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
         params.put(ConstantsKeys.CurrentDate, CurrentDate);
         params.put(ConstantsKeys.VIN, VIN);
         params.put(ConstantsKeys.Country, Country);
-        params.put(ConstantsKeys.OffsetFromUTC, ""+global.GetTimeZoneOffSet() );
+        params.put(ConstantsKeys.OffsetFromUTC, ""+global.GetDriverTimeZoneOffSet(getActivity()) );
+
+       /* params.put(ConstantsKeys.DriverId, "130768");
+        params.put(ConstantsKeys.DeviceId, "a261a74e-f50c-4504-a342-b5bf51fb3b0e" );
+        params.put(ConstantsKeys.VIN, "3HSDZAPR8NN342271");*/
 
         GetUnidentifiedRecords.executeRequest(Request.Method.POST, APIs.GET_UNIDENTIFIED_RECORDS , params, flag,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);

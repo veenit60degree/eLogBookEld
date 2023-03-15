@@ -179,75 +179,44 @@ public class SplashActivity extends Activity implements
 
     private void checkLocationPermission() {
         // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)  != PackageManager.PERMISSION_GRANTED) {
-          //  if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            int PreciseLocation = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+            int ApproximateLocation = checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
+
+            if (PreciseLocation != PackageManager.PERMISSION_GRANTED) {
+
                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-                alertBuilder.setCancelable(true);
+                alertBuilder.setCancelable(false);
                 alertBuilder.setTitle("Location Permission Needed");
                 alertBuilder.setMessage("ALS E-Log book collects location data to enable tracking for Vehicle & Driver corresponding to different duty statuses even when app is closed or not in use.");
-                alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ActivityCompat.requestPermissions(SplashActivity.this,
-                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                LOCATION_REQUEST);
-                    }
-                });
 
-                AlertDialog alert = alertBuilder.create();
-                alert.show();
-         /*   } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        LOCATION_REQUEST);
-                // MY_PERMISSIONS_REQUEST_CAMERA is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }*/
-        } else {
+                if(ApproximateLocation == PackageManager.PERMISSION_GRANTED && PreciseLocation != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(SplashActivity.this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                            LOCATION_REQUEST);
+                }else {
+
+                    alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(SplashActivity.this,
+                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                                    LOCATION_REQUEST);
+                        }
+                    });
+
+                    AlertDialog alert = alertBuilder.create();
+                    alert.show();
+                }
+
+            } else {
+                statusCheck();
+            }
+        }else{
             statusCheck();
         }
     }
 
-
-
-    /*private void checkLocationPermission() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-        ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-            )
-            ) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                AlertDialog.Builder(SplashActivity.this)
-                        .setTitle("Location Permission Needed")
-                        .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton(
-                                "OK"
-                        ) {
-                        //Prompt the user once explanation has been shown
-                        requestLocationPermission()
-                }
-                    .create()
-                        .show()
-            } else {
-                // No explanation needed, we can request the permission.
-                requestLocationPermission()
-            }
-        } else {
-            checkBackgroundLocation()
-        }
-    }
-    */
 
 
     public  boolean isStoragePermissionGranted() {
@@ -351,12 +320,13 @@ public class SplashActivity extends Activity implements
 
 
         if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 askGpsTurnOn();
 
             } else {
               //  Logger.LogVerbose("TAG","Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 4);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 4);
             }
         }else { //permission is automatically granted on sdk<23 upon installation
           //  Logger.LogVerbose("TAG","Permission is granted");
@@ -366,7 +336,8 @@ public class SplashActivity extends Activity implements
     }
 
     void askGpsTurnOn(){
-          if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+          if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                  ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             return;
         }

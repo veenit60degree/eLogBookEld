@@ -89,7 +89,7 @@
                     android:paddingRight="@dimen/margin_18"
                     android:paddingBottom="@dimen/margin_short_5"
                     android:text="@string/certify"
-                    android:textColor="@color/blue_button"
+                    android:textColor="?attr/pager_blue"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold"
                     android:visibility="gone"

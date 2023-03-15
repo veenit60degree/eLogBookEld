@@ -114,8 +114,8 @@
      <attr name="dot_titles_bg2" format="color"/>
 
 
-   <!-- <attr name="" format="color"/>
-      <attr name="" format="color"/>
+   <attr name="blue_login_hover" format="color"/>
+    <!--   <attr name="" format="color"/>
     <attr name="" format="color"/>
     <attr name="" format="color"/>
 -->

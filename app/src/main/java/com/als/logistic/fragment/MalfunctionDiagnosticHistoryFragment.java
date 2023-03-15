@@ -118,7 +118,11 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
         CompanyId               = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
 
 
-        EventDateTime           = globally.GetCurrentDeviceDate();
+        //EventDateTime           = globally.GetCurrentDeviceDate();
+        String strCurrentDate          = globally.GetDriverCurrentDateTime(globally, getActivity());    //getCurrentDate();
+        DateTime currentDateTime         = globally.getDateTimeObj(strCurrentDate, false);
+        EventDateTime           = Globally.GetCurrentDeviceDate(currentDateTime, globally, getActivity());
+
        // CurrentCycleId          = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
         CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getActivity()), getActivity());
 
@@ -147,7 +151,7 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
     void viewOfflineData(String selectedDate){
         try{
             selectedDate = globally.ConvertDateFormatyyyy_MM_dd(selectedDate);
-            JSONArray malDiaArray = malfunctionDiagnosticMethod.getEventsDateWise(selectedDate, globally, dbHelper);  //getMalDiaDurationArray(dbHelper);
+            JSONArray malDiaArray = malfunctionDiagnosticMethod.getEventsDateWise(selectedDate, globally, dbHelper, getActivity());  //getMalDiaDurationArray(dbHelper);
 
             Logger.LogDebug("malDiaArray", "malDiaArray: " + malDiaArray);
 
@@ -197,6 +201,9 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
                     parseListInHashMap(malDiaArray, Constants.DataRecordingComplianceMalfunction);
                 }
 
+                if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.TimingCompMal, getActivity())) {     // check data rec mal permission
+                    parseListInHashMap(malDiaArray, Constants.TimingComplianceMalfunction);
+                }
 
                 notifyMalfunctionAdapter(noRecordTV, diagnosticExpandList, diagnosticHeaderList, diagnosticChildHashMap);
 
@@ -234,7 +241,8 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
                                 DetectionDataEventCode.equals(Constants.EngineSyncMalfunctionEvent) ||
                                 DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction) ||
                                 DetectionDataEventCode.equals(Constants.DataTransferMalfunction) ||
-                                DetectionDataEventCode.equals(Constants.UnIdentifiedDrivingDiagnostic)) {
+                                DetectionDataEventCode.equals(Constants.UnIdentifiedDrivingDiagnostic) ||
+                                DetectionDataEventCode.equals(Constants.TimingComplianceMalfunction)) {
                             parseData(mainObj, i);
                         } else {
                             if (DrId.equals(DriverId) || DrId.equals("0")) {
@@ -448,8 +456,9 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
 
     void VisibleHideNextPrevView(String click){
         String selectedDateStr = globally.ConvertDateFormat(EventDateTime);
-        String currentDateStr = globally.ConvertDateFormat(globally.GetCurrentDeviceDate());
         DateTime selectedDateTime = globally.getDateTimeObj(selectedDateStr, false);
+
+        String currentDateStr = globally.GetDriverCurrentDateTime(globally, getActivity());
         DateTime currentDateTime = globally.getDateTimeObj(currentDateStr, false);
 
         if(click.equals("next")){

@@ -114,6 +114,31 @@ public class WiFiConfig {
     }
 
 
+    public void testConnect(Context context){
+        wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        SupplicantState = wifiManager.getConnectionInfo().getSupplicantState().toString();
+      //  if (!SupplicantState.equals(WIFI_STATE)) {
+            if (!wifiManager.isWifiEnabled()) {
+                wifiManager.setWifiEnabled(true);
+            }
+
+            // Logger.LogDebug("SSID_PASS", "--networkSSID: " + networkSSID + "    networkPassword: " + networkPassword);
+
+            WifiConfiguration conf = new WifiConfiguration();
+            conf.SSID = String.format("\"%s\"", "OBD_AP1234");
+            conf.preSharedKey = String.format("\"%s\"", "12345678");
+            conf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK); // This is for a public network which dont have any authentication
+
+            int netId = wifiManager.addNetwork(conf);
+            wifiManager.disconnect();
+            wifiManager.enableNetwork(netId, true);
+            wifiManager.reconnect();
+
+       // }
+    }
+
+
+
     /**
      * Connect to the specified wifi network.
      *

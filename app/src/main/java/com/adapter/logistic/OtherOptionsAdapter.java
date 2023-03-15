@@ -159,7 +159,7 @@ public class OtherOptionsAdapter extends BaseAdapter {
                 break;
 
             case Constants.SUGGESTED_LOGS:
-                boolean isSuggestedOccur = false;
+                boolean isSuggestedOccur;
                 if(DriverType == Constants.MAIN_DRIVER_TYPE) {
                     isSuggestedOccur = SharedPref.isSuggestedEditOccur(context);
                 }else{

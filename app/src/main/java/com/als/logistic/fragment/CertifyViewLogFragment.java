@@ -71,6 +71,7 @@ import com.custom.dialogs.PtiSignDialog;
 import com.custom.dialogs.SignDialog;
 import com.custom.dialogs.SignRecordDialog;
 import com.driver.details.DriverConst;
+import com.local.db.FailedApiTrackMethod;
 import com.local.db.MalfunctionDiagnosticMethod;
 import com.models.EldDriverLogModel;
 import com.local.db.CertifyLogMethod;
@@ -138,6 +139,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     OdometerAdapter odometerAdapter;
     ShippingViewDetailAdapter shippingAdapter;
 
+    FailedApiTrackMethod failedApiTrackMethod;
     Animation editLogAnimation;
     Button swapDrivingBtn;
     public static Button saveSignatureBtn, editLogBtn, showHideRecapBtn;
@@ -156,7 +158,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     LinearLayout certifyLogLay, logHistorylay, recapLayout, LogInfoLay, certifyLogItemLay,
             itemOdometerLay, itemShippingLay, certifyLocLay;
     RelativeLayout rightMenuBtn, signLay, SignatureMainLay, eldMenuLay, recapItemLay, viewDetailMaiLay,
-            certifyRecordsListLay, malfunctionLay;
+            certifyRecordsListLay, malfunctionLay, graphLayout;
 
     String LogDate = "", CurrentDate = "", CurrentDateDefault = "", DayName = "", MonthFullName = "", MonthShortName = "", DRIVER_ID = "";
     String CountryCycle = "",  CompanyId = "", TruckNumber = "", TrailorNumber = "";
@@ -340,6 +342,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         MainDriverPref              = new MainDriverEldPref();
         CoDriverPref                = new CoDriverEldPref();
+        failedApiTrackMethod        = new FailedApiTrackMethod();
 
         driverLogScrollView         = (ScrollViewExt)view.findViewById(R.id.driverLogScrollView);
         progressBarDriverLog        = (ProgressBar)view.findViewById(R.id.progressBarDriverLog);
@@ -363,6 +366,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         certifyRecordsListLay       = (RelativeLayout)view.findViewById(R.id.certifyRecordsListLay);
         rightMenuBtn                = (RelativeLayout) view.findViewById(R.id.rightMenuBtn);
         malfunctionLay              = (RelativeLayout)view.findViewById(R.id.malfunctionLay);
+        graphLayout                 = (RelativeLayout)view.findViewById(R.id.graphLayout);
 
         certifyLogLay               = (LinearLayout)view.findViewById(R.id.certifyLogLay);
         logHistorylay               = (LinearLayout)view.findViewById(R.id.logHistorylay);
@@ -442,10 +446,10 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         Constants.IS_ACTIVE_ELD = false;
         getBundleData();
 
-        CurrentDateDefault      = Globally.GetCurrentDeviceDateDefault() + "T00:00:00";
-        CurrentDate             = Globally.GetCurrentDeviceDate();
+        CurrentDateDefault      = Globally.GetCurrentDeviceDateDefault(global, getActivity()) + "T00:00:00";
+        CurrentDate             = Globally.GetCurrentDeviceDate(null, global, getActivity());
         IsAOBRDAutomatic        = sharedPref.IsAOBRDAutomatic(getActivity());
-
+        currentDateTime         = Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getActivity());
         eldWarningColor         = getResources().getColor(R.color.colorVoilation);
 
         DriverType              = DriverConst.GetCurrentDriverType(getActivity());
@@ -550,16 +554,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 MaxDays = DriverPermitMaxDays;
             }
 
-            if(SelectedDayOfMonth == constants.CertifyLog){
-                openSignRecordDialog(false);
-            }else{
-                if(Globally.IS_CERTIFY_CALLED) {
-                    openMissingDialogAlert();
-                }
-            }
-       // }
 
-        DateTime currentDateTime = Globally.GetCurrentJodaDateTime();
+        DateTime currentDateTime = Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getActivity());
         DateTime startDateTime = global.GetStartDate(currentDateTime, 15);
         certifyApiStartDate = global.ConvertDateFormatMMddyyyy(String.valueOf(startDateTime));
 
@@ -598,6 +594,16 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         CheckSignatureVisibilityStatus(selectedArray);
         refreshPendingSignView();
+
+        if(SelectedDayOfMonth == constants.CertifyLog){
+            openSignRecordDialog(false);
+        }else{
+            if(Globally.IS_CERTIFY_CALLED) {
+                openMissingDialogAlert();
+            }
+        }
+
+
         CallAPIs();
 
         recapHistoryListView.setOnTouchListener(new View.OnTouchListener() {
@@ -689,6 +695,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         malfunctionTV.setText(R.string.book_not_applicable_govt);
         malfunctionLay.startAnimation(editLogAnimation);
         Globally.IS_CERTIFY_CALLED = false;
+
+
 
         if(UILApplication.getInstance().isNightModeEnabled()) {
             malfunctionLay.setBackgroundColor(getResources().getColor(R.color.green_transparent_background));
@@ -820,14 +828,16 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 if (selectedArray.length() > 1) {
                     addDetailShippingList();
                 }else{
-                    if(selectedArray.length() == 1){
+                    /*if(selectedArray.length() == 1){
                         JSONObject shippingJson = (JSONObject) selectedArray.get(0);
                         int JobStatus = shippingJson.getInt(ConstantsKeys.DriverStatusId);
 
                         if(JobStatus == Constants.DRIVING || JobStatus == Constants.ON_DUTY){
                             addDetailShippingList();
                         }
-                    }
+                    }*/
+
+                    addDetailShippingList();
                 }
             }else{
                 addDetailShippingList();
@@ -838,7 +848,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         }
 
         try{
-            //   Collections.sort(shipmentLogList);
+
             shippingAdapter = new ShippingViewDetailAdapter(getActivity(), shipmentLogList);
             shippingDetailListView.setAdapter(shippingAdapter);
 
@@ -867,6 +877,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
     private void addDetailShippingList(){
         try {
+            ShipmentModel shippingModel = null;
+
             for(int i = 0 ; i < Shipping18DaysArray.length() ; i++){
                 JSONObject obj = (JSONObject)Shipping18DaysArray.get(i);
                 String[] dateArray = obj.getString(ConstantsKeys.ShippingDocDate).split(" ");
@@ -886,15 +898,15 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                     commodity = obj.getString(ConstantsKeys.Commodity);
                 }
 
-                if(date.equals(LogDate)) {
+
 
                     String blNumber = obj.getString(ConstantsKeys.ShippingDocumentNumber);
                     String ShipperName =  obj.getString(ConstantsKeys.ShipperName);
                     String ShipperState =  obj.getString(ConstantsKeys.ShipperState);
                     String ShipperPostalCode =  obj.getString(ConstantsKeys.ShipperPostalCode);
 
-                    //blNumber.equals("") && blNumber.equals(getResources().getString(R.string.Empty))
-                    if(  !ShipperPostalCode.trim().equals("")) {
+
+                    if(!ShipperPostalCode.trim().equals("")) {
                         ShipmentModel shipModel = new ShipmentModel(
                                 i,
                                 DRIVER_ID,
@@ -911,9 +923,18 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                                 false
                         );
 
-                        shipmentLogList.add(shipModel);
-                    }
+                        if(date.equals(LogDate)) {
+                            shipmentLogList.add(shipModel);
+                        }else{
+                            if(shippingModel == null){
+                                shippingModel = shipModel;
+                            }
+                        }
                 }
+            }
+
+            if(shipmentLogList.size() == 0 && shippingModel != null){
+                shipmentLogList.add(shippingModel);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -935,10 +956,10 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         if(Globally.isConnected(getActivity()) ){
 
-            DateTime currentDateTime    = Globally.GetCurrentJodaDateTime();
+            DateTime currentDateTime    = Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getActivity());
             DateTime startDateTime      = Globally.GetStartDate(currentDateTime, 14);
             String StartDate            = Globally.ConvertDateFormatMMddyyyy(String.valueOf(startDateTime));
-            String EndDate              = Globally.GetCurrentDeviceDate(); // current Date
+            String EndDate              = Globally.GetCurrentDeviceDate(currentDateTime, global, getActivity()); // current Date
 
 
 
@@ -1095,7 +1116,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             MonthFullName           = Constants.MonthFullName;
             MonthShortName          = Constants.MonthShortName;
             driverLogArray          = new JSONArray();
-            CurrentDate             = Globally.GetCurrentDeviceDate();
+            CurrentDate             = Globally.GetCurrentDeviceDate(currentDateTime, global, getActivity());
 
             if (!LogDate.equals(CurrentDate)) {
                 UpdateRecapOffLineData();
@@ -1181,7 +1202,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             if (driverLogArray.length() == 0) {
                 driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
             }
-            selectedArray = hMethods.GetSingleDateArray(driverLogArray, selectedDateTime, currentDateTime, selectedUtcTime, IsCurrentDate, offsetFromUTC);
+            selectedArray = hMethods.GetSingleDateArray(driverLogArray, selectedDateTime, currentDateTime, selectedUtcTime, IsCurrentDate,
+                    offsetFromUTC, getActivity());
             recap18DaysArray = recapViewMethod.getSavedRecapView18DaysArray(Integer.valueOf(DRIVER_ID), dbHelper);
             TrailerNo = recapViewMethod.getTrailerNumberFromArray(recap18DaysArray, LogDate);
 
@@ -1271,7 +1293,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
     void CheckSelectedDateTime(){
         try {
-            currentDateTime =Globally.GetCurrentJodaDateTime();
+            currentDateTime =Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getActivity());
             String cDate = String.valueOf(currentDateTime);
             cDate = cDate.split("T")[0] + "T00:00:00";
             currentDateTime = Globally.getDateTimeObj(cDate, false);
@@ -1381,7 +1403,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                             "", new CertificationListener());
                     certifyConfirmationDialog.show();
                 }else{
-                     Globally.EldScreenToast(saveSignatureBtn, getString(R.string.stop_vehicle_alert), eldWarningColor);
+                     Globally.EldScreenToast(saveSignatureBtn, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                             getString(R.string.stop_vehicle_alert), eldWarningColor);
                 }
                 break;
 
@@ -1398,7 +1421,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                     ConfirmLoginDialog(driverType);
 
                 }else{
-                    Globally.EldScreenToast(saveSignatureBtn, getString(R.string.stop_vehicle_alert), eldWarningColor);
+                    Globally.EldScreenToast(saveSignatureBtn, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                            getString(R.string.stop_vehicle_alert), eldWarningColor);
                 }
 
                 break;
@@ -1532,7 +1556,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             signRecordDialog.dismiss();
 
         List<RecapSignModel> signList = constants.GetCertifySignList(recapViewMethod, DRIVER_ID, hMethods, dbHelper,
-                global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj, global, getActivity());
+                global.GetCurrentDeviceDate(currentDateTime, global, getActivity()), CurrentCycleId, logPermissionObj, global, getActivity());
 
         if (signList.size() > 0) {
             signRecordDialog = new SignRecordDialog(getActivity(), DriverType, isCertifySignExist, recap18DaysArray, signList, new SignRecapListener(),
@@ -1882,7 +1906,19 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         setRecapView(layoutHeight, RecapTitleHeight);
                     }
 
+                    int graphLayoutHeight = graphLayout.getMeasuredHeight();
+                    int graphWebHeight = graphWebView.getMeasuredHeight();
+                    int heightCheck;
+                    if (global.isTablet(getActivity())) {
+                        heightCheck = constants.intToPixel(getActivity(), 170 );
+                    }else{
+                        heightCheck = constants.intToPixel(getActivity(), 150 );
+                    }
 
+                    if(graphLayoutHeight < 200 || graphWebHeight < 200) {
+                        graphLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, heightCheck));
+                        graphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, heightCheck));
+                    }
 
                 }catch (Exception e){}
 
@@ -1977,7 +2013,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         if(isCurrentDate){
 
-            currentDateTime     = Globally.GetCurrentJodaDateTime();    // Current Date Time
+            currentDateTime     = Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getActivity());    // Current Date Time
             currentUTCTime      = Globally.getDateTimeObj(Globally.GetCurrentUTCTimeFormat(), true);
             oDriverLogDetail    = hMethods.getSavedLogList(Integer.valueOf(DRIVER_ID), currentDateTime, currentUTCTime, dbHelper);
         }else{
@@ -2042,10 +2078,11 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         try {
             if (!is18DaysApiCalled) {
                 if (IsCurrentDate) {
-                    int IsLogIdMissing = hMethods.IsLogIdMissing(selectedArray);
+                    int IsLogIdMissing = hMethods.IsLogIdMissing(selectedArray, getActivity());
                     if (IsLogIdMissing == 0) {
 
-                        DateTime selectedDateTime = Globally.getDateTimeObj(global.ConvertDateFormat(Globally.GetCurrentDeviceDate()), false);
+                        DateTime selectedDateTime = Globally.getDateTimeObj(global.ConvertDateFormat(
+                                Globally.GetCurrentDeviceDate(currentDateTime, global, getActivity())), false);
                         JSONArray logArrayBeforeSelectedDate = hMethods.GetArrayBeforeSelectedDate(driverLogArray, selectedDateTime);
 
                         for (int i = 0; i < selectedArray.length(); i++) {
@@ -2212,6 +2249,9 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         if(DistanceArray[1].length() > 2){
                             Distance = DistanceArray[0] + "." + DistanceArray[1].substring(0, 2) + " km";
                         }
+                        if(LogDate.equals(CurrentDate) && DistanceArray[0].equals("0")){
+                            certifyDistanceTV.setText(constants.getOdometersDistance(getActivity()));
+                        }
                     }
 
                     if(EngineMileage.contains("Data Malfunction") && EngineMileage.equals("0") ){
@@ -2348,6 +2388,9 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                     Duration = logObj.getString(ConstantsKeys.Duration);
                 else {
                     Duration = logObj.getString(ConstantsKeys.TotalHours);
+                    if(Duration.contains(".")){
+                        Duration = Duration.split("\\.")[0];
+                    }
                     Duration = global.FinalValue(Integer.valueOf(Duration));
                 }
 
@@ -2363,7 +2406,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 int minDiff = 0;
                 if(logCount > 0 && logCount == driverLogJsonArray.length()-1 ) {
                     if(  LogDate.equals(CurrentDate) ) {
-                        endDateTime = Globally.GetCurrentDateTime();
+                        endDateTime = Globally.GetDriverCurrentDateTime(global, getActivity());
                         minDiff = constants.getMinDiff(startDateTime, endDateTime, false);
                     }else{
                         if(endDateTimeStr.length() > 16 && endDateTimeStr.substring(11,16).equals("00:00")){
@@ -3015,6 +3058,10 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 isLoadImageCalled = true;
 
                 if (Globally.isConnected(getActivity())) {
+
+                    // reset api call count
+                    failedApiTrackMethod.isAllowToCallOrReset(dbHelper, APIs.CERTIFY_LOG_OFFLINE, true, global, getActivity());
+
                     progressDialog.show();
                     saveSignatureBtn.setEnabled(false);
                     saveCertifyLogPost.PostDriverLogData(CertifyLogArray, APIs.CERTIFY_LOG_OFFLINE, constants.SocketTimeout10Sec,
@@ -3057,6 +3104,9 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                     saveByteSignLocally(LogSignImageInByte);
 
                     if (Globally.isConnected(getActivity())) {
+                        // reset api call count
+                        failedApiTrackMethod.isAllowToCallOrReset(dbHelper, APIs.CERTIFY_LOG_OFFLINE, true, global, getActivity());
+
                         progressDialog.show();
                         saveSignatureBtn.setEnabled(false);
                         saveCertifyLogPost.PostDriverLogData(CertifyLogArray, APIs.CERTIFY_LOG_OFFLINE, constants.SocketTimeout10Sec, true, false, DriverType, SaveCertifyLog);
@@ -3103,9 +3153,11 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
 
     void refreshPendingSignView(){
-        boolean isSignPending           = constants.GetCertifyLogSignStatus(recapViewMethod, DRIVER_ID, dbHelper, global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj);
+        boolean isSignPending           = constants.GetCertifyLogSignStatus(recapViewMethod, DRIVER_ID, dbHelper,
+                global.GetCurrentDeviceDate(currentDateTime, global, getActivity()), CurrentCycleId, logPermissionObj);
         List<RecapSignModel> signList   = constants.GetCertifySignList(recapViewMethod, DRIVER_ID, hMethods, dbHelper,
-                                            global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj, global, getActivity());
+                                            global.GetCurrentDeviceDate(currentDateTime, global, getActivity()),
+                                            CurrentCycleId, logPermissionObj, global, getActivity());
         boolean isMissingLoc = false;
         for(int i = 0 ; i < signList.size() ; i++){
             if(signList.get(i).isMissingLocation()){
@@ -3598,14 +3650,15 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                                 /* ---------------- DB Helper operations (Insert/Update) --------------- */
                                 try {
                                     if(getActivity() != null && !getActivity().isFinishing()) {
-                                        String savedDate = Globally.GetCurrentDateTime();
+                                        String savedDate = Globally.GetDriverCurrentDateTime(global, getActivity());
                                         if (savedDate != null)
                                             sharedPref.setSavedDateTime(savedDate, getActivity());
 
                                         JSONArray resultArray = new JSONArray(obj.getString("Data"));
                                         hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, resultArray);
                                         driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
-                                        selectedArray = hMethods.GetSingleDateArray(driverLogArray, selectedDateTime, currentDateTime, selectedUtcTime, IsCurrentDate, offsetFromUTC);
+                                        selectedArray = hMethods.GetSingleDateArray(driverLogArray, selectedDateTime, currentDateTime, selectedUtcTime,
+                                                IsCurrentDate, offsetFromUTC, getActivity());
 
                                         selectedArray = hMethods.checkNewDriverDayStartLog( driverLogArray, selectedArray, DRIVER_ID,
                                                 offsetFromUTC, shipmentHelper, getActivity());
@@ -3837,7 +3890,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         // Get Driver details in offline mode
         progressBarDriverLog.setVisibility(View.GONE);
         selectedArray = hMethods.GetSingleDateArray(driverLogArray,  selectedDateTime, currentDateTime,
-                selectedUtcTime, IsCurrentDate, offsetFromUTC);
+                selectedUtcTime, IsCurrentDate, offsetFromUTC, getActivity());
 
         selectedArray = hMethods.checkNewDriverDayStartLog( driverLogArray, selectedArray, DRIVER_ID,
                 offsetFromUTC, shipmentHelper, getActivity());
@@ -4042,10 +4095,10 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
     void CallRecapApi(){
         if(Globally.isConnected(getActivity()) && IsRecapApiCalled == false) {
-            DateTime currentDateTime = Globally.GetCurrentJodaDateTime();
+            DateTime currentDateTime = Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getActivity());
             DateTime startDateTime = Globally.GetStartDate(currentDateTime, 15);
             String StartDate = Globally.ConvertDateFormatMMddyyyy(String.valueOf(startDateTime));
-            String EndDate = Globally.GetCurrentDeviceDate(); // current Date
+            String EndDate = Globally.GetCurrentDeviceDate(currentDateTime, global, getActivity()); // current Date
 
             GetRecapView18DaysData(DRIVER_ID, DeviceId, StartDate, EndDate);
         }

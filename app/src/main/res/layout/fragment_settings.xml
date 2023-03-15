@@ -576,11 +576,10 @@
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@color/colorWhite"
                             android:textColorHighlight="@color/colorPrimary"
-                            app:thumbTextPadding="@dimen/margin_short_5"
                             android:theme="@style/Custom.Widget.SwitchCompatDark"
 
 
-                            />
+                            app:thumbTextPadding="@dimen/margin_short_5" />
 
 
 
@@ -731,11 +730,10 @@
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@color/colorWhite"
                             android:textColorHighlight="@color/colorPrimary"
-                            app:thumbTextPadding="@dimen/margin_short_5"
                             android:theme="@style/Custom.Widget.SwitchCompatDark"
 
 
-                            />
+                            app:thumbTextPadding="@dimen/margin_short_5" />
 
 
 

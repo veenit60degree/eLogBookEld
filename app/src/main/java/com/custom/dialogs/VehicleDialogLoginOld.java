@@ -261,7 +261,7 @@ public class VehicleDialogLoginOld extends Dialog {
         public void getResponse(String response, int flag) {
 
             progressD.dismiss();
-            Logger.LogDebug("response", " logout response: " + response);
+            Logger.LogDebug("response", "VehDiaLoginOld logout response: " + response);
             String status = "";
 
             try {

@@ -827,7 +827,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
                 isApprovedCycleRequest = true;
                 changeCycleRequest(DriverId, DeviceId, CompanyId, Id,
                         Approved, changedCycleId, currentCycleId, Globally.LATITUDE,
-                        Globally.LONGITUDE, DriverTimeZone, TruckNumber, global.GetCurrentDeviceDateDefault());
+                        Globally.LONGITUDE, DriverTimeZone, TruckNumber, global.GetCurrentDeviceDateDefault(global, getActivity()));
             }else{
                 global.EldScreenToast(eldMenuLay, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation) );
             }
@@ -844,7 +844,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
                 isApprovedCycleRequest = false;
                 changeCycleRequest(DriverId, DeviceId, CompanyId, Id,
                         Rejected, changedCycleId, currentCycleId, Globally.LATITUDE,
-                        Globally.LONGITUDE, DriverTimeZone, TruckNumber, global.GetCurrentDeviceDateDefault());
+                        Globally.LONGITUDE, DriverTimeZone, TruckNumber, global.GetCurrentDeviceDateDefault(global, getActivity()));
             }else{
                 global.EldScreenToast(eldMenuLay, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation) );
             }

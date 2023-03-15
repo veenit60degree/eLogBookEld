@@ -48,7 +48,7 @@ public class GenerateRodsDialog extends Dialog implements View.OnClickListener {
     int UsaMaxDays          = 7;    // 7 days
     int CanMaxDays          = 14;   // 14 days
     private SearchArrayListAdapter mSimpleArrayListAdapter;
-    CheckBox checkboxEld,checkBoxAbord;
+    CheckBox checkboxEld;   //,checkBoxAbord;
     String checkedMode;
     LinearLayout selectCheckboxLay;
     Spinner countrySpinner;
@@ -80,7 +80,7 @@ public class GenerateRodsDialog extends Dialog implements View.OnClickListener {
         constants = new Constants();
         globally  = new Globally();
         checkboxEld                = (CheckBox) findViewById(R.id.checkboxEld);
-        checkBoxAbord              = (CheckBox) findViewById(R.id.checkboxAbord);
+       // checkBoxAbord              = (CheckBox) findViewById(R.id.checkboxAbord);
         TitleVehTV                 = (TextView) findViewById(R.id.TitleVehTV);
         updateVehTitleTV           = (TextView) findViewById(R.id.updateVehTitleTV);
         startDateTv                = (TextView) findViewById(R.id.startDateTv);
@@ -135,52 +135,20 @@ public class GenerateRodsDialog extends Dialog implements View.OnClickListener {
                                 setMinMaxDateOnView(CanMaxDays, false);
                                 countryFlagImgView.setImageResource(R.drawable.no_flag);
                                 selectCheckboxLay.setVisibility(View.GONE);
-                                checkboxEld.setVisibility(View.GONE);
-                                checkBoxAbord.setVisibility(View.GONE);
-                                checkBoxAbord.setChecked(false);
-                                checkboxEld.setChecked(false);
-                                checkedMode  = "";
+
                             }else if(SelectedPosition == 1){
                                 countryFlagImgView.setImageResource(R.drawable.can_flag);
                                 SelectedCountry = 1;
-                                selectCheckboxLay.setVisibility(View.VISIBLE);
-                                checkboxEld.setVisibility(View.VISIBLE);
-                                checkBoxAbord.setVisibility(View.VISIBLE);
                                 setMinMaxDateOnView(CanMaxDays, true);
-                                checkboxEld.setOnClickListener(new View.OnClickListener() {
-                                                public void onClick(View v) {
-                                 if(checkboxEld.isChecked()){
-                                     checkedMode = Globally.LOG_TYPE_ELD;
-                                     checkBoxAbord.setChecked(false);
-                                 }else{
-                                     checkedMode = "";
-                                     checkBoxAbord.setChecked(false);
-                                     checkboxEld.setChecked(false);
-                                 }
-                                  }
-                                });
-
-                                checkBoxAbord.setOnClickListener(new View.OnClickListener() {
-                                                public void onClick(View v) {
-                                    if(checkBoxAbord.isChecked()){
-                                        checkedMode = Globally.LOG_TYPE_AOBRD;
-                                        checkboxEld.setChecked(false);
-                                    }else{
-                                        checkedMode = "";
-                                        checkBoxAbord.setChecked(false);
-                                        checkboxEld.setChecked(false);
-                                    }
-                                 }
-                                });
+                                selectCheckboxLay.setVisibility(View.VISIBLE);
+                                checkboxEld.setChecked(true);
+                                checkedMode = Globally.LOG_TYPE_ELD;
 
                             }else if(SelectedPosition == 2){
                                 countryFlagImgView.setImageResource(R.drawable.usa_flag);
                                 SelectedCountry = 3;
                                 setMinMaxDateOnView(UsaMaxDays, true);
                                 selectCheckboxLay.setVisibility(View.GONE);
-                                checkboxEld.setVisibility(View.GONE);
-                                checkBoxAbord.setVisibility(View.GONE);
-                                checkBoxAbord.setChecked(false);
                                 checkboxEld.setChecked(false);
                                 checkedMode  = "";
                             }
@@ -207,7 +175,7 @@ public class GenerateRodsDialog extends Dialog implements View.OnClickListener {
     }
 
     void setMinMaxDateOnView(int MaxDays, boolean isOnCreate){
-        String currentDate = globally.GetCurrentDeviceDate();
+        String currentDate = globally.GetCurrentDeviceDate(null, globally, getContext());
         String currentDateStr = Globally.ConvertDateFormatyyyy_MM_dd(currentDate);
         DateTime selectedDateTime = globally.getDateTimeObj(currentDateStr, false);
         selectedDateTime = selectedDateTime.minusDays(MaxDays);
@@ -252,15 +220,12 @@ public class GenerateRodsDialog extends Dialog implements View.OnClickListener {
         public void onClick(View v) {
 
             if(SelectedPosition > 0) {
-                if(selectCheckboxLay.getVisibility() == View.VISIBLE) {
-                    if (checkBoxAbord.isChecked() || checkboxEld.isChecked()) {
-                        DriverViewValidations();
-                    } else {
-                        globally.EldScreenToast(generateRodsLogBtn, "Please select log type", getContext().getResources().getColor(R.color.colorVoilation));
-                    }
-                } else{
-                    DriverViewValidations();
+
+                if(SelectedPosition == 1 && !checkedMode.equals(Globally.LOG_TYPE_ELD)){
+                    checkedMode = Globally.LOG_TYPE_ELD;
                 }
+
+                DriverViewValidations();
 
             }else{
                 Globally.EldScreenToast(generateRodsLogBtn, "Please select country.", getContext().getResources().getColor(R.color.colorVoilation));
@@ -316,7 +281,8 @@ public class GenerateRodsDialog extends Dialog implements View.OnClickListener {
                 cycleId = "3";
             }
 
-            dateDialog = new DatePickerDialog(getContext(), cycleId + ",sendLog", globally.GetCurrentDeviceDate(), new DateListener(),true);
+            dateDialog = new DatePickerDialog(getContext(), cycleId + ",sendLog",
+                    globally.GetCurrentDeviceDate(null, globally, getContext()), new DateListener(),true);
             dateDialog.show();
         } catch (final IllegalArgumentException e) {
             e.printStackTrace();

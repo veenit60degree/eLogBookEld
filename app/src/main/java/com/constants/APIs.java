@@ -27,6 +27,7 @@ public class APIs {
 
     static String ELD_FAILED_TRACK_DOMAIN_PRODUCTION = "https://eld.alsrealtime.com/api/FailedAPITrack/";
     static String ELD_FAILED_TRACK_DOMAIN_DEV        = "http://develd.alsrealtime.com/api/FailedAPITrack/";
+    static String ELD_FAILED_TRACK_DOMAIN_INDIAN     = "http://182.73.78.171:8954/api/FailedAPITrack/";
 
 
     /*========================= API URLs =========================*/
@@ -40,7 +41,7 @@ public class APIs {
     public static String GET_STATE_LIST 				    = DOMAIN_URL_ALS + "GetStateList";
     public static String VEHICLE_TRACKING 					= DOMAIN_URL_ALS + "VehicleTracking";
     public static String DRIVER_LOGOUT      				= DOMAIN_URL_ALS + "DriverLogout";
-    public static String SEND_LOG      	 					= DOMAIN_URL_ALS + "EldInseption";
+    public static String SEND_LOG                           = DOMAIN_URL_ALS + "EldInseption";
     public static String GET_APP_VERSION					= DOMAIN_URL_ALS + "GetAppVersion";
     public static String SAVE_SCREEN        				= DOMAIN_URL_ALS + "SaveScreenShots";
     public static String GET_DRIVER_STATUS      			= DOMAIN_URL_ALS + "GetDriverLogDetail";   //GetDriverStatusAndLocation
@@ -138,6 +139,7 @@ public class APIs {
     public static String UPDATE_DRIVER_ELD_SETTING_NOTIFICATIONS               = DOMAIN_URL_ELD + "UpdateDriverELDSettingNotifications";
     public static String SAVE_ENGINE_ON_OFF_EVENTS          = DOMAIN_URL_ELD + "SaveEngineOnOffEvents";
 
+    public static String CHECK_IS_UNASSIGNED_REQUIRED       = DOMAIN_URL_ELD + "CheckIsUnassignedRequired";
 
     public static String ADD_DEVICE_GPS_SETTINGS            = ELD_SETTING_DOMAIN_PRODUCTION + "AddDeviceGpsSettings";
     public static String ADD_DEVICE_BLE_SETTINGS            = ELD_SETTING_DOMAIN_PRODUCTION + "AddDeviceBluetoothSettings";

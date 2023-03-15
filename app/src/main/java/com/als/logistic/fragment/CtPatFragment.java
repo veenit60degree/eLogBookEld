@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.adapter.logistic.CtPatAdapter;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
@@ -45,6 +46,7 @@ import com.driver.details.DriverConst;
 import com.local.db.CTPatInspectionMethod;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
+import com.local.db.FailedApiTrackMethod;
 import com.local.db.ShipmentHelperMethod;
 import com.als.logistic.Globally;
 import com.als.logistic.R;
@@ -88,6 +90,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
     ArrayList<Integer> TruckIdList = new ArrayList<Integer>();
     ArrayList<Integer> TrailerIdList = new ArrayList<Integer>();
     ArrayList<Integer> AgricultureIdList = new ArrayList<Integer>();
+    FailedApiTrackMethod failedApiTrackMethod;
 
     ProgressDialog pDialog;
     VolleyRequest GetCtPatInspRequest, ctPatInsp18DaysRequest;
@@ -170,6 +173,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         GetCtPatInspRequest     = new VolleyRequest(getActivity());
         ctPatInsp18DaysRequest  = new VolleyRequest(getActivity());
         constant                = new Constants();
+        failedApiTrackMethod    = new FailedApiTrackMethod();
 
         eldMenuLay              = (RelativeLayout) view.findViewById(R.id.eldMenuLay);
 
@@ -215,7 +219,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         rightMenuBtn.setVisibility(View.GONE);
         actionBarRightBtn.setVisibility(View.VISIBLE);
         ctPatDateTimeTitle.setText(getResources().getString(R.string.date));
-        SelectedDatee = Globally.GetCurrentDeviceDate();
+        SelectedDatee = Globally.GetCurrentDeviceDate(null, new Globally(), getActivity());
 
 
         actionBarRightBtn.setText(Html.fromHtml("<b><u>" + getResources().getString(R.string.view_ct_pat) + "</u></b>"));
@@ -278,7 +282,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
 
 
         EldTitleTV.setText(getResources().getString(R.string.ctPat));
-        CreatedDate = Globally.GetCurrentDeviceDateTime();
+        CreatedDate = Globally.ConvertDateFormatMMddyyyyHHmm(Globally.GetDriverCurrentDateTime(new Globally(), getActivity()));
         ctPatDateTimeTv.setText(CreatedDate.substring(0, 11));
         trailerCtPatTV.setText(SharedPref.getTrailorNumber(getActivity()));
         truckCtPatTV.setText(SharedPref.getTruckNumber(getActivity()));
@@ -292,7 +296,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
 
         JSONArray ctPatInsp18DaysArray = ctPatInspectionMethod.getCtPat18DaysInspectionArray(Integer.valueOf(DRIVER_ID), dbHelper);
         if(ctPatInsp18DaysArray.length() == 0) {
-            String SelectedDate = Globally.GetCurrentDeviceDate();
+            String SelectedDate = Globally.GetCurrentDeviceDate(null, new Globally(), getActivity());
             if (SharedPref.getDriverType(getActivity()).equals(DriverConst.TeamDriver)) {
                 DriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
                 CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
@@ -377,7 +381,8 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
                             }
                         }
                     }else{
-                        Globally.EldScreenToast(ctPatInspectionBtn, getString(R.string.stop_vehicle_alert),
+                        Globally.EldScreenToast(ctPatInspectionBtn, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                        getString(R.string.stop_vehicle_alert),
                                 getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
@@ -413,7 +418,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
 
             case R.id.dateActionBarTV:
                 //ShowDateDialog();
-                MoveFragment(Globally.GetCurrentDeviceDate());
+                MoveFragment(Globally.GetCurrentDeviceDate(null, new Globally(), getActivity()));
                 break;
 
 
@@ -808,7 +813,8 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         // disable temperory button click to avoid multiple clicks on button at the same time
         ctPatInspectionBtn.setEnabled(false);
 
-
+        CreatedDate = Globally.ConvertDateFormatMMddyyyyHHmm(Globally.GetDriverCurrentDateTime(new Globally(), getActivity()));
+        ctPatDateTimeTv.setText(CreatedDate.substring(0, 11));
 
         JSONObject inspectionData = ctPatInspectionMethod.AddUnPostedCtPatInspObj(DRIVER_ID, DeviceId, Globally.PROJECT_ID,
                 DriverName, CompanyId, EldFragment.VehicleId, VIN_NUMBER,
@@ -836,6 +842,9 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         ctPatInspectionMethod.DriverCtPatUnPostedInspHelper(Integer.valueOf(DRIVER_ID), dbHelper, ctPatInspectionArray);
 
         if(Globally.isConnected(getActivity()) ){
+            // reset api call count
+            failedApiTrackMethod.isAllowToCallOrReset(dbHelper, APIs.SAVE_17_INSPECTION_OFFLINE, true, new Globally(), getActivity());
+
             constant.IsCtPatUploading = true;
             saveInspectionPost.PostDriverLogData(ctPatInspectionArray, APIs.SAVE_17_INSPECTION_OFFLINE, Constants.SocketTimeout30Sec, true, false, 1, 101);
         }else{

@@ -5,6 +5,8 @@
     android:orientation="vertical"
     android:paddingLeft="@dimen/margin_20"
     android:paddingRight="@dimen/margin_20"
+
+
     >
 
 
@@ -12,6 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="@dimen/view_height_100"
+        android:layout_marginRight="@dimen/view_height_100"
+
         >
 
     <LinearLayout
@@ -36,7 +41,7 @@
             android:text="@string/Alert"
             android:gravity="center_horizontal"
             android:textSize="@dimen/text_size_21"
-            android:textColor="?attr/textColor"
+            android:textColor="?attr/colorVoilation"
             android:paddingBottom="@dimen/margin_short_8"
             android:textStyle="bold"
 
@@ -66,11 +71,12 @@
             android:layout_height="wrap_content"
             android:text="@string/update_desc"
             android:textSize="@dimen/text_size_18"
-            android:textColor="?attr/textColor"
+            android:textColor="?attr/document_icon_color"
             android:layout_marginTop="@dimen/margin_10"
             android:layout_marginBottom="@dimen/margin_short_5"
             android:layout_marginLeft="@dimen/margin_10"
             android:gravity="center_horizontal"
+            android:textStyle="bold"
 
             />
 

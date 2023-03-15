@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.Logger;
@@ -235,7 +236,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
         CompanyId       = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
         TruckNumber     = SharedPref.getTruckNumber(getActivity());
 
-        SelectedDate = Global.GetCurrentDeviceDateTime();
+        SelectedDate = Global.ConvertDateFormatMMddyyyyHHmm(Globally.GetDriverCurrentDateTime(Global, getActivity()));
     }
 
 
@@ -320,7 +321,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
 
 
                         if (odometerEditTxt.getText().toString().trim().length() > 0) {
-                            SelectedDate = Global.GetCurrentDeviceDateTime();
+                            SelectedDate = Global.ConvertDateFormatMMddyyyyHHmm(Globally.GetDriverCurrentDateTime(Global, getActivity()));
                             if (IsEditOdometer.equals("false")) {
 
                                 String manualInputOdometer = odometerEditTxt.getText().toString().trim();
@@ -391,7 +392,8 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
                             odometerEditTxt.requestFocus();
                         }
                     }else{
-                        Globally.EldScreenToast(saveReadingBtn, getString(R.string.stop_vehicle_alert),
+                        Globally.EldScreenToast(saveReadingBtn, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                        getString(R.string.stop_vehicle_alert),
                                 getResources().getColor(R.color.colorVoilation));
                     }
                 }catch (Exception e){

@@ -53,6 +53,7 @@
         <item name="blue_button_dark">#256CB4</item>
         <item name="field_bg_color">#ffffff</item>
         <item name="layout_color_dot">#ffffff</item>
+
         <item name="share_icon_color">#E1084A</item>
         <item name="download_icon_color">#002249</item>
         <item name="download_rods_icon_color">#CD2329</item>
@@ -81,6 +82,8 @@
         <item name="color_login_view">#CC354365</item>
         <item name="wifi_color">#514F4F</item>
         <item name="bluee_login_hover">#199cdd</item>
+        <item name="blue_login_hover">#199cdd</item>
+
         <item name="grey_text">#736767</item>
         <item name="app_color_primary">#2E2E2E</item>
         <item name="deferral_light_blue">#dee7ec</item>
@@ -198,6 +201,7 @@
         <item name="deferral_light_blue">#F3F3F3</item>
         <item name="edit_gray_bg">#F3F3F3</item>
         <item name="sign_record_bg">#0D0B22</item>
+        <item name="blue_login_hover">#343345</item>
         <item name="fb_default">#F3F3F3</item>
         <item name="gray_updated_divider_color">#0D0B22</item>
         <item name="actionbar_color">#15132B</item> <!--848485-->

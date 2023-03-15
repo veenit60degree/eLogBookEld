@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:paddingLeft="@dimen/margin_20"
     android:paddingRight="@dimen/margin_20"
+
     >
 
 
@@ -22,18 +23,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/TitleTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/Alert"
-            android:gravity="center_horizontal"
-            android:textSize="@dimen/text_size_24"
-            android:textColor="?attr/textColor"
-            android:paddingBottom="@dimen/margin_short_8"
-            android:textStyle="bold"
+            <TextView
+                android:id="@+id/TitleTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:paddingBottom="@dimen/margin_short_8"
+                android:text="@string/Alert"
+                android:textColor="?attr/colorVoilation"
+                android:textSize="@dimen/text_size_24"
+                android:textStyle="bold"
 
-            />
+                />
 
 
             <TextView
@@ -61,11 +62,12 @@
             android:layout_height="wrap_content"
             android:text="@string/update_desc"
             android:textSize="@dimen/text_size_21"
-            android:textColor="?attr/textColor"
+            android:textColor="?attr/document_icon_color"
             android:layout_marginTop="@dimen/margin_10"
             android:layout_marginBottom="@dimen/margin_short_6"
             android:layout_marginLeft="@dimen/margin_10"
             android:gravity="center_horizontal"
+            android:textStyle="bold"
 
             />
 

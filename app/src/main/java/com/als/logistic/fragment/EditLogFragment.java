@@ -42,6 +42,7 @@ import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropM
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.DriverPermissionMethod;
+import com.local.db.FailedApiTrackMethod;
 import com.local.db.HelperMethods;
 import com.als.logistic.Globally;
 import com.als.logistic.R;
@@ -71,7 +72,6 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
     View rootView;
     RecyclerView driverLogRecyclerView;
     RecyclerView.Adapter mWrappedAdapter;
-    ItemTouchHelper mItemTouchHelper;
     boolean isUndo = false;
 
     RelativeLayout eldMenuLay;
@@ -95,7 +95,6 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
     List<DriverLogModel> tempDriverLogDetail = new ArrayList<DriverLogModel>();
 
     final int SaveDriverLog = 1;
-    DriverLogModel mDraggedEntity;
     EditLogPreviewDialog previewDialog;
     EditLogRemarksDialog editLogRemarksDialog;
     public static boolean IsWrongDateEditLog = false;
@@ -122,11 +121,13 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
     JSONArray offlineJobArray = new JSONArray();
     JSONArray previousDateJobs = new JSONArray();
     Globally global;
+    FailedApiTrackMethod failedApiTrackMethod;
     boolean isHaulExcptn;
     boolean isAdverseExcptn;
     boolean isNorthCanada;
     boolean IsUnAssignedMileRecord = false;
-
+    int savedItemPosition = 3;
+    int scrollBottomPosition = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -158,6 +159,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
         GetPermissions          = new VolleyRequest(getActivity());
         MainDriverPref          = new MainDriverEldPref();
         CoDriverPref            = new CoDriverEldPref();
+        failedApiTrackMethod    = new FailedApiTrackMethod();
 
         driverLogRecyclerView   = (RecyclerView)view.findViewById(R.id.driverLogRecyclerView);
 
@@ -187,6 +189,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
         initListControls();
         initMenu();
         initUiAndListener();
+
 
 
 
@@ -222,10 +225,11 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
             selectedDateFormat      = selectedDateTime.toString().substring(0,10);
             DRIVER_ID               = SharedPref.getDriverId( getActivity());
             driverLogArray          = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
-            logArray                = hMethods.GetSingleDateArray( driverLogArray, selectedDateTime, selectedDateTime, selectedUtcTime, IsCurrentDate, offsetFromUTC );
+            logArray                = hMethods.GetSingleDateArray( driverLogArray, selectedDateTime, selectedDateTime, selectedUtcTime,
+                    IsCurrentDate, offsetFromUTC, getActivity() );
             logArrayBeforeSelectedDate = hMethods.GetArrayBeforeSelectedDate(driverLogArray, selectedDateTime);
 
-            currentDateTime         = global.getDateTimeObj(global.GetCurrentDateTime(), false);    // Current Date Time
+            currentDateTime         = global.getDateTimeObj(global.GetDriverCurrentDateTime(global, getActivity()), false);    // Current Date Time
             currentUTCTime          = global.getDateTimeObj(global.GetCurrentUTCTimeFormat(), true);
 
             oDriverLogDetail        = hMethods.GetLogModelEditDriver( logArray, currentDateTime, currentUTCTime, IsCurrentDate, offsetFromUTC);
@@ -247,7 +251,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                 }
             }
 
-            setRecyclerAdapter();
+            setRecyclerAdapter(false);
            // enableSwipeToDeleteAndUndo();
 
 
@@ -316,6 +320,49 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
         addBtn.setOnClickListener(this);
         saveBtn.setOnClickListener(this);
 
+        driverLogRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                int itemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+                if (itemPosition != RecyclerView.NO_POSITION){
+                    int adapterCount = recyclerView.getAdapter().getItemCount();
+                    if(adapterCount > 4) {
+
+                        if (itemPosition == adapterCount - 1 || itemPosition <= 3) {
+                            if (savedItemPosition != itemPosition) {
+                                Logger.LogDebug("RecyclerView", "Scroll at Bottom: " + itemPosition);
+                                savedItemPosition = itemPosition;
+
+                                if(itemPosition == adapterCount - 1){
+                                    notifyAdapterWithListUpdate(true);
+                                }else{
+                                    notifyAdapterWithListUpdate(false);
+                                }
+                            }
+                        }/*else{
+                            if (itemPosition <= 3 && savedItemPosition != itemPosition) {
+                                Logger.LogDebug("RecyclerView", "Scroll to Top: " + itemPosition);
+                                savedItemPosition = itemPosition;
+                            }
+                        }*/
+                    }
+                }
+
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+                scrollBottomPosition = dy;
+
+            }
+        });
+
+
+
     }
 
 
@@ -338,7 +385,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
         return IsUnAssignedMileRecord;
     }
 
-    private void setRecyclerAdapter(){
+    private void setRecyclerAdapter(boolean isScroll){
 
         try {
 
@@ -354,8 +401,11 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
             driverLogRecyclerView.setLayoutManager(mLayoutManager);
             driverLogRecyclerView.setAdapter(mWrappedAdapter);
 
-            dragMgr.attachRecyclerView(driverLogRecyclerView);
-
+            if(isScroll){
+                driverLogRecyclerView.scrollToPosition(editLogRecyclerAdapter.getItemCount()-1);
+            }else{
+                dragMgr.attachRecyclerView(driverLogRecyclerView);
+            }
 
         }catch (Exception e){
             e.printStackTrace();
@@ -458,7 +508,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                         logArray.put(obj);
                     }else{
                         DateTime currentUtcTime = global.getDateTimeObj(global.GetCurrentUTCTimeFormat(), false);
-                        logArray     = hMethods.GetSingleDateArray( driverLogArray, selectedDateTime, selectedDateTime, currentUtcTime, IsCurrentDate, offsetFromUTC );
+                        logArray     = hMethods.GetSingleDateArray( driverLogArray, selectedDateTime, selectedDateTime, currentUtcTime,
+                                IsCurrentDate, offsetFromUTC, getActivity() );
                         oDriverLogDetail = new ArrayList<DriverLogModel>();
 
                         if(logArray.length() > 0) {
@@ -468,7 +519,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                         }
                     }
 
-                    currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);    // Current Date Time
+                    currentDateTime = global.getDateTimeObj(global.GetDriverCurrentDateTime(global, getActivity()), false);    // Current Date Time
                     currentUTCTime = global.getDateTimeObj(global.GetCurrentUTCTimeFormat(), true);
 
                     DateTime startDateTime ,startUtcDateTime;
@@ -497,7 +548,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                         oDriverLogDetail.add(addNewModel);
 
                     }else{
-                        String startDateFormat = global.GetCurrentDeviceDateDefault() + "T00:00:00"; //2018-07-26T04:24:44.547
+                        String startDateFormat = global.GetCurrentDeviceDateDefault(global, getActivity()) + "T00:00:00"; //2018-07-26T04:24:44.547
                         startDateTime = global.getDateTimeObj(startDateFormat, false);
                         startUtcDateTime = global.getDateTimeObj(startDateTime.plusHours(Math.abs(offsetFromUTC)).toString(), false);
 
@@ -512,12 +563,15 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                     logArray = hMethods.ConvertListToJsonArray(oDriverLogDetail, getActivity());
 
 
-                    setRecyclerAdapter();
+                    setRecyclerAdapter(false);
                    // LoadAdapterOnListView();
 
                 }catch (Exception e){
                     e.printStackTrace();
                 }
+
+                IsNewLogAdded = false;
+
                 break ;
 
 
@@ -528,136 +582,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                 IsNewLogAdded = false;
                 violationMsg = "Incorrect Time. Please check your log time on RED highlighted area.";
 
-                JSONArray tempTotalArray    = hMethods.GetSameArray(logArrayBeforeSelectedDate);
-                JSONArray tempLogArray      = hMethods.ConvertListToJsonArray(oDriverLogDetail, getActivity());
-                finalEditingArray           = hMethods.GetSameArray(logArrayBeforeSelectedDate);
-
-                oDriverLogDetail = new ArrayList<DriverLogModel>();
-
-                DateTime lastRecordEndTime = null;
-                for(int i = 0 ; i < tempLogArray.length() ; i++) {
-                    try {
-                        tempTotalArray.put(tempLogArray.get(i));
-
-                        JSONObject logObj = (JSONObject) tempLogArray.get(i);
-                        int DRIVER_JOB_STATUS = logObj.getInt("DriverStatusId");
-                        int TotalMin  = logObj.getInt("TotalHours");
-
-                        if(i == 0){
-                            String time = logObj.getString(ConstantsKeys.startDateTime).substring(11, 16);
-                            if(!time.equals("00:00")){
-                                IsWrongDateEditLog = true;
-                                violationMsg = "Incorrect Time. Day start time should be 00:00";
-                            }
-                        }else{
-                             if(!IsCurrentDate){
-                                if(i == tempLogArray.length()-1){
-                                    String time = logObj.getString(ConstantsKeys.endDateTime).substring(11, 16);
-                                    if(!time.equals("23:59")){
-                                        IsWrongDateEditLog = true;
-                                        violationMsg = "Incorrect Time. Day end time should be 23:59";
-                                    }
-                                }
-                            }
-
-                            DateTime currentLogStartTime = global.getDateTimeObj(logObj.getString(ConstantsKeys.startDateTime), false);
-                            DateTime currentLogEndTime = global.getDateTimeObj(logObj.getString(ConstantsKeys.endDateTime), false);
-
-                            String pos = "";
-                            if(i == 1){
-                                pos = "2nd";
-                            }else if(i == 2){
-                                pos = "3rd";
-                            }else{
-                                pos = "" + (i+1) + "th";
-                            }
-                             if(!lastRecordEndTime.equals(currentLogStartTime)){
-                                 IsWrongDateEditLog = true;
-                                 violationMsg = "Incorrect Time. Start time is not matching in " + pos + " position with previous log End Time.";
-                             }else if(currentLogEndTime.isBefore(currentLogStartTime)){
-                                 IsWrongDateEditLog = true;
-                                 violationMsg = "Incorrect Time. Start time is greater then End time in "+ pos + " position.";
-                             }
-                        }
-
-
-                        lastRecordEndTime = global.getDateTimeObj(logObj.getString(ConstantsKeys.endDateTime), false);
-
-
-
-                        if(DRIVER_JOB_STATUS == Constants.DRIVING || DRIVER_JOB_STATUS == Constants.ON_DUTY) {
-                            CurrentCycleId = logObj.getString(ConstantsKeys.CurrentCycleId);
-                            RulesObj =  InitilizeRulesObj(tempTotalArray, DRIVER_JOB_STATUS, CurrentCycleId );
-
-                            if ( RulesObj.isViolation() ) {
-
-                                double elapsedTime = RulesObj.getElapsedMinutesBeforeViolation();
-
-                                if(elapsedTime == -1 ) {
-                                    JSONObject obj = (JSONObject) tempLogArray.get(i);
-                                    // ------------- Add Model in the list -------------
-                                    DriverLogModel model = AddLogModelToList(obj,
-                                            obj.getString(ConstantsKeys.startDateTime).substring(0,19),
-                                            obj.getString(ConstantsKeys.utcStartDateTime).substring(0,19),
-                                            obj.getString(ConstantsKeys.endDateTime).substring(0,19),
-                                            obj.getString(ConstantsKeys.utcEndDateTime).substring(0,19), RulesObj, false );
-                                    model.setNewRecordStatus(isNewRecord(logObj));
-
-                                    oDriverLogDetail.add(model);
-
-                                    finalEditingArray.put(obj);
-
-                                }else{
-                                    AddSplitLogInList(tempLogArray, logObj, TotalMin, elapsedTime, i);
-                                }
-
-                            } else {
-                                JSONObject obj = (JSONObject) tempLogArray.get(i);
-                                // ------------- Add Model in the list -------------
-                                DriverLogModel model = AddLogModelToList(obj,
-                                        obj.getString(ConstantsKeys.startDateTime).substring(0,19),
-                                        obj.getString(ConstantsKeys.utcStartDateTime).substring(0,19),
-                                        obj.getString(ConstantsKeys.endDateTime).substring(0,19),
-                                        obj.getString(ConstantsKeys.utcEndDateTime).substring(0,19), RulesObj , false);
-                                model.setNewRecordStatus(isNewRecord(logObj));
-                                oDriverLogDetail.add(model);
-
-                                finalEditingArray.put(obj);
-                            }
-                        }else{
-                            CurrentCycleId = logObj.getString(ConstantsKeys.CurrentCycleId);
-                            RulesObj =  InitilizeRulesObj(tempTotalArray, DRIVER_JOB_STATUS, CurrentCycleId );
-                            JSONObject obj = (JSONObject) tempLogArray.get(i);
-                            // ------------- Add Model in the list -------------
-                            RulesObj.setViolation(false);
-                            RulesObj.setViolationReason("");
-
-                            obj.put(ConstantsKeys.ViolationReason, "");
-                            obj.put(ConstantsKeys.IsViolation, false);
-
-                            DriverLogModel model = AddLogModelToList(obj,
-                                    obj.getString(ConstantsKeys.startDateTime).substring(0,19),
-                                    obj.getString(ConstantsKeys.utcStartDateTime).substring(0,19),
-                                    obj.getString(ConstantsKeys.endDateTime).substring(0,19),
-                                    obj.getString(ConstantsKeys.utcEndDateTime).substring(0,19), RulesObj , false);
-                            model.setNewRecordStatus(isNewRecord(logObj));
-                            oDriverLogDetail.add(model);
-
-                            finalEditingArray.put(obj);
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-
-                logArray = hMethods.ConvertListToJsonArray(oDriverLogDetail, getActivity());
-
-              //  if(IsWrongDateEditLog == false) {
-                    //LoadAdapterOnListView();
-                    setRecyclerAdapter();
-               // }
+                notifyAdapterWithListUpdate(false);
 
                 try {
                     new Handler().postDelayed(new Runnable() {
@@ -695,6 +620,164 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
 
     }
 
+
+    private void notifyAdapterWithListUpdate(boolean isScroll){
+        try{
+
+            JSONArray tempTotalArray    = hMethods.GetSameArray(logArrayBeforeSelectedDate);
+            JSONArray tempLogArray      = hMethods.ConvertListToJsonArray(oDriverLogDetail, getActivity());
+            finalEditingArray           = hMethods.GetSameArray(logArrayBeforeSelectedDate);
+            oDriverLogDetail = new ArrayList<DriverLogModel>();
+
+            DateTime lastRecordEndTime = null;
+            for(int i = 0 ; i < tempLogArray.length() ; i++) {
+                try {
+                    tempTotalArray.put(tempLogArray.get(i));
+
+                    JSONObject logObj = (JSONObject) tempLogArray.get(i);
+                    int DRIVER_JOB_STATUS = logObj.getInt("DriverStatusId");
+                    int TotalMin  = logObj.getInt("TotalHours");
+
+                    if(i == 0){
+                        String time = logObj.getString(ConstantsKeys.startDateTime).substring(11, 16);
+                        if(!time.equals("00:00")){
+                            IsWrongDateEditLog = true;
+                            violationMsg = "Incorrect Time. Day start time should be 00:00";
+                        }
+                    }else{
+                        if(!IsCurrentDate){
+                            if(i == tempLogArray.length()-1){
+                                String time = logObj.getString(ConstantsKeys.endDateTime).substring(11, 16);
+                                if(!time.equals("23:59")){
+                                    IsWrongDateEditLog = true;
+                                    violationMsg = "Incorrect Time. Day end time should be 23:59";
+                                }
+                            }
+                        }
+
+                        DateTime currentLogStartTime = global.getDateTimeObj(logObj.getString(ConstantsKeys.startDateTime), false);
+                        DateTime currentLogEndTime = global.getDateTimeObj(logObj.getString(ConstantsKeys.endDateTime), false);
+
+                        String pos = "";
+                        if(i == 1){
+                            pos = "2nd";
+                        }else if(i == 2){
+                            pos = "3rd";
+                        }else{
+                            pos = "" + (i+1) + "th";
+                        }
+
+
+                        String LastEndTimeHHMM = lastRecordEndTime.toString().substring(11, 16);
+                        String StartTimeHHMM   = currentLogStartTime.toString().substring(11, 16);
+
+                        Logger.LogDebug("Time", "----LastEndTimeHHMM: " +LastEndTimeHHMM);
+                        Logger.LogDebug("Time", "----StartTimeHHMM: " +StartTimeHHMM);
+
+                        // some times sec appears in end time and it makes time validation wrong, because here we are using hh:mm only
+                        if(!LastEndTimeHHMM.equals(StartTimeHHMM)){
+                            if(currentLogEndTime.isBefore(currentLogStartTime) ){
+                                /*Logger.LogDebug("Time", "lastRecordEndTime: " +lastRecordEndTime);
+                                Logger.LogDebug("Time", "currentLogStartTime: " +currentLogStartTime);
+                                long secDiff = constants.getDateTimeDuration(currentLogStartTime, lastRecordEndTime).getStandardSeconds();
+                                if(secDiff > 59) {  // some times sec appears in end time and it makes time validation wrong, because here we are using hh:mm only
+                                  } */
+                                IsWrongDateEditLog = true;
+                                violationMsg = "Incorrect Time. Start time is greater then End time in " + pos + " position.";
+
+                            }else{
+                                    /*Logger.LogDebug("Time", "lastRecordEndTime: " +lastRecordEndTime);
+                                    Logger.LogDebug("Time", "currentLogStartTime: " +currentLogStartTime);
+                                    long secDiff = constants.getDateTimeDuration(currentLogStartTime, lastRecordEndTime).getStandardSeconds();
+                                    if(secDiff > 59) {  // some times sec appears in end time and it makes time validation wrong, because here we are using hh:mm only
+                                    }*/
+
+                                IsWrongDateEditLog = true;
+                                violationMsg = "Incorrect Time. Start time is not matching in " + pos + " position with previous log End Time.";
+
+                            }
+                        }
+                    }
+
+
+                    lastRecordEndTime = global.getDateTimeObj(logObj.getString(ConstantsKeys.endDateTime), false);
+
+
+
+                    if((DRIVER_JOB_STATUS == Constants.DRIVING || DRIVER_JOB_STATUS == Constants.ON_DUTY) && !isScroll) {
+                        CurrentCycleId = logObj.getString(ConstantsKeys.CurrentCycleId);
+                        RulesObj =  InitilizeRulesObj(tempTotalArray, DRIVER_JOB_STATUS, CurrentCycleId );
+
+                        if ( RulesObj.isViolation() ) {
+
+                            double elapsedTime = RulesObj.getElapsedMinutesBeforeViolation();
+
+                            if(elapsedTime == -1 ) {
+                                JSONObject obj = (JSONObject) tempLogArray.get(i);
+                                // ------------- Add Model in the list -------------
+                                DriverLogModel model = AddLogModelToList(obj,
+                                        obj.getString(ConstantsKeys.startDateTime).substring(0,19),
+                                        obj.getString(ConstantsKeys.utcStartDateTime).substring(0,19),
+                                        obj.getString(ConstantsKeys.endDateTime).substring(0,19),
+                                        obj.getString(ConstantsKeys.utcEndDateTime).substring(0,19), RulesObj, false );
+                                model.setNewRecordStatus(isNewRecord(logObj));
+
+                                oDriverLogDetail.add(model);
+
+                                finalEditingArray.put(obj);
+
+                            }else{
+                                AddSplitLogInList(tempLogArray, logObj, TotalMin, elapsedTime, i);
+                            }
+
+                        } else {
+                            JSONObject obj = (JSONObject) tempLogArray.get(i);
+                            // ------------- Add Model in the list -------------
+                            DriverLogModel model = AddLogModelToList(obj,
+                                    obj.getString(ConstantsKeys.startDateTime).substring(0,19),
+                                    obj.getString(ConstantsKeys.utcStartDateTime).substring(0,19),
+                                    obj.getString(ConstantsKeys.endDateTime).substring(0,19),
+                                    obj.getString(ConstantsKeys.utcEndDateTime).substring(0,19), RulesObj , false);
+                            model.setNewRecordStatus(isNewRecord(logObj));
+                            oDriverLogDetail.add(model);
+
+                            finalEditingArray.put(obj);
+                        }
+                    }else{
+                        CurrentCycleId = logObj.getString(ConstantsKeys.CurrentCycleId);
+                        RulesObj =  InitilizeRulesObj(tempTotalArray, DRIVER_JOB_STATUS, CurrentCycleId );
+                        JSONObject obj = (JSONObject) tempLogArray.get(i);
+                        // ------------- Add Model in the list -------------
+                        RulesObj.setViolation(false);
+                        RulesObj.setViolationReason("");
+
+                        obj.put(ConstantsKeys.ViolationReason, "");
+                        obj.put(ConstantsKeys.IsViolation, false);
+
+                        DriverLogModel model = AddLogModelToList(obj,
+                                obj.getString(ConstantsKeys.startDateTime).substring(0,19),
+                                obj.getString(ConstantsKeys.utcStartDateTime).substring(0,19),
+                                obj.getString(ConstantsKeys.endDateTime).substring(0,19),
+                                obj.getString(ConstantsKeys.utcEndDateTime).substring(0,19), RulesObj , false);
+                        model.setNewRecordStatus(isNewRecord(logObj));
+                        oDriverLogDetail.add(model);
+
+                        finalEditingArray.put(obj);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            logArray = hMethods.ConvertListToJsonArray(oDriverLogDetail, getActivity());
+            setRecyclerAdapter(isScroll);
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     private boolean isNewRecord(JSONObject obj){
         boolean isNewRecord = false;
@@ -756,7 +839,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                     logObj.getString(ConstantsKeys.utcStartDateTime),
                     endDateTimeStr, endUtcDateTimeStr, elapsedTime, true, RulesObj );
 
-            int elapsedTimeInt = tempEndDateTime.getMinuteOfDay() - startDateTime.getMinuteOfDay();
+            int elapsedTimeInt = (int) Constants.getDateTimeDuration(startDateTime, tempEndDateTime).getStandardMinutes();
 
             // ------------- Add Split Model 1st part in array -------------
 
@@ -913,6 +996,9 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
             Globally.EldScreenToast(saveBtn, "Saved data successfully.", getResources().getColor(R.color.colorPrimary));
             SharedPref.SetEditedLogStatus(true, getActivity());
 
+            // reset api call count
+            failedApiTrackMethod.isAllowToCallOrReset(dbHelper, APIs.SAVE_DRIVER_EDIT_LOG_NEW, true, global, getActivity());
+
             SaveDataLocally();
             UpdateLocalLogWithBackStack(true);
 
@@ -966,186 +1052,6 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
 
 
 
-
-   private List<EldDataModelNew> getEditLogList(JSONArray logArray){
-
-       List <EldDataModelNew> logList = new ArrayList<EldDataModelNew>();
-
-        for(int i = 0; i < logArray.length() ; i++){
-            try {
-                String editLogReason = "", LocationType = "";
-                JSONObject obj = (JSONObject)logArray.get(i);
-                String IsStatusAutomatic = "false", OBDSpeed = "0", GPSSpeed = "0", TruckNumber = "",
-                        DecesionSource = "", PlateNumber = "", isHaulException = "false", IsShortHaulUpdate = "false";
-                String isAdverseException = "false", adverseExceptionRemark = "", IsNorthCanada = "false", IsCycleChanged = "false";
-                int LocationSource = -1;
-
-                if(obj.has(ConstantsKeys.IsStatusAutomatic)){
-                    IsStatusAutomatic = obj.getString(ConstantsKeys.IsStatusAutomatic);
-                }
-
-                if(obj.has(ConstantsKeys.OBDSpeed)){
-                    OBDSpeed = obj.getString(ConstantsKeys.OBDSpeed);
-                }
-
-                if(obj.has(ConstantsKeys.GPSSpeed)){
-                    GPSSpeed = obj.getString(ConstantsKeys.GPSSpeed);
-                }
-
-                if(obj.has(ConstantsKeys.PlateNumber)){
-                    PlateNumber = obj.getString(ConstantsKeys.PlateNumber);
-                }
-
-                if(obj.has(ConstantsKeys.IsShortHaulException)){
-                    isHaulException = obj.getString(ConstantsKeys.IsShortHaulException);
-                }
-
-                if(obj.has(ConstantsKeys.IsShortHaulUpdate)){
-                    IsShortHaulUpdate = obj.getString(ConstantsKeys.IsShortHaulUpdate);
-                }
-
-
-                if(obj.has(ConstantsKeys.DecesionSource)){
-                    DecesionSource = obj.getString(ConstantsKeys.DecesionSource);
-                }
-
-                if(obj.has(ConstantsKeys.Truck)){
-                    TruckNumber = obj.getString(ConstantsKeys.Truck);
-                }
-
-                if (obj.has(ConstantsKeys.IsAdverseException )) {
-                    isAdverseException = obj.getString(ConstantsKeys.IsAdverseException );
-                }
-                if (obj.has(ConstantsKeys.AdverseExceptionRemarks)) {
-                    adverseExceptionRemark = obj.getString(ConstantsKeys.AdverseExceptionRemarks);
-                }
-
-                if (obj.has(ConstantsKeys.EditedReason)) {
-                    editLogReason = obj.getString(ConstantsKeys.EditedReason);
-                }
-
-                if (obj.has(ConstantsKeys.LocationType)) {
-                    LocationType = obj.getString(ConstantsKeys.LocationType);
-                }
-
-                if (obj.has(ConstantsKeys.IsNorthCanada)) {
-                    IsNorthCanada = obj.getString(ConstantsKeys.IsNorthCanada);
-                }
-
-                if (obj.has(ConstantsKeys.IsCycleChanged)) {
-                    IsCycleChanged = obj.getString(ConstantsKeys.IsCycleChanged);
-                }
-
-                if (obj.has(ConstantsKeys.LocationSource)) {
-                    LocationSource = obj.getInt(ConstantsKeys.LocationSource);
-                }
-
-
-
-                String DrivingStartTime = "", IsAOBRD = "false", CurrentCycleId = "", isDeferral = "false";
-                String isNewRecord = "false";
-                if (obj.has(ConstantsKeys.DrivingStartTime)) {
-                    DrivingStartTime = obj.getString(ConstantsKeys.DrivingStartTime);
-                }
-
-                if (obj.has(ConstantsKeys.IsAOBRD)) {
-                    IsAOBRD = obj.getString(ConstantsKeys.IsAOBRD);
-                }
-                if (obj.has(ConstantsKeys.CurrentCycleId)) {
-                    CurrentCycleId = obj.getString(ConstantsKeys.CurrentCycleId);
-                }
-
-                if (obj.has(ConstantsKeys.isDeferral)) {
-                    isDeferral = obj.getString(ConstantsKeys.isDeferral);
-                }
-
-                if (obj.has(ConstantsKeys.isNewRecord)) {
-                    isNewRecord = obj.getString(ConstantsKeys.isNewRecord);
-                }
-
-                String UnAssignedVehicleMilesId = "0";
-                if (obj.has(ConstantsKeys.UnAssignedVehicleMilesId) && !obj.getString(ConstantsKeys.UnAssignedVehicleMilesId).equals("null")) {
-                    UnAssignedVehicleMilesId = obj.getString(ConstantsKeys.UnAssignedVehicleMilesId);
-                }
-
-                String EngHour = "";
-                if (obj.has(ConstantsKeys.EngineHours) && !obj.getString(ConstantsKeys.EngineHours).equals("null")) {
-                    EngHour = obj.getString(ConstantsKeys.EngineHours);
-                }
-
-                String odometer = "";
-                if (obj.has(ConstantsKeys.Odometer) && !obj.getString(ConstantsKeys.Odometer).equals("null")) {
-                    odometer = obj.getString(ConstantsKeys.Odometer);
-                }
-
-                String DriverVehicleTypeId = Constants.Driver;
-                if (obj.has(ConstantsKeys.DriverVehicleTypeId) && !obj.getString(ConstantsKeys.DriverVehicleTypeId).equals("null")) {
-                    DriverVehicleTypeId = obj.getString(ConstantsKeys.DriverVehicleTypeId);
-                }
-
-                EldDataModelNew logModel = new EldDataModelNew(
-                        obj.getString(ConstantsKeys.ProjectId),
-                        obj.getString(ConstantsKeys.DriverId),
-                        obj.getString(ConstantsKeys.DriverStatusId),
-                        obj.getString(ConstantsKeys.DriverLogId),
-
-                        obj.getString(ConstantsKeys.IsYardMove),
-                        obj.getString(ConstantsKeys.IsPersonal),
-                        obj.getString(ConstantsKeys.DeviceID),
-
-                        obj.getString(ConstantsKeys.Remarks),
-                        obj.getString(ConstantsKeys.UTCDateTime),
-                        TruckNumber,
-                        obj.getString(ConstantsKeys.TrailorNumber),
-                        obj.getString(ConstantsKeys.CompanyId),
-                        obj.getString(ConstantsKeys.DriverName),
-
-                        obj.getString(ConstantsKeys.City),
-                        obj.getString(ConstantsKeys.State),
-                        obj.getString(ConstantsKeys.Country),
-                        obj.getString(ConstantsKeys.IsViolation),
-                        obj.getString(ConstantsKeys.ViolationReason),
-                        obj.getString(ConstantsKeys.Latitude),
-                        obj.getString(ConstantsKeys.Longitude),
-                        IsStatusAutomatic,
-                        OBDSpeed,
-                        GPSSpeed,
-                        PlateNumber,
-
-                        isHaulException,
-                        IsShortHaulUpdate,
-
-                        DecesionSource,
-                        isAdverseException,
-                        adverseExceptionRemark,
-                        editLogReason,
-                        LocationType,
-                        IsNorthCanada,
-                        DrivingStartTime,
-                        IsAOBRD,
-                        CurrentCycleId,
-                        isDeferral,
-                        "",
-                        isNewRecord,
-                        IsCycleChanged,
-                        UnAssignedVehicleMilesId,
-                        obj.getString(ConstantsKeys.CoDriverId),
-                        obj.getString(ConstantsKeys.CoDriverName),
-                        "false", LocationSource, EngHour,
-                        odometer, DriverVehicleTypeId
-
-                );
-
-                logList.add(logModel);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-
-
-
-        return logList;
-    }
 
 
 
@@ -1460,7 +1366,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                                 }
                             }
 
-                            setRecyclerAdapter();
+                            setRecyclerAdapter(false);
 
                         }
                     }
@@ -1526,7 +1432,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
 
     void RefreshTempAdapter(){
         driverLogArray          = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
-        logArray                = hMethods.GetSingleDateArray( driverLogArray, selectedDateTime, selectedDateTime, selectedUtcTime, IsCurrentDate , offsetFromUTC);
+        logArray                = hMethods.GetSingleDateArray( driverLogArray, selectedDateTime, selectedDateTime, selectedUtcTime,
+                                    IsCurrentDate , offsetFromUTC, getActivity());
         oDriverLogDetail        = hMethods.GetLogModelEditDriver( logArray, currentDateTime, currentUTCTime, IsCurrentDate, offsetFromUTC);
 
     }
@@ -1539,7 +1446,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
             MainDriverPref.ClearLocFromList(getActivity());
 
             // Save data for Main Driver
-            List<EldDataModelNew> editLogList = getEditLogList(finalEditedLogArray);
+            List<EldDataModelNew> editLogList = constants.getLogInList(finalEditedLogArray);
             MainDriverPref.SaveDriverLoc(getActivity(), editLogList);
 
         }else{
@@ -1548,7 +1455,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                 MainDriverPref.ClearLocFromList(getActivity());
 
                 // Save data for Main Driver
-                List<EldDataModelNew> editLogList = getEditLogList(finalEditedLogArray);
+                List<EldDataModelNew> editLogList = constants.getLogInList(finalEditedLogArray);
                 MainDriverPref.SaveDriverLoc(getActivity(), editLogList);
             }else{
 
@@ -1556,7 +1463,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                 CoDriverPref.ClearLocFromList(getActivity());
 
                 // Save data for Co Driver
-                List<EldDataModelNew> editLogList = getEditLogList(finalEditedLogArray);
+                List<EldDataModelNew> editLogList = constants.getLogInList(finalEditedLogArray);
                 CoDriverPref.SaveDriverLoc(getActivity(), editLogList);
             }
         }
@@ -1576,7 +1483,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
             // this loop was call only when previous day log is edited.
             // In logArrayBeforeSelectedDate logs were before selected date. In upper loop we are adding previous edited log in array and in this loop we are adding current day non-edited log in array
             if(!IsCurrentDate){
-                JSONArray currentLogArray   = hMethods.GetSingleDateArray( driverLogArray, currentDateTime, currentDateTime, currentUTCTime, IsCurrentDate, offsetFromUTC );
+                JSONArray currentLogArray   = hMethods.GetSingleDateArray( driverLogArray, currentDateTime, currentDateTime, currentUTCTime,
+                        IsCurrentDate, offsetFromUTC, getActivity() );
                 for (int i = 0; i < currentLogArray.length(); i++) {
                     JSONObject jsonObj1 = (JSONObject) currentLogArray.get(i);
                     editableLogArray.put(jsonObj1);

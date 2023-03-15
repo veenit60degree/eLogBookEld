@@ -58,7 +58,7 @@ public class DriverAddressDialog extends Dialog implements AdapterView.OnItemCli
     ArrayList formattedAddress = new ArrayList();
     ArrayAdapter<String> adapter;
     String address = "";
-
+    boolean isInProgress = false;
 
     public DriverAddressDialog(Context context,
                                 View view,  LocationListener readyListener) {
@@ -116,7 +116,9 @@ public class DriverAddressDialog extends Dialog implements AdapterView.OnItemCli
 
                 String updatedCityName = CityNameEditText.getText().toString().trim();
                 if(updatedCityName.length() > 2) {
-                    AddressUser(updatedCityName);
+                    if(!isInProgress) {
+                        AddressUser(updatedCityName);
+                    }
                 }
 
             }
@@ -156,10 +158,10 @@ public class DriverAddressDialog extends Dialog implements AdapterView.OnItemCli
 
     void AddressUser(final String Address){
 
+        isInProgress = true;
         params = new HashMap<String, String>();
-
         AddressRequest.executeRequest(Request.Method.GET, "https://dev.virtualearth.net/REST/v1/Autosuggest?query="+Address+"&key=Aovjh460r6Z3o2jcmOdWUCfYBTKQpZaNDOBvkX9LK78OB9wvbF3WnxDPKyyFJmYr", null, 1,
-                Constants.SocketTimeout8Sec, ResponseCallBack, ErrorCallBack);
+                Constants.SocketTimeout5Sec, ResponseCallBack, ErrorCallBack);
 
     }
 
@@ -169,9 +171,9 @@ public class DriverAddressDialog extends Dialog implements AdapterView.OnItemCli
         public void getResponse(String response, int flag) {
 
 
-            Logger.LogDebug("response", " logout response: " + response);
-            String status = "";
-
+            Logger.LogDebug("response", "DriverAddDia logout response: " + response);
+            //String status = "";
+            isInProgress = false;
             formattedAddress = new ArrayList();
 
             try {
@@ -217,6 +219,7 @@ public class DriverAddressDialog extends Dialog implements AdapterView.OnItemCli
 
         @Override
         public void getError(VolleyError error, int flag) {
+            isInProgress = false;
             Logger.LogDebug("onDuty error", "onDuty error: " + error.toString());
         }
     };

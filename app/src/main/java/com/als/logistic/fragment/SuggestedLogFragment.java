@@ -3,6 +3,7 @@ package com.als.logistic.fragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +25,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.adapter.logistic.TabLayoutAdapter;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.AlertDialogEld;
 import com.constants.ConstantHtml;
@@ -194,7 +196,6 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
     void initView(View rootView) {
 
-
         recapViewMethod = new RecapViewMethod();
         certifyLogMethod= new CertifyLogMethod();
         globally        = new Globally();
@@ -202,7 +203,6 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
         dbHelper        = new DBHelper(getActivity());
         constants       = new Constants();
 
-      //  saveCertifyLogPost          = new SaveDriverLogPost(getActivity(), saveCertifyResponse);
         GetEditedRecordRequest      = new VolleyRequest(getActivity());
         claimLogRequest             = new VolleyRequest(getActivity());
         GetReCertifyRequest         = new VolleyRequest(getActivity());
@@ -235,9 +235,9 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
             DriverType = Constants.CO_DRIVER_TYPE;
         }
 
-        offsetFromUTC = (int) globally.GetTimeZoneOffSet();
-        currentDateTime = globally.getDateTimeObj(globally.GetCurrentDateTime(), false);
-        LogDate = globally.GetCurrentDeviceDate();
+        offsetFromUTC = (int) globally.GetDriverTimeZoneOffSet(getActivity());
+        currentDateTime = globally.getDateTimeObj(globally.GetDriverCurrentDateTime(globally, getActivity()), false);
+        LogDate = globally.GetCurrentDeviceDate(currentDateTime, globally, getActivity());
 
         DateTime fromDateTime       = currentDateTime.minusDays(14);
         String fromDateStr = Globally.ConvertDateFormatMMddyyyy(fromDateTime.toString());
@@ -270,14 +270,11 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
             driverLogArray = new JSONArray();
         }
 
-       // CheckSelectedDateTime(currentDateTime, LogDate);
-
         String date = "";
         Bundle getBundle        = this.getArguments();
         if(getBundle != null) {
             editedData = getBundle.getString(ConstantsKeys.suggested_data);
             date = getBundle.getString(ConstantsKeys.Date);
-           // getBundle.clear();
         }
 
         LogDate = Globally.ConvertDateFormatMMddyyyy(date);
@@ -391,7 +388,8 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                             "", new CertificationListener());
                     certifyConfirmationDialog.show();
                 }else{
-                    Globally.EldScreenToast(confirmCertifyBtn, getString(R.string.stop_vehicle_alert),
+                    Globally.EldScreenToast(confirmCertifyBtn, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                    getString(R.string.stop_vehicle_alert),
                             getResources().getColor(R.color.colorVoilation));
                 }
                 break;
@@ -410,7 +408,8 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                         globally.EldScreenToast(confirmCertifyBtn, globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
-                    Globally.EldScreenToast(confirmCertifyBtn, getString(R.string.stop_vehicle_alert),
+                    Globally.EldScreenToast(confirmCertifyBtn, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                    getString(R.string.stop_vehicle_alert),
                             getResources().getColor(R.color.colorVoilation));
                 }
 
@@ -688,7 +687,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
             cDate = cDate.split("T")[0] + "T00:00:00";
             selectedDate = globally.getDateTimeObj(cDate, false);
 
-            if (LogDate.equals(globally.GetCurrentDeviceDate())) {
+            if (LogDate.equals(globally.GetCurrentDeviceDate(currentDateTime, globally, getActivity()))) {
                 selectedDateTime = selectedDate;
                 selectedUtcTime = globally.getDateTimeObj(globally.GetCurrentUTCTimeFormat(), true);
             } else {
@@ -707,10 +706,9 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
 
 
-    public void LoadDataOnWebView(WebView webView, JSONArray driverLogJsonArray, String selectedLogDate, boolean isEdited){
+    public void LoadDataOnWebView(WebView webView, JSONArray driverLogJsonArray, String selectedLogDate, boolean isEdited, Context context){
 
         int DRIVER_JOB_STATUS = 1, OldStatus = -1;
-       // CoDriverKey               = "";
 
         TotalDrivingHours        = "00:00";
         TotalOnDutyHours         = "00:00";
@@ -729,6 +727,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
         }else {
             originalLogList = new ArrayList<>();
         }
+        String currentDate = globally.GetCurrentDeviceDate(currentDateTime, globally, context);
 
         try{
             for(int logCount = 0 ; logCount < driverLogJsonArray.length() ; logCount ++) {
@@ -759,8 +758,9 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                 startHour = 0; startMin = 0; endHour = 0; endMin = 0;
 
                 if(logCount > 0 && logCount == driverLogJsonArray.length()-1 ) {
-                    if(  selectedLogDate.equals(globally.GetCurrentDeviceDate()) ) {
-                        endDateTime = Globally.GetCurrentDateTime();
+
+                    if(  selectedLogDate.equals(currentDate) ) {
+                        endDateTime = Globally.GetDriverCurrentDateTime(globally, getActivity());
                     }else{
                         if(endDateTime.length() > 16 && endDateTime.substring(11,16).equals("00:00")){
                             endDateTime = endDateTime.substring(0,11) + "23:59" +endDateTime.substring(16, endDateTime.length());
@@ -902,7 +902,6 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
             progressDialog.show();
 
 
-      //  String selectedDate= selectedDateTime.toString().split("T")[0];
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
         params.put(ConstantsKeys.DeviceId, DeviceId );
@@ -911,7 +910,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
         params.put(ConstantsKeys.CoDriverKey, SuggestedFragmentActivity.CoDriverKey);
         params.put(ConstantsKeys.CoDriverId, CoDriverId);
 
-        params.put(ConstantsKeys.ActionDateTime, globally.getCurrentDate() );
+        params.put(ConstantsKeys.ActionDateTime, globally.GetDriverCurrentDateTime(globally, getActivity()) );
         params.put(ConstantsKeys.ActionTimeZone, SharedPref.getTimeZone(getActivity()) );
 
         if(!isCurrentDate) {
@@ -1000,18 +999,16 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                     case CertifyRecordFlag:
 
                         dismissDialog();
-                        if(isCurrentDate){
+                        globally.EldScreenToast(EldFragment.refreshLogBtn, Message, UILApplication.getInstance().getThemeColor());
 
-                            globally.EldScreenToast(EldFragment.refreshLogBtn, Message, UILApplication.getInstance().getThemeColor());
+                        if(isCurrentDate){
                             finishActivityWithViewUpdate();
                             EldFragment.refreshLogBtn.performClick();
-
                         }else {
-                            globally.EldScreenToast(EldFragment.refreshLogBtn, Message, UILApplication.getInstance().getThemeColor());
                             Constants.isClaim = true;
                             removeSelectedDateFromList();
-
                         }
+
                         clearRecall(SuggestedFragmentActivity.dataArray);
 
                         break;
@@ -1053,17 +1050,16 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                 dismissDialog();
 
                 if(Message.equals("Record Status updated successfully")){
-                    if(isCurrentDate){
+                    globally.EldScreenToast(EldFragment.refreshLogBtn, Message, UILApplication.getInstance().getThemeColor());
+                    dismissDialog();
 
-                        dismissDialog();
-                        globally.EldScreenToast(EldFragment.refreshLogBtn, Message, UILApplication.getInstance().getThemeColor());
+                    if(isCurrentDate){
                         finishActivityWithViewUpdate();
                         EldFragment.refreshLogBtn.performClick();
-
                     }else {
-                        globally.EldScreenToast(EldFragment.refreshLogBtn, Message, UILApplication.getInstance().getThemeColor());
                         removeSelectedDateFromList();
                     }
+
                 }else {
                     setPagetAdapter();
                     globally.EldScreenToast(confirmCertifyBtn, Message, getResources().getColor(R.color.colorVoilation));
@@ -1148,7 +1144,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
             e.printStackTrace();
         }
 
-        if(SuggestedFragmentActivity.dataArray.length() > 0 && !((Activity) getActivity()).isFinishing() ){
+        if(SuggestedFragmentActivity.dataArray.length() > 0 && !(getActivity()).isFinishing() ){
             Toast.makeText(getActivity(), Message, Toast.LENGTH_SHORT).show();
             getParentFragmentManager().popBackStack();
         }else{
@@ -1241,12 +1237,16 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                     StartLongitude = editedObj.getString(ConstantsKeys.StartLongitude);
                 }
 
+                String EndDateTime = editedObj.getString(ConstantsKeys.EndDateTime);
+                if(i == editedLogArray.length()-1){
+                    EndDateTime = String.valueOf(Globally.getDateTimeObj(EndDateTime, false).minusSeconds(1)).substring(0, 19);
+                }
                 EldDriverLogModel editModel = new EldDriverLogModel(
 
                         editedObj.getInt(ConstantsKeys.DriverStatusId),
                         "0",
                         editedObj.getString(ConstantsKeys.StartDateTime),
-                        editedObj.getString(ConstantsKeys.EndDateTime),
+                        EndDateTime,
                         editedObj.getString(ConstantsKeys.TotalHours),
                         editedObj.getString(ConstantsKeys.CurrentCycleId),
 
@@ -1306,16 +1306,6 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
             }catch (Exception e){
                 e.printStackTrace();
             }
-    /*    }else{
-            try {
-
-                if(getActivity() != null && !getActivity().isFinishing()) {
-                    getParentFragmentManager().popBackStack();
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }*/
 
     }
 
@@ -1330,7 +1320,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
         EldTitleTV.setText(getResources().getString(R.string.review_carrier_edits) + " ( " + dateDesc + " )");
 
-        if(LogDate.equals(Globally.GetCurrentDeviceDate())){
+        if(LogDate.equals(Globally.GetCurrentDeviceDate(currentDateTime, globally, getActivity()))){
             isCurrentDate = true;
             confirmCertifyTV.setText(getString(R.string.Confirm));
         }

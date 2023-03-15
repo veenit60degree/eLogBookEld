@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.als.logistic.UILApplication;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.Logger;
@@ -33,6 +34,7 @@ import com.constants.VolleyRequest;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
+import com.local.db.FailedApiTrackMethod;
 import com.local.db.ShipmentHelperMethod;
 import com.als.logistic.Globally;
 import com.als.logistic.LoginActivity;
@@ -44,6 +46,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
 public class ShippingDocDialog extends Dialog {
@@ -69,6 +73,7 @@ public class ShippingDocDialog extends Dialog {
     ShippingPost postRequest;
     ProgressDialog progressDialog;
     VolleyRequest GetShippingRequest, GetShippingDocNumber;
+    FailedApiTrackMethod failedApiTrackMethod;
     Globally global;
     Constants constant;
     Map<String, String> params;
@@ -105,6 +110,7 @@ public class ShippingDocDialog extends Dialog {
         constant                = new Constants();
         GetShippingRequest      = new VolleyRequest(getContext());
         GetShippingDocNumber    = new VolleyRequest(getContext());
+        failedApiTrackMethod    = new FailedApiTrackMethod();
         postRequest             = new ShippingPost(getContext(), requestResponse);
         shipmentHelper          = new ShipmentHelperMethod();
         shipperNoEditText       = (EditText)findViewById(R.id.shipperNoEditText);
@@ -273,22 +279,53 @@ public class ShippingDocDialog extends Dialog {
 
                         } else {
 
+
+
                             ShipperNumber = shipperNoEditText.getText().toString().trim();
                             ShipperName = shipperNameEditText.getText().toString().trim();
                             FromAddress = FromEditText.getText().toString().trim();
                             ToAddress = ToEditText.getText().toString().trim();
                             Commodity = commodityEditText.getText().toString().trim();
 
-                            if(SharedPref.IsDrivingShippingAllowed(getContext())) {
-                                if (ToAddress.length() > 0) {
-                                    CallApiToSaveShipping(false);
-                                } else {
-                                    ToEditText.requestFocus();
-                                    global.EldScreenToast(shippingDocSaveBtn, "Enter (To) address", UILApplication.getInstance().getThemeColor());
-                                }
-                            }else{
-                                CallApiToSaveShipping(false);
+
+                            boolean isContainSpclChar = false;
+                            String spclCharAlert = "";
+                            String alphabetNumAlertMsg = " Only accept alphabet and numeric char";
+
+                            if(isContainSpecialChar(ShipperNumber)) {
+                                isContainSpclChar = true;
+                                spclCharAlert = "Shipper number field contain special char." + alphabetNumAlertMsg;
+                            }else if(isContainSpecialChar(ShipperName)){
+                                isContainSpclChar = true;
+                                spclCharAlert = "Shipper name field contain special char." + alphabetNumAlertMsg;
+                            }else if(isContainSpecialChar(FromAddress)){
+                                isContainSpclChar = true;
+                                spclCharAlert = "From address field contain special char." + alphabetNumAlertMsg;
+                            }else if(isContainSpecialChar(ToAddress)){
+                                isContainSpclChar = true;
+                                spclCharAlert = "To address field contain special char." + alphabetNumAlertMsg;
+                            }else if(isContainSpecialChar(Commodity)){
+                                isContainSpclChar = true;
+                                spclCharAlert = "Commodity field contain special char." + alphabetNumAlertMsg;
                             }
+
+
+                            if(isContainSpclChar){
+                                global.EldScreenToast(shippingDocSaveBtn, spclCharAlert, UILApplication.getInstance().getThemeColor());
+                            }else {
+                                if (SharedPref.IsDrivingShippingAllowed(getContext())) {
+                                    if (ToAddress.length() > 0) {
+                                        CallApiToSaveShipping(false);
+                                    } else {
+                                        ToEditText.requestFocus();
+                                        global.EldScreenToast(shippingDocSaveBtn, "Enter (To) address", UILApplication.getInstance().getThemeColor());
+                                    }
+                                } else {
+                                    CallApiToSaveShipping(false);
+                                }
+                            }
+
+
                         }
                     } else {
 
@@ -302,13 +339,20 @@ public class ShippingDocDialog extends Dialog {
                 }
 
             }else{
-                global.EldScreenToast(shippingDocSaveBtn,  getContext().getResources().getString(R.string.stop_vehicle_alert),
+                global.EldScreenToast(shippingDocSaveBtn,  "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                getContext().getResources().getString(R.string.stop_vehicle_alert),
                         UILApplication.getInstance().getThemeColor());
             }
         }
     }
 
 
+    private boolean isContainSpecialChar(String str){
+        Pattern pattern = Pattern.compile("[^a-zA-Z0-9]");
+        Matcher matcher = pattern.matcher(str);
+        return matcher.find();
+
+    }
     private void CallApiToSaveShipping(boolean IsUnloadingSaved) {
 
             if (IsSingleDriver.equals(DriverConst.TeamDriver)) {
@@ -316,6 +360,10 @@ public class ShippingDocDialog extends Dialog {
                 AddDataInDB(MainDriverId, CoDriverId, IsUnloadingSaved);
 
                 if (global.isConnected(getContext())) {
+                    // reset api call count
+                    failedApiTrackMethod.isAllowToCallOrReset(dbHelper, APIs.SAVE_SHIPPING_DOC_NUMBER,
+                            true, global, getContext());
+
                     progressDialog.show();
                     //POST data to server
                     postRequest.PostListingData(shipmentJsonArray, APIs.SAVE_SHIPPING_DOC_NUMBER, Save18DaysList);
@@ -326,6 +374,12 @@ public class ShippingDocDialog extends Dialog {
             } else {
                 AddDataInDB(DriverId, "", IsUnloadingSaved);
                 if (global.isConnected(getContext())) {
+
+                    // reset api call count
+                    failedApiTrackMethod.isAllowToCallOrReset(dbHelper, APIs.SAVE_SHIPPING_DOC_NUMBER,
+                            true, global, getContext());
+
+
                     progressDialog.show();
                     //POST data to server
                     postRequest.PostListingData(shipmentJsonArray, APIs.SAVE_SHIPPING_DOC_NUMBER, Save18DaysList);
@@ -427,8 +481,8 @@ public class ShippingDocDialog extends Dialog {
     void AddDataInDB(String MainDriverId, String CoDriverId, boolean IsShippingCleared){
 
         boolean isPostedData = false;   // this parameter was used earlier to check data is posted on not. if posted then it will be saved as true. but now some few changes in functionality its value is false statically..
-        String currentDate      = global.getCurrentDate();
-        String CurrentDateTime  = global.GetCurrentDeviceDateTime();
+        String currentDate      = global.GetDriverCurrentDateTime(global, getContext());
+        String CurrentDateTime  = global.ConvertDateFormatMMddyyyyHHmm(currentDate);
 
         try {
             if(shipment18DaysJsonArray.length() > 0 && IsShippingCleared){

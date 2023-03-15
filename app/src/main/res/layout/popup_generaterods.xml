@@ -117,11 +117,11 @@
 
                         <Spinner
                             android:id="@+id/countrySpinner"
+                            style="@style/spinner_style_country"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
                             android:layout_centerVertical="true"
-                            style="@style/spinner_style_country"
+                            android:gravity="center"
 
                             />
 
@@ -173,7 +173,7 @@
                         android:textColor="?attr/txt_eld_color"
                         android:paddingLeft="@dimen/margin_short_5"
                         android:checked="false"
-
+                        android:visibility="gone"
                         />
 
 
@@ -190,6 +190,8 @@
                         android:textColor="?attr/txt_eld_color"
                         android:layout_marginLeft="@dimen/margin_10"
                         android:paddingLeft="@dimen/margin_short_5"
+                        android:checked="true"
+                        android:clickable="false"
 
                         />
 

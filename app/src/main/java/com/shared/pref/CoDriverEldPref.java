@@ -43,7 +43,7 @@ public class CoDriverEldPref {
 
     public static ArrayList<EldDataModelNew> LoadSavedLoc(Context context) {
         SharedPreferences settings;
-        List<EldDataModelNew> favorites;
+        List<EldDataModelNew> favorites = new ArrayList<>();
         ArrayList<EldDataModelNew> emptyList = new ArrayList<EldDataModelNew>();
 
         settings = context.getSharedPreferences(PREFS_Name_Co_driver,Context.MODE_PRIVATE);

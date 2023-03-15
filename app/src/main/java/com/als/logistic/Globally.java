@@ -109,6 +109,8 @@ public class Globally {
 	public static int VEHICLE_SPEED = -1;
 	public static JSONObject obj ;
 	public static Intent i;
+
+
 	public static final int PICK_FROM_CAMERA = 1, MEDIA_TYPE_VIDEO = 4575;
 	public static String DateFormat 				= "yyyy'-'MM'-'dd'T'HH':'mm':'ss";
 	public static String DateFormatLocal			= "yyyy'-'MM'-'dd HH':'mm':'ss";
@@ -185,7 +187,7 @@ public class Globally {
 
 
 
-
+	public static String WarningMessage 					  = "";
 	public static String CANADA_SOUTH_OPERATION_NAME          = "Canada South 60°N (";
 	public static String CANADA_NORTH_OPERATION_NAME          = "Canada North 60°N (";
 
@@ -240,6 +242,7 @@ public class Globally {
 		}
 		return false;
 	}
+
 
 
 	public static boolean isWifiOrMobileDataEnabled(Context context) {
@@ -753,7 +756,7 @@ public class Globally {
 		DateTime savedUtcDateTime = getDateTimeObj(utcDate, false);
 		DateTime currentUtcDateTime = GetCurrentUTCDateTime();
 
-		int minDiff = currentUtcDateTime.getMinuteOfDay() - savedUtcDateTime.getMinuteOfDay();
+		long minDiff = Constants.getDateTimeDuration(savedUtcDateTime, currentUtcDateTime).getStandardMinutes();
 		if(currentUtcDateTime.isAfter(savedUtcDateTime) || currentUtcDateTime.equals(savedUtcDateTime) || minDiff >= -5){
 			return true;
 		}else{
@@ -774,8 +777,7 @@ public class Globally {
 
 			if (dayDiff >= 0) {
 				int minDiff = (int) Constants.getDateTimeDuration(savedUtcDateTime, currentUtcDateTime).getStandardMinutes();
-				//int minDiff = currentUtcDateTime.getMinuteOfDay() - savedUtcDateTime.getMinuteOfDay();
-				if (Math.max(-9, minDiff) == Math.min(minDiff, 9)) {	//minDiff >= -5
+				if (Math.max(-10, minDiff) == Math.min(minDiff, 10)) {	//minDiff >= -5
 					isTimeCorrect = true;
 				} else {
 					if(isConnected(context) && !IsOnCreateView) {
@@ -787,21 +789,6 @@ public class Globally {
 					isTimeCorrect = false;
 				}
 			}
-
-			/*else {
-				if (currentUtcDateTime.toString().substring(11, 13).equals("00")) {
-					int min = Integer.valueOf(currentUtcDateTime.toString().substring(14, 16));
-
-					if (min <= 7) {
-						isTimeCorrect = true;
-					} else {
-						isTimeCorrect = false;
-					}
-				} else {
-					isTimeCorrect = true;
-				}
-				isTimeCorrect = true;
-			}*/
 		}
 
 		if(!isTimeCorrect && SharedPref.isServiceOnDestoryCalled(context)){
@@ -1228,19 +1215,6 @@ public class Globally {
 		return date;
 	}
 
-	public String getCurrentDateLocal(){
-		SimpleDateFormat currentDateFormat = new SimpleDateFormat(DateFormatLocal);
-		Calendar c = Calendar.getInstance();
-		String StringCurrentDate = "";
-
-		try {
-			StringCurrentDate = currentDateFormat.format(c.getTime());
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return StringCurrentDate;
-	}
-
 	public String getCurrentDateLocalUtc(){
 		SimpleDateFormat currentDateFormat = new SimpleDateFormat(DateFormatLocal);
 		currentDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -1306,11 +1280,27 @@ public class Globally {
     }
 
 
-    public static String GetCurrentDeviceDate(){
-        SimpleDateFormat dateFormatGmt = new SimpleDateFormat(DateFormatMMddyyyy);
-        String currentTime = dateFormatGmt.format(new Date());
-        return currentTime;
+    public static String GetCurrentDeviceDate(DateTime currentTimeFromUtc, Globally global, Context context){	//DateTime currentTimeFromUtc, Globally global, Context context
+       // SimpleDateFormat dateFormatGmt = new SimpleDateFormat(DateFormatMMddyyyy);
+      //  String currentTime = dateFormatGmt.format(new Date());
+
+		//if(currentTimeFromUtc == null) {
+			currentTimeFromUtc = Globally.getDateTimeObj(GetCurrentUTCTimeFormat(), false);
+			long driverOffSet = global.GetDriverTimeZoneOffSet(context);
+			if (driverOffSet < 0) {
+				driverOffSet = Math.abs(driverOffSet);
+			}
+			currentTimeFromUtc = currentTimeFromUtc.minusHours((int) driverOffSet);
+		//}
+
+		String currentTime = ConvertDateFormatMMddyyyy(currentTimeFromUtc.toString());
+
+		return currentTime;
     }
+
+
+
+
 
 	public static String GetCurrentFullDateTime(){
 		String currentTime = "";
@@ -1324,10 +1314,16 @@ public class Globally {
 
 
 
-    public static String GetCurrentDeviceDateDefault(){
-        SimpleDateFormat dateFormatGmt = new SimpleDateFormat(DateFormatHalf);
-        String currentTime = dateFormatGmt.format(new Date());
-        return currentTime;
+    public static String GetCurrentDeviceDateDefault(Globally global, Context context){
+
+		String currentDate = GetDriverCurrentDateTime(global, context);
+		if(currentDate.length() > 10){
+			currentDate = currentDate.substring(0, 10);
+		}else{
+			SimpleDateFormat dateFormatGmt = new SimpleDateFormat(DateFormatHalf);
+			currentDate = dateFormatGmt.format(new Date());
+		}
+        return currentDate;
     }
 
 
@@ -1339,11 +1335,17 @@ public class Globally {
 
 
 
-    public static String GetCurrentDateTime(){
-        SimpleDateFormat dateFormatGmt = new SimpleDateFormat(DateFormat);
-        //dateFormatGmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-        String currentTime = dateFormatGmt.format(new Date());
-        return currentTime;
+    public static String GetCurrentDateTime(Globally global, Context context){
+		String currentDateTime = GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, context).toString();
+		if(currentDateTime.length() > 19){
+			currentDateTime = currentDateTime.substring(0, 19);
+		}else{
+			SimpleDateFormat dateFormatGmt = new SimpleDateFormat(DateFormat);
+			currentDateTime = dateFormatGmt.format(new Date());
+
+		}
+
+        return currentDateTime;
     }
 
     public static String GetCurrentUTCTimeFormat(){
@@ -1354,8 +1356,28 @@ public class Globally {
     }
 
 
+	public static String GetDriverCurrentDateTime(Globally global, Context context){
+		String currentDateTime = GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, context).toString();
+		if(currentDateTime.length() > 19){
+			currentDateTime = currentDateTime.substring(0, 19);
+		}
+		return currentDateTime;
+	}
 
 
+
+
+
+	public static DateTime GetDriverCurrentTime(String StartUTCCurrentTime, Globally global, Context context){
+		DateTime currentTimeFromUtc = Globally.getDateTimeObj(StartUTCCurrentTime, false);
+		long driverOffSet = global.GetDriverTimeZoneOffSet(context);
+		if(driverOffSet < 0){
+			driverOffSet = Math.abs(driverOffSet);
+		}
+		currentTimeFromUtc = currentTimeFromUtc.minusHours((int)driverOffSet);
+
+		return currentTimeFromUtc;
+	}
 
 
 	public static DateTime GetStartDate(DateTime date, int days){
@@ -1410,28 +1432,92 @@ public class Globally {
 			}
 		}
 		dateFormatGmt = new SimpleDateFormat("hh:mm a");   // hh:mm a  -- 12 hours format (am/pm)
-		date = dateFormatGmt.format(newDate);
-		convertedDate = date.toString();
+		convertedDate = dateFormatGmt.format(newDate);
+		//convertedDate = date.toString();
 
 		return convertedDate;
 	}
 
 
-    public long GetTimeZoneOffSet(){
-        String currentDate = getCurrentDate();
-        String currentUTCDate = GetCurrentUTCTimeFormat();
-		long minutes = 0;
-    	try {
+    public long GetTimeZoneOffSet(Context context){
+
+		long offsetInHr = 0;
+		try {
+
+			DateTime currentDateTime = getDateTimeObj(GetDriverCurrentTime(
+					Globally.GetCurrentUTCTimeFormat(), new Globally(), context).toString(), false);
+			DateTime currentUtcdateTime = getDateTimeObj(GetCurrentUTCTimeFormat(), false);
+			long diffInMillis = currentDateTime.getMillis() - currentUtcdateTime.getMillis();
+			offsetInHr = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
+			offsetInHr = offsetInHr / 60;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        return offsetInHr;
+    }
+
+
+
+	public long GetDriverTimeZoneOffSet(Context context){
+
+		long savedOffsetInHr = TabAct.Offset;
+
+			try {
+				if(context != null) {
+					savedOffsetInHr = SharedPref.getDriverTimeZoneOffSet(context);
+					if (savedOffsetInHr == 0) {
+						savedOffsetInHr = GetDefaultTimeZoneOffSet(context);
+						SharedPref.setDriverTimeZoneOffSet(savedOffsetInHr, context);
+					}
+				}else{
+					Logger.LogDebug("GetDriverTimeZoneOffSet", "context null: " + TabAct.Offset );
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+
+
+		return savedOffsetInHr;
+	}
+
+	public String getShortNameOfTimeZone(Context context){
+		String timeZone = "";
+		String[] timeZoneArray = SharedPref.getTimeZone(context).split(" ");
+		for(int i = 0 ; i < timeZoneArray.length ; i++){
+			if(timeZoneArray[i].length() > 0) {
+				timeZone = timeZone + timeZoneArray[i].charAt(0);
+			}
+		}
+
+		if(timeZone.length() == 0){
+			return SharedPref.getTimeZone(context);
+		}else{
+			return timeZone.trim();
+		}
+
+	}
+
+
+	public long GetDefaultTimeZoneOffSet(Context context){
+
+		String currentDate = getCurrentDate();
+		String currentUTCDate = GetCurrentUTCTimeFormat();
+		long offsetInHr = 0;
+		try {
 			DateTime currentDateTime = getDateTimeObj(currentDate, false);
 			DateTime currentUtcdateTime = getDateTimeObj(currentUTCDate, false);
 			long diffInMillis = currentDateTime.getMillis() - currentUtcdateTime.getMillis();
-			minutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
-			minutes = minutes / 60;
+			offsetInHr = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
+			offsetInHr = offsetInHr / 60;
 		}catch (Exception e){
-    		e.printStackTrace();
+			e.printStackTrace();
 		}
-        return minutes;
-    }
+		return offsetInHr;
+
+
+	}
+
 
     public static DateTime getDateTimeObj(String date, boolean isInputInUTC) {
         DateTime oDate = null;
@@ -1614,31 +1700,31 @@ public class Globally {
 	}
 
 	public static File getAlsGenerateRodsPath(Context context){
-		File apkStorageDir = new File(context.getExternalFilesDir(null),"/Logistic/GenerateRods");
+		File rodsStorageDir = new File(context.getExternalFilesDir(null),"/Logistic/GenerateRods");
 
 		// Create the storage directory if it does not exist
-		if (!apkStorageDir.exists()) {
-			if (!apkStorageDir.mkdirs()) {
+		if (!rodsStorageDir.exists()) {
+			if (!rodsStorageDir.mkdirs()) {
 				Logger.LogDebug("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
 				return null;
 			}
 		}
 
-		return apkStorageDir;
+		return rodsStorageDir;
 	}
 
 	public static File getAlsGenerateRodsDummyPath(Context context){
-		File apkStorageDir = new File(context.getExternalFilesDir(null),"/Logistic/GenerateRodsDummy");
+		File rodsStorageDir = new File(context.getExternalFilesDir(null),"/Logistic/GenerateRodsDummy");
 
 		// Create the storage directory if it does not exist
-		if (!apkStorageDir.exists()) {
-			if (!apkStorageDir.mkdirs()) {
+		if (!rodsStorageDir.exists()) {
+			if (!rodsStorageDir.mkdirs()) {
 				Logger.LogDebug("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
 				return null;
 			}
 		}
 
-		return apkStorageDir;
+		return rodsStorageDir;
 	}
 
 	public static boolean isExternalStorageAvailable() {
@@ -1676,7 +1762,8 @@ public class Globally {
 
 	public static File getAlsApkPath(){
 		//File apkStorageDir = new File(context.getExternalFilesDir(null),"Logistic/AlsApp");
-		File apkStorageDir = new File(Environment.getExternalStorageDirectory() + "/EldApp");
+		//File apkStorageDir = new File(Environment.getExternalStorageDirectory() + "/EldApp");
+		File apkStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+ "/EldApp");
 		// Create the storage directory if it does not exist
 		if (!apkStorageDir.exists()) {
 			if (!apkStorageDir.mkdirs()) {
@@ -1708,17 +1795,17 @@ public class Globally {
 
 
 	public static File getAlsDocPath(Context context){
-		File apkStorageDir = new File(context.getExternalFilesDir(null),"Logistic/AlsDoc");
+		File docStorageDir = new File(context.getExternalFilesDir(null),"Logistic/AlsDoc");
 
 		// Create the storage directory if it does not exist
-		if (!apkStorageDir.exists()) {
-			if (!apkStorageDir.mkdirs()) {
+		if (!docStorageDir.exists()) {
+			if (!docStorageDir.mkdirs()) {
 				Logger.LogDebug("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
 				return null;
 			}
 		}
 
-		return apkStorageDir;
+		return docStorageDir;
 	}
 
 
@@ -2421,6 +2508,8 @@ public class Globally {
 			error = "Connection time out.";
 		}else if( error.contains("NoConnectionError")){
 			error = "Connection Error";
+		}else if(error.contains("UnknownHostException")){
+			error = "Server not responding";
 		}
 
 		return error;
@@ -2448,7 +2537,7 @@ public class Globally {
 			case Constants.CANADAShiftNotification:
 			case Constants.USAShiftNotification:
 
-				String title = "ALS";
+				String title = "ELD";
 				String message = "Alert";
 
 				if(RemainingTimeObj.isViolation()){
@@ -2470,7 +2559,7 @@ public class Globally {
 
 		int id = RemainingTimeObj.getNotificationType() + 1000;
 		Intent intent = new Intent(context, TabAct.class);   //
-		mNotificationManager.showLocalNotification("ALS",  RemainingTimeObj.getMessage(), id , intent);
+		mNotificationManager.showLocalNotification("ELD Alert",  RemainingTimeObj.getMessage(), id , intent);
 
 	}
 
@@ -2617,7 +2706,7 @@ public class Globally {
 		//	DisConnectBleDevice(c);
 
 			MalfunctionDiagnosticMethod malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
-			malfunctionDiagnosticMethod.updateTimeOnLocationReceived(new DBHelper(c));
+			malfunctionDiagnosticMethod.updateTimeOnLocationReceived(new DBHelper(c), c);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2660,7 +2749,7 @@ public class Globally {
 			SharedPref.setDriverId("", c);
 			SharedPref.setDriverStatusId("", c);
 			SharedPref.setCountryCycle("CountryCycle", "", c);
-			SharedPref.setTimeZone("", c);
+			//SharedPref.setTimeZone("", c);
 			SharedPref.setUTCTimeZone("utc_time_zone", "", c);
 			SharedPref.setTrailorNumber("", c);
 			SharedPref.setVehicleId("", c);
@@ -2755,6 +2844,7 @@ public class Globally {
 				dbHelper.DeleteBleGpsAppLaunchTable();
 				dbHelper.DeleteVehiclePowerEventTable();
 				dbHelper.DeleteSyncDataVersion2Table();
+				dbHelper.DeleteFailedApiTrackEventTable();
 
 			}catch (Exception e){
 				e.printStackTrace();

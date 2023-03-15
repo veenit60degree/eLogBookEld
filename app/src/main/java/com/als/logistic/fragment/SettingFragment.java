@@ -57,11 +57,13 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.AsyncResponse;
 import com.constants.CheckConnectivity;
 import com.constants.CircularProgressBar;
 import com.constants.Constants;
+import com.constants.ConstantsEnum;
 import com.constants.DownloadAppService;
 import com.constants.LoadingSpinImgView;
 import com.constants.Logger;
@@ -74,6 +76,7 @@ import com.custom.dialogs.ChangeCycleDialog;
 import com.custom.dialogs.ConfirmationDialog;
 import com.custom.dialogs.DeferralDialog;
 import com.custom.dialogs.DriverAddressDialog;
+import com.custom.dialogs.DriverLocationDialog;
 import com.custom.dialogs.ObdDataInfoDialog;
 import com.local.db.DeferralMethod;
 import com.local.db.MalfunctionDiagnosticMethod;
@@ -166,8 +169,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     int CanListSize = 0, UsaListSize = 0, TimeZoneListSize = 0, SavedPosition = 0;
     String SavedCanCycle = "", SavedUsaCycle = "", CurrentCycleId = "", SavedTimeZone = "", DeviceId = "", DriverId = "",
             CoDriverId = "", DriverName = "", CoDriverName = "", CompanyId = "";
-    String SelectedCanCycle = "", SelectedUsaCycle = "", SelectedTimeZone = "", exceptionDesc = "", TruckNumber, DriverTimeZone,
-            IsSouthCanada, SavedCycleType, changedCycleId, changedCycleName, LocationType = "", agricultureAddress = "";
+    String SelectedCanCycle = "", SelectedUsaCycle = "", SelectedTimeZone = "", exceptionDesc = "", TruckNumber,
+            DriverTimeZone,  IsSouthCanada, SavedCycleType, changedCycleId, changedCycleName, LocationType = "",
+            SourceAddress = "--", agricultureAddress = "";
     String SourceLatitude = "", SourceLongitude = "";
     String Approved = "2";
     String Rejected = "3";
@@ -189,7 +193,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     String VersionCode = "", VersionName = "", ExistingApkVersionCode = "", ExistingApkVersionName = "";
     CircularProgressBar downloadProgressBar;
     VolleyRequest GetAppUpdateRequest, GetDriverLogPostPermission, getCycleChangeApproval, ChangeCycleRequest, OperatingZoneRequest,
-            AddressLatLongRequest,SaveAgricultureRequest;
+            AddressLatLongRequest, GetAddFromLatLngRequest, SaveAgricultureRequest;
     final int GetAppUpdate  = 1, DriverLogPermission = 2, CycleChangeApproval = 3, ChangeCycle = 4, OperatingZone = 5,
                 AddressLatLong = 6, SaveAgricultureException = 7;
     int DriverType = 0;
@@ -283,6 +287,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         ChangeCycleRequest          = new VolleyRequest(getActivity());
         OperatingZoneRequest        = new VolleyRequest(getActivity());
         AddressLatLongRequest       = new VolleyRequest(getActivity());
+        GetAddFromLatLngRequest     = new VolleyRequest(getActivity());
         SaveAgricultureRequest      = new VolleyRequest(getActivity());
 
         connectivityTask            = new CheckConnectivity(getActivity());
@@ -419,12 +424,13 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     }else {
                         if (isChecked) {
                             List<DriverLog> oDriverLogDetail = hMethods.getSavedLogList(Integer.valueOf(DriverId),
-                                    global.GetCurrentJodaDateTime(),
+                                    global.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getActivity()),
                                     global.GetCurrentUTCDateTime(), dbHelper);
 
-                            DriverDetail oDriverDetail = hMethods.getDriverList(global.GetCurrentJodaDateTime(),
+                            DriverDetail oDriverDetail = hMethods.getDriverList(
+                                    global.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getActivity()),
                                     global.GetCurrentUTCDateTime(), Integer.valueOf(DriverId),
-                                    (int) global.GetTimeZoneOffSet(), Integer.valueOf(CurrentCycleId),
+                                    (int) global.GetDriverTimeZoneOffSet(getActivity()), Integer.valueOf(CurrentCycleId),
                                     global.isSingleDriver(getActivity()),
                                     Integer.valueOf(SharedPref.getDriverStatusId(getActivity())), false,
                                     isHaulExcptn, isAdverseExcptn, isNorthCanada,
@@ -629,6 +635,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
                             if (!isAgricultureExcptn) {
                                 if (isAllowToEnableExceptionn(DriverId, false) && !isVehicleMoving) {
+                                    // get current location address
+                                    GetAddFromLatLng();
+
                                     OpenAddressDialog();
                                 } else {
                                     buttonView.setChecked(false);
@@ -643,7 +652,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     }else{
                         buttonView.setChecked(isChecked);
                         IsAgriExceptionEnable = false;
-                        SaveAgricultureRecord(global.getCurrentDateLocal(), Globally.GetCurrentUTCTimeFormat(), SharedPref.getTruckNumber(getActivity()),
+
+                        SaveAgricultureRecord( Globally.GetCurrentUTCTimeFormat(), SharedPref.getTruckNumber(getActivity()),
                                 DriverId,CompanyId,
                                 SharedPref.getAgricultureRecord("AgricultureAddress", getContext()),SharedPref.getAgricultureRecord("AgricultureLatitude", getContext()),SharedPref.getAgricultureRecord("AgricultureLongitude", getContext()),SharedPref.getObdEngineHours(getContext()),SharedPref.getObdOdometer(getContext()),"0");
                     }
@@ -782,7 +792,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         getStorageRecordOnView();
         getExceptionStatus();
         haulExceptnSwitchButton.setChecked(isHaulExcptn);
-        adverseSwitchButton.setChecked(isAdverseExcptn);
         deferralSwitchButton.setChecked(isDeferral);
         agricultureSwitchButton.setChecked(isAgricultureExcptn);
         dayNightSwitchButton.setChecked(isDayNightMode);
@@ -801,12 +810,20 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             haulExpTxtView.setTextColor(ColorGrayCategory);
             adverseExpTxtView.setTextColor(ColorGrayCategory);
             agricultureExpTxtView.setTextColor(ColorGrayCategory);
+            adverseCanadaSwitchButton.setChecked(false);
+
+            adverseSwitchButton.setChecked(isAdverseExcptn);
         }else {
+
             haulExpTxtView.setTextColor(ColorGrayBackground);
             adverseExpTxtView.setTextColor(ColorGrayBackground);
             adverseCanadaExpTxtView.setTextColor(ColorGrayCategory);
             deferralTxtView.setTextColor(ColorGrayCategory);
             agricultureExpTxtView.setTextColor(ColorGrayBackground);
+
+            adverseSwitchButton.setChecked(false);
+            adverseCanadaSwitchButton.setChecked(isAdverseExcptn);
+
         }
 
 
@@ -957,7 +974,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 if (global.isConnected(getActivity())) {
                     changeCycleRequest(DriverId, DeviceId, CompanyId, "",
                             Approved, changedCycleId, CurrentCycleId, Globally.LATITUDE,
-                            Globally.LONGITUDE, DriverTimeZone, TruckNumber, global.GetCurrentDeviceDateDefault());
+                            Globally.LONGITUDE, DriverTimeZone, TruckNumber, global.GetCurrentDeviceDateDefault(global, getActivity()));
                 }else{
                     global.EldScreenToast(SyncDataBtn, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation) );
                 }
@@ -1496,7 +1513,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                             global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.cycle_change_check), UILApplication.getInstance().getThemeColor());
                         }
                     }else{
-                        Globally.EldScreenToast(caCycleTV, getString(R.string.stop_vehicle_alert),
+                        Globally.EldScreenToast(caCycleTV, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                        getString(R.string.stop_vehicle_alert),
                                 getResources().getColor(R.color.colorVoilation));
                     }
 
@@ -1519,7 +1537,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                 global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.cycle_change_check), UILApplication.getInstance().getThemeColor());
                             }
                         }else{
-                            Globally.EldScreenToast(caCycleTV, getString(R.string.stop_vehicle_alert),
+                            Globally.EldScreenToast(caCycleTV, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                            getString(R.string.stop_vehicle_alert),
                                     getResources().getColor(R.color.colorVoilation));
                         }
 
@@ -1557,7 +1576,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                 global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.op_zone_change_check), UILApplication.getInstance().getThemeColor());
                             }
                         }else{
-                            Globally.EldScreenToast(caCycleTV, getString(R.string.stop_vehicle_alert),
+                            Globally.EldScreenToast(caCycleTV, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                                            getString(R.string.stop_vehicle_alert),
                                     getResources().getColor(R.color.colorVoilation));
                         }
                     }
@@ -1756,9 +1776,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         public void JobBtnReady(int time, int deferralDays) {
 
             if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-                SharedPref.setDeferralForMain(true, Globally.GetCurrentDateTime(), "1", getActivity());
+                SharedPref.setDeferralForMain(true, Globally.GetDriverCurrentDateTime(global, getActivity()), "1", getActivity());
             }else{
-                SharedPref.setDeferralForCo(true, Globally.GetCurrentDateTime(), "1", getActivity());
+                SharedPref.setDeferralForCo(true, Globally.GetDriverCurrentDateTime(global, getActivity()), "1", getActivity());
             }
 
             global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.Deferralenabled), UILApplication.getInstance().getThemeColor());
@@ -1836,10 +1856,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
           /*  try {
                 // creating log when haul exception is not enabled to check log array
                 int currentStatus = Integer.valueOf(SharedPref.getDriverStatusId(getActivity()));
-                constants.writeViolationFile(global.getDateTimeObj(global.getCurrentDate(), false),
+                constants.writeViolationFile(global.getDateTimeObj(global.GetDriverCurrentDateTime(Global, getActivity()), false),
                         global.GetCurrentUTCDateTime(),
                         Integer.valueOf(DriverId), CurrentCycleId,
-                        (int) global.GetTimeZoneOffSet(),
+                        (int) global.GetDriverTimeZoneOffSet(),
                         global.isSingleDriver(getActivity()),
                         currentStatus, false, isHaulExcptn,
                         "Not able to allow Adverse Exception.",
@@ -1917,7 +1937,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
                     if ((syncingFile != null && syncingFile.exists()) || (DriverLogFile != null && DriverLogFile.exists())) {
                         // Sync driver log API data to server with SAVE_LOG_TEXT_FILE (SAVE sync data service)
-                        SyncDataUpload syncDataUpload = new SyncDataUpload(getActivity(), DriverId, syncingFile, DriverLogFile, cycleUpdationRecordFile, IsLogPermission, asyncResponse );
+                        // set this variable always true to get violation file to check wrong violtaion issue
+                        IsLogPermission = true;
+                        SyncDataUpload syncDataUpload = new SyncDataUpload(getActivity(), DriverId, syncingFile, DriverLogFile,
+                                cycleUpdationRecordFile, IsLogPermission, asyncResponse );
                         syncDataUpload.execute();
                     }else{
                         settingSpinImgVw.stopAnimation();
@@ -2035,7 +2058,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         //startActivity(intent);
 
 
-        Globally.DriverSwitchAlert(getActivity(), "Eld App !!" , "Update app from EldApp folder.", "Ok");
+        Globally.DriverSwitchAlert(getActivity(), "Eld App !!" , "Update app from Download/EldApp folder.", "Ok");
     }
 
 
@@ -2073,7 +2096,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
         if(toInstall.isFile()) {
             /*if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){ //Build.VERSION.SDK_INT < Build.VERSION_CODES.P &&
-                global.EldScreenToast(SyncDataBtn, "Not able to install app directly. You can install it manually in (Logistic/AlsApp/) folder.", Color.parseColor("#358A0D"));
+                global.EldScreenToast(SyncDataBtn, "Not able to install app directly. You can install it manually in (Logistic/EldApp/) folder.", Color.parseColor("#358A0D"));
             }else */
 
             if(AppInstallAttemp < 2) { // It means apk file has some problem and need to delete it to download again.
@@ -2231,7 +2254,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         params.put(ConstantsKeys.CoDriverId, CoDriverId);
         params.put(ConstantsKeys.DeviceId, DeviceId);
         params.put(ConstantsKeys.CompanyId, CompanyId);
-        params.put(ConstantsKeys.Id, Id);
+        //params.put(ConstantsKeys.Id, Id);
         params.put(ConstantsKeys.Status, Status);
         params.put(ConstantsKeys.CycleId, ChangedCycleId);
         params.put(ConstantsKeys.CurrentCycleId, CurrentCycleId);
@@ -2288,11 +2311,31 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
     }
 
-    void SaveAgricultureRecord(final String EventDateTime,final String EventDateTimeInUtc,final String Truck,final String DriverId,final String CompanyId,
+
+    //*================== Get Address From Lat Lng ===================*//*
+    void GetAddFromLatLng() {
+
+        if (global.isConnected(getActivity()) && SourceAddress.length() < 3) {
+            params = new HashMap<String, String>();
+            params.put(ConstantsKeys.Latitude, Globally.LATITUDE);
+            params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
+           // params.put(ConstantsKeys.IsAOBRDAutomatic, "false");
+
+            GetAddFromLatLngRequest.executeRequest(Request.Method.POST, APIs.GET_Add_FROM_LAT_LNG, params,
+                    ConstantsEnum.GetAddFromLatLng, Constants.SocketTimeout5Sec, ResponseCallBack, ErrorCallBack);
+        }
+    }
+
+
+
+    void SaveAgricultureRecord(final String EventDateTimeInUtc,final String Truck,final String DriverId,final String CompanyId,
                               final String SourceAddress,final String SourceLatitude,final String SourceLongitude,final String Odometer,final String EngineHours,final String IsEnabled){
 
+        String driverZoneCurrentTime = Globally.GetDriverCurrentDateTime(global, getActivity());
+        driverZoneCurrentTime = driverZoneCurrentTime.replaceAll("T", " ");
+
         params = new HashMap<String, String>();
-        params.put(ConstantsKeys.EventDateTime, EventDateTime);
+        params.put(ConstantsKeys.EventDateTime, driverZoneCurrentTime);
         params.put(ConstantsKeys.EventDateTimeInUtc, EventDateTimeInUtc);
         params.put(ConstantsKeys.Truck, Truck);
         params.put(ConstantsKeys.DriverId, DriverId);
@@ -2328,7 +2371,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
                     if (ExistingApkVersionCode.equals(VersionCode) && ExistingApkVersionName.equals(VersionName)) {
                         checkAppUpdateTV.setText("Install Updates");
-                        global.EldScreenToast(SyncDataBtn, "This application is already in (AlsApp) folder.", UILApplication.getInstance().getThemeColor());
+                        global.EldScreenToast(SyncDataBtn, "This application is already in (Download/EldApp) folder.", UILApplication.getInstance().getThemeColor());
                         ApkFilePath = global.getAlsApkPath() + "/" + existingApkFilePath;
                        // InstallApp(ApkFilePath);
                         openFileLocation(ApkFilePath);
@@ -2406,13 +2449,14 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                 global.EldScreenToast(SyncDataBtn, "Your application is up to date.", UILApplication.getInstance().getThemeColor());
                             }else {
                                 CheckAppStatus();
-
                             }
+
                         }catch (Exception e){
                             e.printStackTrace();
                         }
 
                         break;
+
 
                     case DriverLogPermission:
                         try {
@@ -2483,12 +2527,15 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                     color = "#FFFFFF";
                                 }
 
-                                OpenAgricultureAlertDialog("<br/><font color='"+color+"'>Your Current distance from Source of Load is "+ distanceMilesFormat +
-                                        " ("+distanceKm+" KM). " +" <br/><b>Please Note:</b> You are eligible for this exemption within 150 air-mile " +
+                                String sourceDestAddress = "<br/><font color='"+color+"'><b>Current Address:</b> " + SourceAddress +
+                                                            "<br/><b>Source Address:</b> " + agricultureAddress +
+                                                            "<br/><b>Distance:</b> " + distanceMilesFormat + " miles ("+distanceKm+" KM)." ;
+
+                                OpenAgricultureAlertDialog(sourceDestAddress + "<br/><br/><b>Please Note:</b> You are eligible for this exemption within 150 air-mile " +
                                         "(172.6 Miles or 277.80 KM) radius from the source of the commodities.</font>");
                             }else{
                                 IsAgriExceptionEnable = true;
-                                SaveAgricultureRecord(global.getCurrentDateLocal(), Globally.GetCurrentUTCTimeFormat(),
+                                SaveAgricultureRecord(Globally.GetCurrentUTCTimeFormat(),
                                         SharedPref.getTruckNumber(getActivity()), DriverId,CompanyId,
                                         agricultureAddress,String.valueOf(latitude),String.valueOf(longitude),SharedPref.getObdEngineHours(getContext()),SharedPref.getObdOdometer(getContext()),"1");
 
@@ -2502,10 +2549,31 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         }
                         break;
 
+
+                    case ConstantsEnum.GetAddFromLatLng:
+
+                        if (!obj.isNull("Data")) {
+                            try {
+                                JSONObject dataJObject = new JSONObject(obj.getString("Data"));
+                                if(!dataJObject.getString(ConstantsKeys.City).equals("null")) {
+                                    SourceAddress = dataJObject.getString(ConstantsKeys.City);
+                                    SourceAddress = SourceAddress + ", " +dataJObject.getString(ConstantsKeys.State);
+                                    SourceAddress = SourceAddress + ", " + dataJObject.getString(ConstantsKeys.Country);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+
+                        break;
+
+
                     case SaveAgricultureException:
 
                         if(IsAgriExceptionEnable) {
 
+                            SourceAddress = "--";
                             SharedPref.setAgricultureExemption(true, getActivity());
                             SharedPref.SaveAgricultureRecord(SourceLatitude, SourceLongitude, agricultureAddress, getContext());
 
@@ -2872,10 +2940,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                 try {
                                     // creating log when haul exception is not enabled to check log array
                                     int currentStatus = Integer.valueOf(SharedPref.getDriverStatusId(getActivity()));
-                                    constants.writeViolationFile(global.getDateTimeObj(global.getCurrentDate(), false),
+                                    constants.writeViolationFile(global.getDateTimeObj(global.GetDriverCurrentDateTime(global, getActivity()), false),
                                             global.GetCurrentUTCDateTime(),
                                             Integer.valueOf(DriverId), CurrentCycleId,
-                                            (int) global.GetTimeZoneOffSet(),
+                                            (int) global.GetDriverTimeZoneOffSet(getActivity()),
                                             global.isSingleDriver(getActivity()),
                                             currentStatus, false, isHaulExcptn,
                                             "Not able to allow 16 hr Haul Exception.",

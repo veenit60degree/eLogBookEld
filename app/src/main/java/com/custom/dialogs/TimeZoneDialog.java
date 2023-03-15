@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -70,15 +71,30 @@ public class TimeZoneDialog extends Dialog {
         getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
         setContentView(R.layout.popup_update_app);
+        constant        = new Constants();
+
         setCancelable(false);
 
-        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        //getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(getWindow().getAttributes());
+        if(Globally.isTablet(getContext())) {
+            lp.width = constant.intToPixel(mContext, 850);
+        }else{
+            lp.width = constant.intToPixel(mContext, 730);
+        }
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.gravity = Gravity.CENTER;
+        getWindow().setAttributes(lp);
+
+
 
         progressD = new ProgressDialog(mContext);
         progressD.setMessage("Loading...");
         LogoutRequest   = new VolleyRequest(mContext);
-        constant        = new Constants();
+
         global          = new Globally();
 
         recordTitleTV   = (TextView)findViewById(R.id.recordTitleTV);
@@ -100,11 +116,12 @@ public class TimeZoneDialog extends Dialog {
             }else{
                 logoutTV.setText(Html.fromHtml("<font color='blue'><u>Logout</u></font>"));
             }
+            logoutTV.setVisibility(View.GONE);
 
             if (isTimeZoneValid) {
                 // if time zone is valid, means time is invalid
-                TitleTV.setText(mContext.getResources().getString(R.string.incorrect_time));
-                recordTitleTV.setText(mContext.getResources().getString(R.string.incorrect_time_desc));
+                TitleTV.setText(mContext.getResources().getString(R.string.timing_mal_alert));  //incorrect_time
+                recordTitleTV.setText(mContext.getResources().getString(R.string.timing_mal_alert_desc));   //incorrect_time_desc
                 btnUpdateApp.setText(mContext.getResources().getString(R.string.AdjustTime));
 
                 DateTime savedUtcDateTime = global.getDateTimeObj(SharedPref.getCurrentUTCTime(mContext), false);
@@ -116,9 +133,18 @@ public class TimeZoneDialog extends Dialog {
                     }
                     savedUtcDateTime = savedUtcDateTime.minusHours(offSetFromServer);
                     String serverSavedTime = global.ConvertDateFormatMMddyyyyHHmm(savedUtcDateTime.toString());
-                    String timeAlert = fontColor + "<b>Driver Time:</b>   </font> " + serverSavedTime + fontColor +
-                            "<br/><b>Device Time:</b> </font> " +
-                            global.GetCurrentDeviceDateTime();
+                    String currentDate = Globally.GetDriverCurrentDateTime(global, getContext());
+                    String DeviceTime = global.ConvertDateFormatMMddyyyyHHmm(currentDate);
+                    String[] timeZoneArray = DriverConst.GetDriverSettings(DriverConst.DriverTimeZone, mContext).split(" ");
+                    String timeZoneShortName = "";
+
+                    for(int i = 0 ; i < timeZoneArray.length ; i++){
+                         if(timeZoneArray[i].length() > 0){
+                             timeZoneShortName = timeZoneShortName + timeZoneArray[i].substring(0, 1);
+                         }
+                     }
+                    String timeAlert = fontColor + "<b>Current " + timeZoneShortName +" Time:</b>   </font> " + serverSavedTime + fontColor +
+                            "<br/><b>Your Device Time in " + timeZoneShortName+" :</b> </font> " + DeviceTime;
                     timezoneDetailIssueTV.setText(Html.fromHtml(timeAlert));
                 }
 
@@ -137,6 +163,7 @@ public class TimeZoneDialog extends Dialog {
             e.printStackTrace();
         }
 
+        //btnUpdateApp.setText(mContext.getResources().getString(R.string.ok));
         btnUpdateApp.setOnClickListener(new ChangeTimeZoneListener());
 
         if (global.isWifiOrMobileDataEnabled(mContext)) {
@@ -151,7 +178,7 @@ public class TimeZoneDialog extends Dialog {
             }
         }
 
-        logoutTV.setOnClickListener(new View.OnClickListener() {
+      /*  logoutTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (SharedPref.getDriverId(mContext).length() > 0){
@@ -166,7 +193,7 @@ public class TimeZoneDialog extends Dialog {
                 }
             }
         });
-
+*/
 
         HideKeyboard();
     }
@@ -223,7 +250,7 @@ public class TimeZoneDialog extends Dialog {
         @Override
         public void getResponse(String response, int flag) {
 
-            Logger.LogDebug("response", " logout response: " + response);
+            Logger.LogDebug("response", "TimeZone logout response: " + response);
 
             try {
                 if(getContext() != null) {
@@ -251,7 +278,7 @@ public class TimeZoneDialog extends Dialog {
                             SharedPref.setCurrentUTCTime( obj.getString("Data") , mContext );
                             boolean isCorrectTime = global.isCorrectTime(mContext, IsOnCreateView);
 
-                            if( isCorrectTime && isTimeZoneValid && mContext != null){
+                            if( isCorrectTime && mContext != null){ //&& isTimeZoneValid
                                 dismiss();
                             }
 

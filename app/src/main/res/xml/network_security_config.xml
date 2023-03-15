@@ -17,7 +17,16 @@
 -->
 
 
-        <base-config cleartextTrafficPermitted="true" />
+        <base-config cleartextTrafficPermitted="true" >
+
+  <!--  <trust-anchors>
+        <certificates src="system"/>
+        <certificates src="user"/>
+    </trust-anchors>-->
+
+
+
+        </base-config>
 
 
 

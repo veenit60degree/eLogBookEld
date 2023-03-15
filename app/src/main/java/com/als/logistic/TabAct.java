@@ -42,6 +42,7 @@ import com.custom.dialogs.AppUpdateDialog;
 import com.custom.dialogs.BleAvailableDevicesDialog;
 import com.custom.dialogs.ContinueStatusDialog;
 import com.custom.dialogs.EldNotificationDialog;
+import com.custom.dialogs.TimeZoneDialog;
 import com.driver.details.DriverConst;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.local.db.ConstantsKeys;
@@ -87,6 +88,8 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     boolean IsTablet = false;
     boolean isPlayStoreDownload = false;
     public static boolean isUpdateDirectly = false;
+    public static long Offset = 0;
+
     DBHelper dbHelper;
     HelperMethods hMethods;
 
@@ -103,6 +106,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     ContinueStatusDialog continueStatusDialog;
     BleAvailableDevicesDialog bleAvailableDevicesDialog;
     List<String> availableDevicesList = new ArrayList<>();
+    TimeZoneDialog timeZoneDialog;
 
 
     @Override
@@ -194,11 +198,16 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                                     e.printStackTrace();
                                 }
                             }
+                        }else if (intent.hasExtra(ConstantsKeys.IsInvalidTime)) {
+                            if (intent.getBooleanExtra(ConstantsKeys.IsInvalidTime, false) == true) {
+                             /*   global.DriverSwitchAlert(TabAct.this, getString(R.string.timing_mal_alert),
+                                        getString(R.string.timing_mal_alert_desc), "Ok");*/
+                                checkDriverTime();
+                            }
                         }
                     }
                 }  else {
                     boolean isSuggestedEdit = intent.getBooleanExtra(ConstantsKeys.SuggestedEdit, false);
-                   // boolean IsCycleRequest = intent.getBooleanExtra(ConstantsKeys.IsCycleRequest, false);
                     boolean isFreshLogin = SharedPref.GetNewLoginStatus(TabAct.this);
                     boolean IsCCMTACertified = SharedPref.IsCCMTACertified(TabAct.this);
                    // boolean IsELDNotification = intent.getBooleanExtra(ConstantsKeys.IsELDNotification, false);
@@ -210,40 +219,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                         startActivity(i);
 
                     } else {
-                      /*  if (IsCycleRequest && isFreshLogin == false) {
 
-                            if (SharedPref.IsCycleRequestAlertShownAlready(TabAct.this) == false) {
-                                String certifyTitle = "<font color='#1A3561'><b>Alert !!</b></font>";
-                                String titleDesc = "<font color='#2E2E2E'><html>" + getResources().getString(R.string.cycle_change_req) + " </html> </font>";
-                                String okText = "<font color='#1A3561'><b>" + getResources().getString(R.string.ok) + "</b></font>";
-                                Globally.SwitchAlertWIthTabPosition(TabAct.this, certifyTitle, titleDesc, okText, 3);
-                            }
-                            SharedPref.SetCycleRequestAlertViewStatus(true, TabAct.this);
-
-                        } else if (IsELDNotification && isFreshLogin == false) {
-
-                            if(EldFragment.eldNotificationDialog != null && !EldFragment.eldNotificationDialog.isShowing()) {
-                                if (SharedPref.IsELDNotificationAlertShownAlready(TabAct.this) == false) {
-                                    try {
-                                        if (eldNotificationDialog != null && eldNotificationDialog.isShowing()) {
-                                            eldNotificationDialog.dismiss();
-                                        }
-
-                                        String ELDNotification = intent.getStringExtra(ConstantsKeys.DriverELDNotificationList);
-                                        eldNotificationDialog = new EldNotificationDialog(TabAct.this, ELDNotification, true);
-                                        eldNotificationDialog.show();
-
-                                    } catch (final IllegalArgumentException e) {
-                                        e.printStackTrace();
-                                    } catch (final Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-
-                            SharedPref.SetELDNotificationAlertViewStatus(true, TabAct.this);
-
-                        }else{*/
                             if (intent.hasExtra(ConstantsKeys.IsEngineRestarted)) {
 
                                 if(intent.getBooleanExtra(ConstantsKeys.IsEngineRestarted, false)){
@@ -282,6 +258,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
 
                                 }
+
                             }else if(intent.hasExtra(ConstantsKeys.BleDevices)){
 
                                 try {
@@ -361,7 +338,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
         // Check app version
         if (!SharedPref.GetNewLoginStatus(this)) {
-            if(!SharedPref.GetUpdateAppDialogTime(this).equals(Globally.GetCurrentDeviceDate())){
+            if(!SharedPref.GetUpdateAppDialogTime(this).equals(Globally.GetCurrentDeviceDate(null, global, getApplicationContext()))){
                 getAppVersion();
             }
 
@@ -438,6 +415,28 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
 
 
+    void checkDriverTime(){
+
+        try {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (timeZoneDialog != null && timeZoneDialog.isShowing()) {
+                        timeZoneDialog.dismiss();
+                    }
+
+                    timeZoneDialog = new TimeZoneDialog(TabAct.this, true, false, false);
+                    timeZoneDialog.show();
+
+                }
+            });
+
+        } catch (final IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
 
@@ -496,14 +495,14 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         public void ContinueBtnReady(String TruckIgnitionStatus) {
             SharedPref.savePcYmAlertCallTime("", getApplicationContext());
             SharedPref.SetTruckStartLoginStatus(false, getApplicationContext());
-            SharedPref.SetTruckIgnitionStatusForContinue(TruckIgnitionStatus, "home", global.getCurrentDate(), getApplicationContext());
+            SharedPref.SetTruckIgnitionStatusForContinue(TruckIgnitionStatus, "home", global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
 
         }
 
         @Override
         public void CancelBtnReady(String TruckIgnitionStatus, boolean isYardMove) {
             SharedPref.SetTruckStartLoginStatus(false, getApplicationContext());
-            SharedPref.SetTruckIgnitionStatusForContinue(TruckIgnitionStatus, "home", global.getCurrentDate(), getApplicationContext());
+            SharedPref.SetTruckIgnitionStatusForContinue(TruckIgnitionStatus, "home", global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
 
             if (Globally.VEHICLE_SPEED < 10) {
                 SharedPref.savePcYmAlertCallTime("", getApplicationContext());
@@ -513,7 +512,8 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                     EldFragment.autoOffDutyBtn.performClick();
                 }
             } else {
-                Globally.EldScreenToast(speedAlertBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
+                Globally.EldScreenToast(speedAlertBtn, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+                        getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
                 //EldFragment.autoDriveBtn.performClick();
             }
 
@@ -699,6 +699,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
             Constants.IsAlsServerResponding = true;
         }
 
+        Offset = SharedPref.getDriverTimeZoneOffSet(TabAct.this);
         UILApplication.activityResumed();
         ActiveScreen();
 
@@ -890,7 +891,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
     private void getAppVersion(){
         try {
-            if(getApplicationContext() != null) {
+            if(getApplicationContext() != null && Globally.isConnected(TabAct.this)) {
                 String url = "https://play.google.com/store/apps/details?id=" + getPackageName() + "&hl=en";
                 new CheckIsUpdateReady(url, new UrlResponce() {
                     @Override

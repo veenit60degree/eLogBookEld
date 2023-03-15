@@ -87,7 +87,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     ImageView nextDateBtn, previousDateBtn, eldMenuBtn, signImageView;
 
     LinearLayout itemShippingLay;
-    RelativeLayout rightMenuBtn, eldMenuLay, SignatureMainLay,otherOptionBtn;
+    RelativeLayout rightMenuBtn, eldMenuLay, SignatureMainLay, otherOptionBtn, graphLayout;
     ProgressBar dotProgressBar;
 
     TextView recordDateTV, usDotTV, LicenseNoTV, LicensePlateTV;
@@ -200,10 +200,12 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
         otherOptionBtn      = (RelativeLayout) view.findViewById(R.id.otherOptionBtn);
         rightMenuBtn        = (RelativeLayout) view.findViewById(R.id.rightMenuBtn);
-        itemShippingLay     = (LinearLayout)view.findViewById(R.id.itemShippingLay);
+        graphLayout         = (RelativeLayout)view.findViewById(R.id.graphLayout);
 
         eldMenuLay          = (RelativeLayout)view.findViewById(R.id.eldMenuLay);
         SignatureMainLay    = (RelativeLayout)view.findViewById(R.id.SignatureMainLay);
+
+        itemShippingLay     = (LinearLayout)view.findViewById(R.id.itemShippingLay);
 
         dotProgressBar      = (ProgressBar)view.findViewById(R.id.dotProgressBar);
 
@@ -216,6 +218,32 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         initilizeTextView(view);
         getBundleData();
 
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    int graphLayoutHeight = graphLayout.getMeasuredHeight();
+                    int graphWebHeight = dotGraphWebView.getMeasuredHeight();
+                    int heightCheck;
+                    if (global.isTablet(getActivity())) {
+                        heightCheck = constants.intToPixel(getActivity(), 200 );
+//                        if(graphWebHeight < 400){
+//                            graphWebHeight = 0;
+//                        }
+                    }else{
+                        heightCheck = constants.intToPixel(getActivity(), 160 );
+                    }
+
+                    if(graphLayoutHeight < 200 || graphWebHeight < 200) {
+                        graphLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, heightCheck));
+                        dotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, heightCheck));
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }, 800);
 
         countryList.add("Select");
         countryList.add("CANADA");
@@ -337,7 +365,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
            // getBundle.clear();
         }
 
-        CurrentDate             = global.GetCurrentDeviceDate();
+        CurrentDate             = global.GetCurrentDeviceDate(null, new Globally(), getActivity());
         DeviceId                = SharedPref.GetSavedSystemToken(getActivity());
         DRIVER_ID               = SharedPref.getDriverId( getActivity());
 
@@ -751,14 +779,13 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                 String data = ConstantHtml.GraphHtml + htmlAppendedText + closeTag;
                 dotGraphWebView.loadDataWithBaseURL("" , data, "text/html", "UTF-8", "");
 
-                if(global.isTablet(getActivity())){
+               /* if(global.isTablet(getActivity())){
                     dotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                             constants.dpToPx(getActivity(), 250)) );
                 }else{
                     dotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                             constants.dpToPx(getActivity(), 160)) );
-                }
-
+                }*/
 
             }
         }, 500);
@@ -802,7 +829,11 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                 String endDateTime = logObj.getString("EndTime");
 
                 if (endDateTime.equals("null")) {
-                    endDateTime = global.GetCurrentDateTime();
+                    endDateTime = global.GetDriverCurrentDateTime(global, getActivity());
+                }else{
+                    if(driverLogJsonArray.length() == 1 && LogDate.equals(CurrentDate)){
+                        endDateTime = global.GetDriverCurrentDateTime(global, getActivity());
+                    }
                 }
 
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(global.DateFormat);  //:SSSZ
@@ -815,7 +846,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
                 if (logCount > 0 && logCount == driverLogJsonArray.length() - 1) {
                     if (LogDate.equals(CurrentDate)) {
-                        endDateTime = global.GetCurrentDateTime();
+                        endDateTime = global.GetDriverCurrentDateTime(global, getActivity());
                     } else {
                         if (endDateTime.length() > 16 && endDateTime.substring(11, 16).equals("00:00")) {
                             endDateTime = endDateTime.substring(0, 11) + "23:59" + endDateTime.substring(16, endDateTime.length());
@@ -840,6 +871,9 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
                 int VerticalLineX = constants.VerticalLine(OldStatus);
                 int VerticalLineY = constants.VerticalLine(DRIVER_JOB_STATUS);
+
+                Logger.LogDebug("HorizontalLine","---HorizontalLine: "+hLineX1 + " - " +hLineX2);
+                Logger.LogDebug("VerticalLine","---VerticalLine: "+VerticalLineY );
 
                 if (hLineX2 > hLineX1) {
                     if (OldStatus != -1) {

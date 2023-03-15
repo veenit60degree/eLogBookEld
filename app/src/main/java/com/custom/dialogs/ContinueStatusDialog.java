@@ -75,7 +75,7 @@ public class ContinueStatusDialog extends Dialog {
             continueStatusDescTV.setText(getContext().getString(R.string.ConfirmDutyStatus));
         }
 
-        SharedPref.savePcYmAlertCallTime(Globally.GetCurrentDateTime(), getContext());
+        SharedPref.savePcYmAlertCallTime(Globally.GetCurrentDateTime(new Globally(), getContext()), getContext());
 
         if(SharedPref.GetAfterLoginConfStatus(getContext()) == false && isLogin){
             continueStatusDescTV.setVisibility(View.INVISIBLE );
@@ -85,7 +85,6 @@ public class ContinueStatusDialog extends Dialog {
         continueStatusBtn.setOnClickListener(new ContinueJobListener());
         changeStatusBtn.setOnClickListener(new ChangeJobListener());
 
-    //    SharedPref.SetTruckStartLoginStatus(false, getContext());
         SharedPref.SetAfterLoginConfStatus(true, getContext());
     }
 

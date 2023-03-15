@@ -26,7 +26,7 @@ public class SharedPref {
     static String CURRENT_UTC_DATE                    = "current_utc_date";
     static String DRIVER_TYPE                	  	  = "driver_type";
     static String CURRENT_DRIVER_TYPE				  = "current_driver_type";
-
+    static String PU_EXCEED_CHECK_DATE				  = "PuExceedCheckDate";
 
 
     public SharedPref() {
@@ -57,6 +57,9 @@ public class SharedPref {
     // Save Total Personal use Odometer For the Day -----------
     public static void setTotalPUOdometerForDay(String odometer, String time, Context context){
 
+        if(odometer.equals("null")){
+            odometer = "";
+        }
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("TotalPUOdometerForDay", odometer);
@@ -201,6 +204,19 @@ public class SharedPref {
         return preferences.getString(CURRENT_DATE, "");
     }
 
+
+    // Set Current Saved Time -------------------
+    public static void setPuExceedCheckDate( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(PU_EXCEED_CHECK_DATE, value);
+        editor.commit();
+    }
+    // Get Current Saved Time -------------------
+    public static String getPuExceedCheckDate(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(PU_EXCEED_CHECK_DATE, "");
+    }
 
     // Set Current Saved Time -------------------
     public static void setUTCCurrentDate( String value, Context context) {
@@ -451,7 +467,7 @@ public class SharedPref {
     public static void setBleOnReceiveTime( Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("BleOnReceiveTime", Globally.GetCurrentDateTime());
+        editor.putString("BleOnReceiveTime", Globally.GetDriverCurrentDateTime(new Globally(), context));   //Globally.GetCurrentDateTime()
         editor.commit();
     }
 
@@ -824,6 +840,25 @@ public class SharedPref {
 
 
 
+    // Set High Precision odometer Unit for wired tablet -------------------
+    public static void SetHighPrecisionUnit( String ObdPreference, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(ConstantsKeys.HighPrecisionUnit, ObdPreference);
+        editor.commit();
+    }
+
+
+
+    // Get High Precision odometer Unit for wired tablet -------------------
+    public static String getHighPrecisionUnit(Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getString(ConstantsKeys.HighPrecisionUnit, "m");
+        }
+        return "M";
+    }
+
     // Set Exempt Driver Status for main driver -------------------
     public static void SetExemptDriverStatusMain( boolean ExemptDriver, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -1182,6 +1217,23 @@ public class SharedPref {
     }
 
 
+
+    // save Unassigned Required api call Time -------------------
+    public static void setCheckUnassignedReqTime( String time, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("CheckUnassignedReqTime", time);
+        editor.commit();
+    }
+
+    // Get Unassigned Required api call Time -------------------
+    public static String getCheckUnassignedReqTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("CheckUnassignedReqTime", "");
+    }
+
+
+
     // Set Inspection Issues -------------------
     public static void setInspectionIssues( String truckValue, String traileValue, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -1260,8 +1312,12 @@ public class SharedPref {
 
     // Get  Driver Type -------------------
     public static String getDriverType( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString(DRIVER_TYPE, "");
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getString(DRIVER_TYPE, "");
+        }else{
+            return "";
+        }
     }
 
 
@@ -1278,6 +1334,22 @@ public class SharedPref {
     public static String getCurrentDriverType( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(CURRENT_DRIVER_TYPE, "");
+    }
+
+
+    // Set Current Driver Type -------------------
+    public static void setDriverTimeZoneOffSet( long value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong("driver_time_ZONE", value);
+        editor.commit();
+    }
+
+
+    // Get Current Driver Type -------------------
+    public static long getDriverTimeZoneOffSet( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getLong("driver_time_ZONE", 0);
     }
 
 
@@ -1600,22 +1672,29 @@ public class SharedPref {
 
     // Set  Job Type -------------------
     public static void setDriverStatusId( String value, Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("jobType", value);
-        editor.commit();
+        if(context != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("jobType", value);
+            editor.commit();
+        }
     }
 
 
     // Get Job Type -------------------
     public static String getDriverStatusId( Context context) {
-        String DriverStatusId = "";
+        String DriverStatusId = "1";
         try {
             if (context != null) {
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                DriverStatusId = preferences.getString("jobType", "0");
+                DriverStatusId = preferences.getString("jobType", "1");
+
+                if(DriverStatusId.length() == 0){
+                    DriverStatusId = "1";
+                }
             }
         }catch (Exception e){}
+
         return DriverStatusId;
     }
 
@@ -1736,8 +1815,12 @@ public class SharedPref {
 
     // Get Login Status -------------------
     public static boolean GetNewLoginStatus( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean("user_type", true);
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean("user_type", true);
+        }else{
+            return true;
+        }
     }
 
 
@@ -2036,7 +2119,7 @@ public class SharedPref {
     public static String getDeferralDayCoDriver( Context context) {
         if(context != null) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            return preferences.getString("deferral_co_day", "");
+            return preferences.getString("deferral_co_day", "0");
         }
         return "";
     }
@@ -2363,6 +2446,60 @@ public class SharedPref {
         }
     }
 
+
+    // Save particular malfunction/Diagnostic status
+    public static void saveTimingMalfunctionStatus( boolean TimingComplianceMal, String time, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        editor.putBoolean(ConstantsKeys.TimingComplianceMal, TimingComplianceMal);
+        editor.putString(ConstantsKeys.TimingComplianceMalTime, time);
+
+        editor.commit();
+    }
+
+
+    // Get Timing Compliance malfunction status -------------------
+    public static boolean IsTimingMalfunction(Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.TimingComplianceMal, false);
+        }else {
+            return false;
+        }
+    }
+
+    // Get Timing Compliance malfunction occurred time -------------------
+    public static String getTimingMalTime(Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getString(ConstantsKeys.TimingComplianceMalTime, "");
+        }else {
+            return "";
+        }
+    }
+
+
+    // save Timing Compliance malfunction warning time -------------------
+    public static void saveTimingMalfunctionWarningTime( String time, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        editor.putString(ConstantsKeys.TimingMalWarningTime, time);
+
+        editor.commit();
+    }
+
+
+    // Get Timing Compliance malfunction warning time -------------------
+    public static String getTimingMalWarningTime(Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getString(ConstantsKeys.TimingMalWarningTime, "");
+        }else {
+            return "";
+        }
+    }
 
 
     // Save Unidentified event status  -------------------
@@ -3441,7 +3578,11 @@ public class SharedPref {
     // GetUnAssigned Vehicle Miles Id  -------------------
     public static String getUnAssignedVehicleMilesId( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString("UnAssignedVehicleMilesId", "");
+        String UnAssignedVehicleMilesId = preferences.getString("UnAssignedVehicleMilesId", "0");
+        if(UnAssignedVehicleMilesId.equals("null") || UnAssignedVehicleMilesId.length() == 0){
+            UnAssignedVehicleMilesId = "0";
+        }
+        return UnAssignedVehicleMilesId;
     }
 
     // Set  IntermediateLog Id -------------------
@@ -3454,7 +3595,13 @@ public class SharedPref {
     // Get  IntermediateLog Id -------------------
     public static String getIntermediateLogId( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString("IntermediateLogId", "");
+        String IntermediateLogId = preferences.getString("IntermediateLogId", "0");
+
+        if(IntermediateLogId.equals("null") || IntermediateLogId.length() == 0){
+            IntermediateLogId = "0";
+        }
+
+        return IntermediateLogId;
     }
 
 
@@ -3630,7 +3777,7 @@ public class SharedPref {
 
 
     // Get api call status, is already called or not -------------------
-    public static boolean isApiAlreadyCalled(int ApiFlag, Context context) {
+    public static boolean isApiAlreadyCalled(int ApiFlag, Globally Global, Context context) {
         boolean isApiAlreadyCalled = false;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String apiList = preferences.getString(ConstantsKeys.ApiCallStatus, "[]");
@@ -3641,7 +3788,7 @@ public class SharedPref {
                 int savedApiFlag = obj.getInt(ConstantsKeys.ApiFlag);
                 if(savedApiFlag == ApiFlag){
                     String apiCalledDate = obj.getString(ConstantsKeys.ApiCalledDate);
-                    String currentDate = Globally.GetCurrentDateTime();
+                    String currentDate = Globally.GetDriverCurrentDateTime(new Globally(), context);
 
                     switch (ApiFlag){
                         case ConstantsEnum.GetOdometer:
@@ -3649,14 +3796,14 @@ public class SharedPref {
                             if(DayDiff == 0){
                                 isApiAlreadyCalled = true;
                             }else{
-                                updateApiCallStatus(ApiFlag, true, context);
+                                updateApiCallStatus(ApiFlag, true, Global, context);
                             }
                             break;
 
                         case ConstantsEnum.GetNotifications:
                             int minDiff = Constants.getMinDiff(apiCalledDate, currentDate);
                             if(minDiff > 30){
-                                updateApiCallStatus(ApiFlag, true, context);
+                                updateApiCallStatus(ApiFlag, true, Global, context);
                             }else{
                                 isApiAlreadyCalled = true;
                             }
@@ -3665,7 +3812,7 @@ public class SharedPref {
                         case ConstantsEnum.GetDriverPermission:
                             int minDiffP = Constants.getMinDiff(apiCalledDate, currentDate);
                             if(minDiffP > 240){
-                                updateApiCallStatus(ApiFlag, true, context);
+                                updateApiCallStatus(ApiFlag, true, Global, context);
                             }else{
                                 isApiAlreadyCalled = true;
                             }
@@ -3691,7 +3838,7 @@ public class SharedPref {
 
 // need to add GetOdometerReading api check and 1 more
 
-    public static void updateApiCallStatus(int ApiFlag, boolean isUpdate, Context context){
+    public static void updateApiCallStatus(int ApiFlag, boolean isUpdate, Globally global,  Context context){
 
         try {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -3708,7 +3855,7 @@ public class SharedPref {
                     int savedApi = obj.getInt(ConstantsKeys.ApiFlag);
                     if (savedApi == ApiFlag) {
                         if(isUpdate){
-                            obj.put(ConstantsKeys.ApiCalledDate, Globally.GetCurrentDateTime());
+                            obj.put(ConstantsKeys.ApiCalledDate, Globally.GetCurrentDateTime(global, context));
                             listArray.put(i, obj);
 
                             // update api call time -----------
@@ -3726,7 +3873,7 @@ public class SharedPref {
                     JSONObject itemObj = new JSONObject();
                     itemObj.put(ConstantsKeys.ApiFlag, ApiFlag);
                     itemObj.put(ConstantsKeys.IsAlreadyCalled, true);
-                    itemObj.put(ConstantsKeys.ApiCalledDate, Globally.GetCurrentDateTime());
+                    itemObj.put(ConstantsKeys.ApiCalledDate, Globally.GetCurrentDateTime(new Globally(), context));
 
                     listArray.put(itemObj);
 

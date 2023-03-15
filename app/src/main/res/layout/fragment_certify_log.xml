@@ -336,15 +336,14 @@
                             android:id="@+id/certifyDistanceTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="?attr/textColor"
-                            android:textSize="@dimen/text_size_14"
                             android:layout_centerVertical="true"
-                            android:text="@string/temp_zero_value"
-                            android:layout_toRightOf="@+id/certifyDistanceTitle"
                             android:layout_marginLeft="@dimen/margin_short_5"
                             android:layout_marginRight="@dimen/margin_short_5"
+                            android:layout_toRightOf="@+id/certifyDistanceTitle"
                             android:singleLine="true"
-                            />
+                            android:text="@string/temp_zero_value"
+                            android:textColor="?attr/textColor"
+                            android:textSize="@dimen/text_size_14" />
 
 
 

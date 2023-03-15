@@ -82,6 +82,8 @@ public class UpdateAppDialog extends Dialog {
                 getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" +appPackageName )));
             } catch (android.content.ActivityNotFoundException anfe) {
                 getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" +appPackageName )));
+            }catch (Exception e){
+                e.printStackTrace();
             }
 
 

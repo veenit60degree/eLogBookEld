@@ -246,11 +246,8 @@ public class Slidingmenufunctions implements OnClickListener {
 
 				case Constants.LOGOUT:
 
-					logoutEvent();
 
-					if (context != null && !constants.isObdConnectedWithELD(context)) {
-						global.InternetErrorDialog(context, true, true);
-					}
+					logoutEvent();
 
 					break;
 
@@ -273,7 +270,8 @@ public class Slidingmenufunctions implements OnClickListener {
 					if(	TabAct.host.getCurrentTab() != 0){
 						TabAct.host.setCurrentTab(0);
 					}
-					global.EldScreenToast(MainDriverBtn, context.getString(R.string.stop_vehicle_alert),
+					global.EldScreenToast(MainDriverBtn, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+									context.getString(R.string.stop_vehicle_alert),
 							context.getResources().getColor(R.color.colorVoilation));
 					break;
 			}
@@ -287,24 +285,28 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	void logoutEvent(){
 
-/*
-		Constants.isLogoutEvent = true;
-		SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
-		startService();
-*/
-
-
-		if(constants.isActionAllowed(context) && !SharedPref.getDriverStatusId(context).equals(Globally.DRIVING)){
+		String mainDriverStatus = SharedPref.getDriverStatusId(context);
+		int CoDriverStatus  = hMethod.getCoDriverStatus(SharedPref.getDriverId(context), context, dbHelper);
+		if(constants.isActionAllowed(context) && !mainDriverStatus.equals(Globally.DRIVING) &&
+				CoDriverStatus != Constants.DRIVING){
 			if(isSignPending()){
 				certifyLogAlert();
 			}else {
 				logoutDialog();
 			}
+
+			if (context != null && !constants.isObdConnectedWithELD(context)) {
+				global.InternetErrorDialog(context, true, true);
+			}
+
 		}else{
-			if(SharedPref.getDriverStatusId(context).equals(Globally.DRIVING)){
+			if(mainDriverStatus.equals(Globally.DRIVING)){
 				global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.chnge_dr_to_othr), context.getResources().getColor(R.color.colorVoilation));
+			}else if(CoDriverStatus == Constants.DRIVING){
+				global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.chnge_codriver_dr_to_othr), context.getResources().getColor(R.color.colorVoilation));
 			}else {
-				global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.logout_speed_alert), context.getResources().getColor(R.color.colorVoilation));
+				global.EldScreenToast(MainDriverBtn, "Vehicle speed is " +BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+						context.getResources().getString(R.string.logout_speed_alert), context.getResources().getColor(R.color.colorVoilation));
 			}
 		}
 	}
@@ -313,7 +315,8 @@ public class Slidingmenufunctions implements OnClickListener {
 	boolean isSignPending(){
 		if(SharedPref.getDriverId(context).trim().length() > 0) {
 			JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(SharedPref.getDriverId(context)), dbHelper);
-			boolean isSignPending = constants.GetCertifyLogSignStatus(recapViewMethod, SharedPref.getDriverId(context), dbHelper, global.GetCurrentDeviceDate(),
+			boolean isSignPending = constants.GetCertifyLogSignStatus(recapViewMethod, SharedPref.getDriverId(context), dbHelper,
+										global.GetCurrentDeviceDate(null, global, context),
 							DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(context), context), logPermissionObj);
 			return isSignPending;
 		}else{
@@ -366,7 +369,8 @@ public class Slidingmenufunctions implements OnClickListener {
 								callLogoutApi();
 							}
 						}else{
-							global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.logout_speed_alert), context.getResources().getColor(R.color.colorVoilation));
+							global.EldScreenToast(MainDriverBtn, "Vehicle speed is " +BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+									context.getResources().getString(R.string.logout_speed_alert), context.getResources().getColor(R.color.colorVoilation));
 						}
 
 					}
@@ -548,7 +552,8 @@ public class Slidingmenufunctions implements OnClickListener {
 				if(constants.isActionAllowed(context)) {
 					callLogoutApi();
 				}else{
-					global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.logout_speed_alert), context.getResources().getColor(R.color.colorVoilation));
+					global.EldScreenToast(MainDriverBtn, "Vehicle speed is " +BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+							context.getResources().getString(R.string.logout_speed_alert), context.getResources().getColor(R.color.colorVoilation));
 				}
 
 			}
@@ -827,7 +832,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				}
 			}
 		}catch (Exception e){
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 
@@ -909,7 +914,7 @@ public class Slidingmenufunctions implements OnClickListener {
 							global.EldScreenToast(MainDriverBtn, "Password confirmed", eldGreenColor );
 
 
-							SharedPref.SetCoDriverSwitchTime(Globally.GetCurrentDateTime(), context);
+							SharedPref.SetCoDriverSwitchTime(Globally.GetDriverCurrentDateTime(new Globally(), context), context);
 							Constants.isDriverSwitchEvent = true;
 							Constants.isDriverSwitchEventForHome = true;
 							SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
@@ -939,7 +944,7 @@ public class Slidingmenufunctions implements OnClickListener {
 							//RefreshActivity();
 							global.EldScreenToast(MainDriverBtn, "Password confirmed", eldGreenColor );
 
-							SharedPref.SetCoDriverSwitchTime(Globally.GetCurrentDateTime(), context);
+							SharedPref.SetCoDriverSwitchTime(Globally.GetDriverCurrentDateTime(new Globally(), context), context);
 							Constants.isDriverSwitchEvent = true;
 							Constants.isDriverSwitchEventForHome = true;
 							SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
@@ -1011,7 +1016,7 @@ public class Slidingmenufunctions implements OnClickListener {
 					}
 				}
 
-					Logger.LogDebug("response", " >>>logout response: " + response);
+					Logger.LogDebug("response", " Slidemenu logout response: " + response);
 				String status = "", message = "";
 
 				try {
@@ -1065,7 +1070,8 @@ public class Slidingmenufunctions implements OnClickListener {
 			@Override
 			protected Map<String, String> getParams()
 			{
-				String date = global.getCurrentDate();
+				String date = global.GetDriverCurrentDateTime(global, context);
+
 				Map<String,String> params = new HashMap<String, String>();
 				params.put(ConstantsKeys.DriverId, DriverId);
 				params.put(ConstantsKeys.MobileDeviceCurrentDateTime, date);
@@ -1079,7 +1085,8 @@ public class Slidingmenufunctions implements OnClickListener {
 				params.put(ConstantsKeys.Latitude,  Globally.LATITUDE);
 				params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
 
-				Logger.LogDebug("DateLogout", "MobileDeviceCurrentDateTime: " +date);
+				Logger.LogDebug("DateLogout", ">>>MobileDeviceCurrentDateTime: " +date);
+
 				return params;
 			}
 		};

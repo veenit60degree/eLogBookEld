@@ -54,7 +54,7 @@ public class GPSRequest implements GoogleApiClient.ConnectionCallbacks, GoogleAp
                 public void onResult(LocationSettingsResult result) {
                     final Status status = result.getStatus();
                     int statusCode = status.getStatusCode();
-                    final LocationSettingsStates state = result.getLocationSettingsStates();
+                   // final LocationSettingsStates state = result.getLocationSettingsStates();
 
                     switch (statusCode) {
                         case LocationSettingsStatusCodes.SUCCESS:

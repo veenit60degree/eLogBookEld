@@ -1,6 +1,8 @@
 package com.adapter.logistic;
 
 import android.content.Context;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +42,8 @@ public class NotificationPagerAdapter extends PagerAdapter {
         TextView notificationDescTV = (TextView)view.findViewById(R.id.notificationDescTV);
 
         notificationTitleTV.setText(pagerList.get(position).getNotificationTitle());
-        notificationDescTV.setText(pagerList.get(position).getNotificationDesc());
+        notificationDescTV.setText(Html.fromHtml(pagerList.get(position).getNotificationDesc()));
+        notificationDescTV.setMovementMethod(LinkMovementMethod.getInstance());
 
         container.addView(view);
 

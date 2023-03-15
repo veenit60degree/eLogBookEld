@@ -200,6 +200,20 @@
                 />
 
 
+            <TextView
+                android:id="@+id/driverTimeZoneTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/view_height_30"
+                android:layout_below="@+id/dateTv"
+                android:text=""
+                android:textStyle="bold"
+                android:textColor="?attr/txt_eld_color"
+                android:textSize="@dimen/text_size_10"
+
+                />
+
+
         </RelativeLayout>
 
 
