@@ -13,6 +13,8 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
@@ -44,7 +46,7 @@ import java.util.TimeZone;
 public class TimeZoneDialog extends Dialog {
 
     Button btnUpdateApp;
-    TextView TitleTV, recordTitleTV, logoutTV, timezoneDetailIssueTV;
+    TextView TitleTV, recordTitleTV, logoutTV, timezoneDetailIssueTV, autoTimeSettingDescTV;
     ProgressDialog progressD ;
     Constants constant;
     Context mContext;
@@ -54,6 +56,7 @@ public class TimeZoneDialog extends Dialog {
     final int LogoutUser = 1;
     final int CheckConnection = 2;
     boolean isTimeZoneValid,  isCurrentTimeBigger, isTimeValid, IsOnCreateView;
+    Animation timeSettingsDescAnim;
 
 
     public TimeZoneDialog(Context context, boolean isvalidTimeZone, boolean isTimeValid, boolean isOnCreateView) {
@@ -101,11 +104,14 @@ public class TimeZoneDialog extends Dialog {
         TitleTV         = (TextView)findViewById(R.id.TitleTV);
         logoutTV        = (TextView)findViewById(R.id.logoutTV);
         timezoneDetailIssueTV= (TextView)findViewById(R.id.timezoneDetailIssueTV);
+        autoTimeSettingDescTV = (TextView)findViewById(R.id.autoTimeSettingDescTV);
 
         btnUpdateApp = (Button) findViewById(R.id.btnUpdateApp);
 
         isCurrentTimeBigger = global.isCurrentTimeBigger(mContext);
 
+        timeSettingsDescAnim = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
+        timeSettingsDescAnim.setDuration(1500);
 
 
         try {
@@ -117,6 +123,9 @@ public class TimeZoneDialog extends Dialog {
                 logoutTV.setText(Html.fromHtml("<font color='blue'><u>Logout</u></font>"));
             }
             logoutTV.setVisibility(View.GONE);
+            String autoTimeSettingDesc = "<b>Note: </b>" + getContext().getString(R.string.auto_time_setting_desc);
+            autoTimeSettingDescTV.setText(Html.fromHtml(autoTimeSettingDesc));
+            autoTimeSettingDescTV.startAnimation(timeSettingsDescAnim);
 
             if (isTimeZoneValid) {
                 // if time zone is valid, means time is invalid
@@ -178,22 +187,27 @@ public class TimeZoneDialog extends Dialog {
             }
         }
 
-      /*  logoutTV.setOnClickListener(new View.OnClickListener() {
+        timeSettingsDescAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onClick(View view) {
-                if (SharedPref.getDriverId(mContext).length() > 0){
-                    if (global.isWifiOrMobileDataEnabled(mContext)) {
-                        LogoutUser(SharedPref.getDriverId(mContext));
-                    } else {
-                        global.EldScreenToast(logoutTV, global.CHECK_INTERNET_MSG, mContext.getResources().getColor(R.color.colorSleeper));
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                try {
+                    if (getContext() != null) {
+                        autoTimeSettingDescTV.startAnimation(timeSettingsDescAnim);
                     }
-                }else {
-                    constant.ClearLogoutData(mContext);
-                    dismiss();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+            }
+            //
+            @Override
+            public void onAnimationRepeat(Animation animation) {
             }
         });
-*/
 
         HideKeyboard();
     }

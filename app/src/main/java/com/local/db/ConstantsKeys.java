@@ -280,6 +280,9 @@ public class ConstantsKeys {
     public static String SIM1                           = "SIM1";
     public static String OSType                         = "OSType";
     public static String DeviceType                     = "DeviceType";
+    public static String IsOffsetAvailable              = "IsOffsetAvailable";
+    public static String AppBuildVersion                = "AppBuildVersion";
+    public static String LastLoginDriverId              = "LastLoginDriverId";
 
 
     public static String OdometerFromOBD                = "OdometerFromOBD";
@@ -291,6 +294,7 @@ public class ConstantsKeys {
     public static String PersonalUse75Km                = "PersonalUse75Km";
     public static String PersonalUseSelected            = "PersonalUseSelected";
     public static String IsAOBRDAutomatic               = "IsAOBRDAutomatic";
+    public static String AOBRD                          = "AOBRD";
     public static String IsAutoDriving                  = "IsAutoDriving";
     public static String IsDrivingShippingAllowed       = "IsDrivingShippingAllowed";
     public static String IsTimestampEnabled             = "IsTimestampEnabled";
@@ -530,7 +534,7 @@ public class ConstantsKeys {
     public static String SuggestedEditModel             = "SuggestedEditModel";
     public static String MalfunctionEngSync             = "SuggestedEditModel";
     public static String DiagnosticEngSync              = "SuggestedEditModel";
-
+    public static String Allcodriver                    = "Allcodriver";
 
     // ELD Rule Inputs
 

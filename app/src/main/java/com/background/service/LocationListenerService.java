@@ -19,6 +19,7 @@ import com.als.logistic.R;
 import com.constants.Constants;
 import com.constants.Logger;
 import com.constants.SharedPref;
+import com.constants.Utils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -29,6 +30,7 @@ import com.als.logistic.Globally;
 public class LocationListenerService extends Service  implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
+    public static boolean IS_LOC_SERVICE_RUNNING = false;
     private static final long MIN_TIME_LOCATION_UPDATES = 2 * 1000;   // 2 sec
     int MIN_DISTANCE_METER = 10;
     public static LocationRequest locationRequest;
@@ -36,6 +38,8 @@ public class LocationListenerService extends Service  implements GoogleApiClient
     protected LocationManager locationManager;
     Globally global;
     Constants constants;
+    Utils obdUtil;
+
 
     @Override
     public void onCreate() {
@@ -43,6 +47,14 @@ public class LocationListenerService extends Service  implements GoogleApiClient
 
         global = new Globally();
         constants = new Constants();
+
+        try{
+            //  ------------- OBD Log write initilization----------
+            obdUtil = new Utils(getApplicationContext());
+            obdUtil.createAppUsageLogFile();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         createLocationRequest(MIN_TIME_LOCATION_UPDATES);
 
@@ -55,7 +67,7 @@ public class LocationListenerService extends Service  implements GoogleApiClient
             requestLocationWithoutPlayServices();
         }
 
-
+        IS_LOC_SERVICE_RUNNING = true;
 
     }
 
@@ -130,8 +142,16 @@ public class LocationListenerService extends Service  implements GoogleApiClient
                   constants.saveEcmLocationWithTime(Globally.GPS_LATITUDE, Globally.GPS_LONGITUDE,
                           SharedPref.getHighPrecisionOdometer(getApplicationContext()), getApplicationContext());
 
+
+             /*   Globally.ShowLocalNotification(getApplicationContext(),
+                        "LocationChanged-GPS","Lat: " +Globally.LATITUDE + ", Lon: " + Globally.LONGITUDE, 2081111);
+
+                constants.saveAppUsageLog("LocationChangedGPS - Lat: " +Globally.LATITUDE + ", Lon: " + Globally.LONGITUDE ,
+                        false, false, obdUtil);
+*/
             }
 
+            SharedPref.setLocChangeTime(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
 
             /*if (SharedPref.IsDriverLogin(getApplicationContext())) {
                 stopForeground(true);
@@ -196,7 +216,16 @@ public class LocationListenerService extends Service  implements GoogleApiClient
             constants.saveEcmLocationWithTime(Globally.GPS_LATITUDE, Globally.GPS_LONGITUDE,
                     SharedPref.getHighPrecisionOdometer(getApplicationContext()), getApplicationContext());
 
+
+           /* Globally.ShowLocalNotification(getApplicationContext(),
+                    "LocationChanged-Loc","Lat: " +Globally.LATITUDE + ", Lon: " + Globally.LONGITUDE, 2081111);
+
+            constants.saveAppUsageLog("LocationChangedLoc - Lat: " +Globally.LATITUDE + ", Lon: " + Globally.LONGITUDE ,
+                    false, false, obdUtil);
+       */
         }
+
+        SharedPref.setLocChangeTime(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
 
         /*if (SharedPref.IsDriverLogin(getApplicationContext())) {
             stopForeground(true);
@@ -247,7 +276,7 @@ public class LocationListenerService extends Service  implements GoogleApiClient
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        IS_LOC_SERVICE_RUNNING = false;
         super.onDestroy();
 
 

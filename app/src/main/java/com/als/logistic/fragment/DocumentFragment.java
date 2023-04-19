@@ -27,6 +27,7 @@ import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.DownloadPdf;
+import com.constants.LoadingSpinImgView;
 import com.constants.Logger;
 import com.constants.VolleyRequest;
 import com.local.db.ConstantsKeys;
@@ -57,7 +58,9 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
     RelativeLayout eldMenuLay, shippingMainLay;
     RelativeLayout rightMenuBtn;
     TextView EldTitleTV, noDataEldTV;
+    LoadingSpinImgView loadingSpinEldIV;
 
+    boolean isFileOpened = false, isLogRefreshed = false;
     final  int getDocDetails = 1;
     VolleyRequest getAppDocDetailsRequest;
     HelpDocAdapter helpDocAdapter;
@@ -65,6 +68,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
     List<HelpDocModel> localDocList = new ArrayList<>();
     ArrayList<String> docFilesList;
     DownloadPdf downloadDocService = new DownloadPdf();
+    Constants constants;
 
     File docFile1;
     File docFile2;
@@ -132,6 +136,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
 
     void initView(View v) {
         global                  = new Globally();
+        constants               = new Constants();
         getAppDocDetailsRequest = new VolleyRequest(getActivity());
 
         notiHistoryListView = (ListView)v.findViewById(R.id.notiHistoryListView);
@@ -144,12 +149,12 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
         eldMenuLay          = (RelativeLayout)v.findViewById(R.id.eldMenuLay);
         shippingMainLay     = (RelativeLayout)v.findViewById(R.id.shippingMainLay);
         eldMenuBtn          = (ImageView)v.findViewById(R.id.eldMenuBtn);
+        loadingSpinEldIV    = (LoadingSpinImgView)v.findViewById(R.id.loadingSpinEldIV);
 
         eldMenuBtn.setImageResource(R.drawable.back_btn);
         EldTitleTV.setText(getResources().getString(R.string.eld_documents));
         notiHistoryListView.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
-        rightMenuBtn.setVisibility(View.GONE);
         notiHistoryListView.setDividerHeight(2);
 
         // if (UILApplication.getInstance().getInstance().PhoneLightMode() == Configuration.UI_MODE_NIGHT_YES) {
@@ -181,7 +186,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
 
 
         eldMenuLay.setOnClickListener(this);
-
+        rightMenuBtn.setOnClickListener(this);
 
     }
 
@@ -280,9 +285,8 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
 
 
 
-    void documentViewerFragment(String filePath, String filename ){
-        File file = new File(filePath );    //Environment.getExternalStorageDirectory().getAbsolutePath()+ "/Logistic/AlsDoc/" + fileName);
-     //   Uri photoURI = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
+    void documentViewerFragment(String filePath ){
+        File file = new File(filePath );
 
         try {
 
@@ -297,7 +301,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
         }catch (Exception e){
             e.printStackTrace();
         }
-
+        isFileOpened = true;
     }
 
     void displayPdfFromUrl(int position){
@@ -312,7 +316,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
             Toast.makeText(getActivity(), getResources().getString(R.string.no_pdf_viewer), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
-
+        isFileOpened = true;
     }
 
 
@@ -343,7 +347,20 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
                     TabAct.host.setCurrentTab(0);
                 }
                 break;
-        }
+
+            case R.id.rightMenuBtn:
+
+                if(Globally.isConnected(getActivity())) {
+                    rightMenuBtn.setEnabled(false);
+                    loadingSpinEldIV.startAnimation();
+                    isLogRefreshed = true;
+                    GetEldDocDetails();
+                }else {
+                    global.EldScreenToast(rightMenuBtn, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation) );
+                }
+                break;
+            }
+
     }
 
 
@@ -362,12 +379,35 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
         boolean hasFile = false;
         String title = helpDocList.get(pos).getDocumentTitle();
         String version = helpDocList.get(pos).getVersion();
+        int filePos = -1;
 
         for(int i = 0 ; i < localDocList.size() ; i++){
             String localFileTitle = localDocList.get(i).getDocumentTitle().replaceAll(".pdf", "");
-            if(localFileTitle.equals(title) && localDocList.get(i).getVersion().equals(version)){
-                hasFile = true;
-                break;
+            if(localFileTitle.equals(title)){
+                if(localDocList.get(i).getVersion().equals(version)) {
+                    hasFile = true;
+                    break;
+                }else{
+                    // if version changed means document is updated. then need to download again
+                    for(int j = 0 ; j < docFilesList.size() ; j++){
+                        if(docFilesList.get(i).contains(title)){
+                            String filepath = global.getAlsDocPath(getActivity()).toString() + "/" + docFilesList.get(i);
+                            constants.DeleteFile(filepath);
+
+                            String[] filePosArray = docFilesList.get(i).split("_");
+                            if(filePosArray.length > 0){
+                                filePos = Integer.valueOf(filePosArray[0]);
+                            }
+
+                            if(filePos != -1) {
+                                downloadFile(helpDocList.get(pos).getDocumentUrl(), version, title, filePos);
+                            }
+
+                            break;
+                        }
+                    }
+
+                }
             }
 
         }
@@ -380,17 +420,59 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
 
     }
 
+    private void deleteOldDoc(String title, String version){
+        for(int i = 0 ; i < localDocList.size() ; i++) {
+            String localDocTitle = localDocList.get(i).getDocumentTitle();
+            String localFileTitle = localDocTitle.replaceAll(".pdf", "");
+            if (localFileTitle.equals(title)) {
+                Logger.LogDebug("Version" , ">>>localDocVersion: " + localDocList.get(i).getVersion());
+                Logger.LogDebug("version2" , ">>>apiVersion: " + version);
+
+                if (!localDocList.get(i).getVersion().equals(version)) {
+                    for (int j = 0; j < docFilesList.size(); j++) {
+                        if (localDocTitle.contains(title)) {
+                            String filepath = global.getAlsDocPath(getActivity()).toString() + "/" + docFilesList.get(i);
+                            constants.DeleteFile(filepath);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
     private int  getFilePositionFromLocalDir(int pos){
         int filePosition = -1;
 
         if(helpDocList.size() > pos) {
             String title = helpDocList.get(pos).getDocumentTitle();
             String version = helpDocList.get(pos).getVersion();
+            int filePos = -1;
 
             for (int i = 0; i < localDocList.size(); i++) {
                 String localFileTitle = localDocList.get(i).getDocumentTitle().replaceAll(".pdf", "");
-                if (localFileTitle.equals(title) && localDocList.get(i).getVersion().equals(version)) {
-                    filePosition = i;
+                if (localFileTitle.equals(title) ) {
+                    if(localDocList.get(i).getVersion().equals(version)) {
+                        filePosition = i;
+                    }else{
+                        // if version changed means document is updated. then need to download again
+                        for(int j = 0 ; j < docFilesList.size() ; j++){
+                            if(docFilesList.get(i).contains(title)){
+                                String filepath = global.getAlsDocPath(getActivity()).toString() + "/" + docFilesList.get(i);
+                                constants.DeleteFile(filepath);
+
+                                String[] filePosArray = docFilesList.get(i).split("_");
+                                if(filePosArray.length > 0){
+                                    filePos = Integer.valueOf(filePosArray[0]);
+                                }
+                                break;
+                            }
+                        }
+                        if(filePos != -1) {
+                            downloadFile(helpDocList.get(pos).getDocumentUrl(), version, title, filePos);
+                        }
+                    }
                     break;
                 }
             }
@@ -407,6 +489,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
 
             JSONObject obj = null;  //, dataObj = null;
             String status = "";
+            rightMenuBtn.setEnabled(true);
 
             try {
                 obj = new JSONObject(response);
@@ -419,6 +502,14 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
                     case getDocDetails:
                         try {
                             Logger.LogDebug("response", "response: " + response);
+
+                            if(isLogRefreshed) {
+                                isLogRefreshed = false;
+                                loadingSpinEldIV.stopAnimation();
+                                File docStorageDir = new File(getActivity().getExternalFilesDir(null), "Logistic/AlsDoc");
+                                global.DeleteDirectory(docStorageDir.toString());
+                                getLocalDocuments(true);
+                            }
 
                             helpDocList = new ArrayList<>();
 
@@ -438,6 +529,10 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
 
                                 );
                                 helpDocList.add(docModel);
+
+
+                                deleteOldDoc(docObj.getString(ConstantsKeys.Heading), Version);
+
 
                                 // ---------- PDF offline commented code -----------
                                 // Save pdf file in SD card if not saved
@@ -462,6 +557,12 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
 
 
                 }
+            }else{
+                if(isLogRefreshed) {
+                    isLogRefreshed = false;
+                    loadingSpinEldIV.stopAnimation();
+                    global.EldScreenToast(rightMenuBtn, "Connection Error - Failed to refresh.", getResources().getColor(R.color.colorVoilation) );
+                }
             }
         }
     };
@@ -470,10 +571,16 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
     VolleyRequest.VolleyErrorCall ErrorCallBack = new VolleyRequest.VolleyErrorCall(){
         @Override
         public void getError(VolleyError error, int flag) {
+            rightMenuBtn.setEnabled(true);
+
             switch (flag){
 
                 default:
                     Logger.LogDebug("Driver", "error" + error.toString());
+                    if(isLogRefreshed) {
+                        isLogRefreshed = false;
+                        loadingSpinEldIV.stopAnimation();
+                    }
 
                     if(getActivity() != null && !getActivity().isFinishing()) {
                         Toast.makeText(getActivity(), Globally.DisplayErrorMessage(error.toString()), Toast.LENGTH_LONG).show();
@@ -498,10 +605,11 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
         eldMenuLay.setEnabled(true);
         getLocalDocuments(true);
 
-        if(Globally.isConnected(getActivity())){
+        if(Globally.isConnected(getActivity()) && !isFileOpened){
             GetEldDocDetails();
         }
 
+        isFileOpened = false;
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver( progressReceiver, new IntentFilter("download_pdf_progress"));
     }
 
@@ -647,7 +755,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
             case 0:
                 if(docFile1 != null && docFile1.isFile() && isDownloading1 == false){
                     if(localDocList.size() > position) {
-                        documentViewerFragment(docFile1.toString(), localDocList.get(position).getDocumentTitle());
+                        documentViewerFragment(docFile1.toString());
                     }else{
                         GetEldDocDetails();
                         global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
@@ -661,7 +769,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
             case 1:
                 if(docFile2 != null && docFile2.isFile() && isDownloading2 == false){
                     if(localDocList.size() > position) {
-                        documentViewerFragment(docFile2.toString(), localDocList.get(position).getDocumentTitle());
+                        documentViewerFragment(docFile2.toString());
                     }else{
                         GetEldDocDetails();
                         global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
@@ -675,7 +783,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
             case 2:
                 if(docFile3 != null && docFile3.isFile() && isDownloading3 == false){
                     if(localDocList.size() > position) {
-                        documentViewerFragment(docFile3.toString(), localDocList.get(position).getDocumentTitle());
+                        documentViewerFragment(docFile3.toString());
                     }else{
                         GetEldDocDetails();
                         global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
@@ -689,7 +797,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
             case 3:
                 if(docFile4 != null && docFile4.isFile() && isDownloading4 == false){
                     if(localDocList.size() > position) {
-                        documentViewerFragment(docFile4.toString(), localDocList.get(position).getDocumentTitle());
+                        documentViewerFragment(docFile4.toString());
                     }else{
                         GetEldDocDetails();
                         global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
@@ -704,7 +812,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
             case 4:
                 if(docFile5 != null && docFile5.isFile() && isDownloading5 == false){
                     if(localDocList.size() > position) {
-                        documentViewerFragment(docFile5.toString(), localDocList.get(position).getDocumentTitle());
+                        documentViewerFragment(docFile5.toString());
                     }else{
                         GetEldDocDetails();
                         global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
@@ -719,7 +827,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
             case 5:
                 if(docFile6 != null && docFile6.isFile() && isDownloading6 == false){
                     if(localDocList.size() > position) {
-                        documentViewerFragment(docFile6.toString(), localDocList.get(position).getDocumentTitle());
+                        documentViewerFragment(docFile6.toString());
                     }else{
                         GetEldDocDetails();
                         global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
@@ -734,7 +842,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
             case 6:
                 if(docFile7 != null && docFile7.isFile() && isDownloading7 == false){
                     if(localDocList.size() > position) {
-                        documentViewerFragment(docFile7.toString(), localDocList.get(position).getDocumentTitle());
+                        documentViewerFragment(docFile7.toString());
                     }else{
                         GetEldDocDetails();
                         global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
@@ -749,7 +857,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
             case 7:
                 if(docFile8 != null && docFile8.isFile() && isDownloading8 == false){
                     if(localDocList.size() > position) {
-                        documentViewerFragment(docFile8.toString(), localDocList.get(position).getDocumentTitle());
+                        documentViewerFragment(docFile8.toString());
                     }else{
                         GetEldDocDetails();
                         global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
@@ -764,7 +872,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
             case 8:
                 if(docFile9 != null && docFile9.isFile() && isDownloading9 == false){
                     if(localDocList.size() > position) {
-                        documentViewerFragment(docFile9.toString(), localDocList.get(position).getDocumentTitle());
+                        documentViewerFragment(docFile9.toString());
                     }else{
                         GetEldDocDetails();
                         global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
@@ -779,7 +887,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
             case 9:
                 if(docFile10 != null && docFile10.isFile() && isDownloading10 == false){
                     if(localDocList.size() > position) {
-                        documentViewerFragment(docFile10.toString(), localDocList.get(position).getDocumentTitle());
+                        documentViewerFragment(docFile10.toString());
                     }else{
                         GetEldDocDetails();
                         global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));

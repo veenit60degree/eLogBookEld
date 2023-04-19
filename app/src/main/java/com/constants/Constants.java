@@ -42,6 +42,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.toolbox.Volley;
 import com.background.service.BackgroundLocationService;
 import com.ble.util.BleUtil;
 import com.driver.details.DriverConst;
@@ -237,6 +238,10 @@ public class Constants {
     public static String DiagnosticEvent = "Diagnostic";
     public static String MalfunctionEvent = "Malfunction";
 
+
+    public static int NoLocation            = 0;
+    public static int LocationPrecise       = 1;
+    public static int LocationApproximate   = 2;
 
     public static final int MAIN_DRIVER_TYPE = 0;
     public static final int CO_DRIVER_TYPE = 1;
@@ -608,8 +613,14 @@ public class Constants {
         locationObj.put(ConstantsKeys.Odometer, ListModel.getOdometer());
         locationObj.put(ConstantsKeys.DriverVehicleTypeId, ListModel.getDriverVehicleTypeId());
 
-        if (SharedPref.IsEditedData(context)) {
-            locationObj.put(ConstantsKeys.AppVersionCode, Globally.GetAppVersion(context, "VersionCode"));
+        if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
+            if (SharedPref.IsMainDriverEdited(context)) {
+                locationObj.put(ConstantsKeys.AppVersionCode, Globally.GetAppVersion(context, "VersionCode"));
+            }
+        } else {
+            if (SharedPref.IsCoDriverEditedData(context)) {
+                locationObj.put(ConstantsKeys.AppVersionCode, Globally.GetAppVersion(context, "VersionCode"));
+            }
         }
 
         jsonArray.put(locationObj);
@@ -1417,8 +1428,24 @@ public class Constants {
             if (dayStartSavedDate.length() > 0) {
                 if (dayStartOdometerMilesStr.length() > 0 && !dayStartOdometerMilesStr.equals("null") &&
                         currentOdometerMilesStr.length() > 0 && !currentOdometerMilesStr.equals("null")) {
-                    double distanceInMiles = Double.parseDouble(currentOdometerMilesStr) - Double.parseDouble(dayStartOdometerMilesStr);
+                    double currentOdometer = Double.parseDouble(currentOdometerMilesStr);
+                    double dayStartOdometer = Double.parseDouble(dayStartOdometerMilesStr);
+
+                    double distanceInMiles ;
+                    if(dayStartOdometer > currentOdometer){
+                        if(currentOdometer == 0){
+                            distanceInMiles = currentOdometer;
+                        }else{
+                            distanceInMiles = dayStartOdometer - currentOdometer;
+                        }
+
+                    }else{
+                        distanceInMiles = currentOdometer - dayStartOdometer;
+                    }
+
                     distance = getBeforeDecimalValue(String.valueOf(distanceInMiles)) + " Miles";
+
+
                 }
             }
         } catch (Exception e) {
@@ -2201,7 +2228,9 @@ public class Constants {
                 "0",
                 EngHour,
                 odometer,
-                DriverVehicleTypeId
+                DriverVehicleTypeId,
+                false
+
 
 
         );
@@ -2276,7 +2305,7 @@ public class Constants {
         boolean isLocMissing = false;
         try {
             if (logPermissionObj == null) {
-                logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), dbHelper);
+                logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), "", dbHelper);
             }
             List<RecapSignModel> signList = GetCertifySignList(recapViewMethod, DRIVER_ID, hMethods, dbHelper,
                     Global.GetCurrentDeviceDate(null, Global, context), CurrentCycleId, logPermissionObj, Global, context);
@@ -3270,7 +3299,7 @@ public class Constants {
 
     public boolean IsWarningNotificationAllowed(String DriverId, DBHelper dbHelper) {
         DriverPermissionMethod driverPermissionMethod = new DriverPermissionMethod();
-        JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DriverId), dbHelper);
+        JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DriverId), "", dbHelper);
         boolean IsAllowed = false;
 
         if (logPermissionObj != null && logPermissionObj.has(ConstantsKeys.IsAutoDutyNotificationAllowed)) {
@@ -3662,7 +3691,7 @@ public class Constants {
 
 
     public boolean IsSendLog(String DRIVER_ID, DriverPermissionMethod driverPermissionMethod, DBHelper dbHelper) {
-        JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), dbHelper);
+        JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), "", dbHelper);
         boolean IsSendLog = true;
 
         try {
@@ -4867,6 +4896,29 @@ public class Constants {
     }
 
 
+    public void saveAppLog(String performanceDesc, String DriverId, DBHelper dbHelper,
+                            DriverPermissionMethod driverPermissionMethod, Utils obdUtil) {
+
+        boolean isDeviceLogEnabled = driverPermissionMethod.isDeviceLogEnabled(DriverId, dbHelper);
+
+        if (isDeviceLogEnabled || DriverId.equals("0")) {
+
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put(EventData, performanceDesc);
+
+                obdUtil.writeToLogFile(obj.toString());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
+
+
     public void saveBleLog(String data, String timeStamp, Context context, DBHelper dbHelper,
                            DriverPermissionMethod driverPermissionMethod, Utils obdUtil) {
 
@@ -5207,6 +5259,88 @@ public class Constants {
         }
         return false;
     }
+
+
+    public static String getSaveStatusOrEditedApi(Context context){
+        String SavedLogApi = "";
+        if(context != null) {
+            if(isEditedLog(context)){
+                SavedLogApi = APIs.SAVE_DRIVER_EDIT_LOG_NEW;
+            }else{
+                SavedLogApi = APIs.SAVE_DRIVER_STATUS;
+            }
+        }
+
+        return SavedLogApi;
+    }
+
+    public static boolean isEditedLog(Context context){
+        if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
+            boolean IsMainDriverEdited = SharedPref.IsMainDriverEdited(context);
+            return IsMainDriverEdited;
+        } else {
+            boolean IsCoDriverEditedData = SharedPref.IsCoDriverEditedData(context);
+            return IsCoDriverEditedData;
+        }
+    }
+
+
+    public static String getSaveApiInCoDriverCase(Context context){
+        String SavedLogApi = "";
+        if(context != null) {
+            boolean isEditedLog;
+            if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
+                isEditedLog = SharedPref.IsCoDriverEditedData(context);
+            } else {
+                isEditedLog =  SharedPref.IsMainDriverEdited(context);
+            }
+            if(isEditedLog){
+                SavedLogApi = APIs.SAVE_DRIVER_EDIT_LOG_NEW;
+            }else{
+                SavedLogApi = APIs.SAVE_DRIVER_STATUS;
+            }
+
+        }
+
+        return SavedLogApi;
+    }
+
+
+    public String getErrorMsg(String errorStr){
+
+        if (errorStr.contains("Object reference")) {
+            errorStr = "Input data problem. Restart your app and try again.";
+        }else if( errorStr.contains("timeout") || errorStr.contains("TimeoutError")){
+            errorStr = "Connection timeout. Please try again.";
+        }else if (errorStr.contains("NoConnectionError") || errorStr.contains("SSLHandshakeException") ) {
+            errorStr = "Internet connection error";
+        }else if(errorStr.contains("UnknownHostException")){
+            String[] array = errorStr.split(": ");
+            if(array.length > 2){
+                errorStr = array[1] + ". Please check your internet connection and try again";
+            }
+        }else if(errorStr.contains("Network")){
+            errorStr = "Network connection Error";
+        } else if (errorStr.contains("ServerError")) {
+            errorStr = "ALS server not responding";
+        }
+
+		/*if (errorStr.contains("Object reference")) {
+			errorStr = "Invalid Username/Password.";
+		}else if( errorStr.contains("timeout")){
+			errorStr = "Connection timeout error";
+		}else if (errorStr.contains("NoConnectionError") || errorStr.contains("SSLHandshakeException")) {
+			errorStr = "Internet connection error";
+		}else if(errorStr.contains("Network")){
+			errorStr = "Network Error";
+		} else if (errorStr.contains("ServerError")) {
+			errorStr = "ALS server not responding";
+		}*/
+
+        // intilize request queue object again to notify network.
+        return errorStr;
+    }
+
 
 
     // Duty Status Changes, Intermediate Logs and Special Driving Condition(Personal Use and Yard Move)
@@ -5990,7 +6124,7 @@ public class Constants {
             }
         }
 
-        return true;
+        return isObdConnected;
     }
 
 

@@ -24,6 +24,7 @@ import com.constants.Constants;
 import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
+import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.DriverPermissionMethod;
@@ -57,7 +58,7 @@ public class OtherOptionsDialog extends Dialog {
     VolleyRequest GetEditedRecordRequest;
     Map<String, String> params;
     ProgressDialog progressDialog;
-    String DriverId, DeviceId, CurrentCycleId;
+    String DriverId, CoDriverId, DeviceId, CurrentCycleId;
     int pendingNotificationCount, DriverType = 0;
     DriverPermissionMethod driverPermissionMethod;
     RecapViewMethod recapViewMethod;
@@ -99,6 +100,14 @@ public class OtherOptionsDialog extends Dialog {
         DriverId        = SharedPref.getDriverId( getContext());
         DeviceId        = SharedPref.GetSavedSystemToken(getContext());
 
+        if (!SharedPref.getDriverType(getContext()).equals(DriverConst.SingleDriver)) {
+            if(DriverId.equals(DriverConst.GetDriverDetails(DriverConst.DriverID, getContext()))){
+                CoDriverId   = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getContext());
+            }else{
+                CoDriverId   = DriverConst.GetDriverDetails(DriverConst.DriverID, getContext());
+            }
+        }
+
         otherFeatureListView = (ListView) findViewById(R.id.otherFeatureListView);
         otherOptionMainLay = (RelativeLayout) findViewById(R.id.otherOptionMainLay);
 
@@ -126,7 +135,7 @@ public class OtherOptionsDialog extends Dialog {
 
         try {
             Globally Global = new Globally();
-            JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DriverId), dbHelper);
+            JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DriverId), CoDriverId, dbHelper);
             List<RecapSignModel> signList   = constants.GetCertifySignList(recapViewMethod, DriverId, hMethods, dbHelper,
                     Global.GetCurrentDeviceDate(null, Global, getContext()), CurrentCycleId, logPermissionObj, Global, getContext());
             boolean isMissingLoc = false;

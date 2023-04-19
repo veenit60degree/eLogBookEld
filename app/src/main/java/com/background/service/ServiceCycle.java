@@ -1475,7 +1475,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 "0",
                 SharedPref.getObdEngineHours(context),
                 SharedPref.getObdOdometer(context),
-                DriverVehicleTypeId
+                DriverVehicleTypeId,
+                false
 
         );
 
@@ -1532,7 +1533,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         "0",
                         SharedPref.getObdEngineHours(context),
                         SharedPref.getObdOdometer(context),
-                        DriverVehicleTypeId
+                        DriverVehicleTypeId,
+                        false
 
                 );
 
@@ -1552,8 +1554,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         hMethods.DriverLogHelper(DriverId, dbHelper, driverLogArray);
 
         // update static log array which is used
-        EldFragment.driverLogArray =  new JSONArray();
-        EldFragment.driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
+       // EldFragment.driverLogArray =  new JSONArray();
+      //  EldFragment.driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
 
         //ClearCounter
         BackgroundLocationService.IsAutoChange = false;

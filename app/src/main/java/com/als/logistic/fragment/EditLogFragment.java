@@ -72,6 +72,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
     View rootView;
     RecyclerView driverLogRecyclerView;
     RecyclerView.Adapter mWrappedAdapter;
+    EditLogRecyclerViewAdapter editLogRecyclerAdapter;
     boolean isUndo = false;
 
     RelativeLayout eldMenuLay;
@@ -90,14 +91,13 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
     DateTime currentDateTime,currentUTCTime;
     String selectedDateFormat = "";
     private Menu mMenu;
-    EditLogRecyclerViewAdapter editLogRecyclerAdapter;
     public static List<DriverLogModel> oDriverLogDetail = new ArrayList<DriverLogModel>();
     List<DriverLogModel> tempDriverLogDetail = new ArrayList<DriverLogModel>();
 
     final int SaveDriverLog = 1;
     EditLogPreviewDialog previewDialog;
     EditLogRemarksDialog editLogRemarksDialog;
-    public static boolean IsWrongDateEditLog = false;
+    public static boolean IsWrongDateEditLog = false, IsAllowToUpdate = true;
     JSONObject logPermissionObj;
     DriverPermissionMethod driverPermissionMethod;
     SaveDriverLogPost saveDriverLogPost;
@@ -186,6 +186,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
         eldMenuBtn.setImageResource(R.drawable.back_btn);
         rightMenuBtn.setVisibility(View.GONE);
 
+        IsAllowToUpdate = true;
         initListControls();
         initMenu();
         initUiAndListener();
@@ -226,7 +227,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
             DRIVER_ID               = SharedPref.getDriverId( getActivity());
             driverLogArray          = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
             logArray                = hMethods.GetSingleDateArray( driverLogArray, selectedDateTime, selectedDateTime, selectedUtcTime,
-                    IsCurrentDate, offsetFromUTC, getActivity() );
+                                        IsCurrentDate, offsetFromUTC, getActivity() );
             logArrayBeforeSelectedDate = hMethods.GetArrayBeforeSelectedDate(driverLogArray, selectedDateTime);
 
             currentDateTime         = global.getDateTimeObj(global.GetDriverCurrentDateTime(global, getActivity()), false);    // Current Date Time
@@ -403,9 +404,9 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
 
             if(isScroll){
                 driverLogRecyclerView.scrollToPosition(editLogRecyclerAdapter.getItemCount()-1);
-            }else{
-                dragMgr.attachRecyclerView(driverLogRecyclerView);
             }
+
+            dragMgr.attachRecyclerView(driverLogRecyclerView);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -451,30 +452,34 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
         final DriverLogModel item = editLogRecyclerAdapter.getData().get(position);
 
         int jobStatus = item.getDriverStatusId();
-        editLogRecyclerAdapter.removeItem(position);
 
-        if(isEnabled(jobStatus)) {
-
-            Snackbar snackbar = Snackbar.make(driverLogRecyclerView, getResources().getString(R.string.action_deleted), Snackbar.LENGTH_LONG);
-            snackbar.setAction("UNDO", new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    isUndo = true;
-                    editLogRecyclerAdapter.restoreItem(item, position);
-                    driverLogRecyclerView.scrollToPosition(position);
-
-                }
-            });
-
-            snackbar.setActionTextColor(Color.YELLOW);
-            snackbar.show();
-        }else{
-            isUndo = true;
-            editLogRecyclerAdapter.restoreItem(item, position);
-            driverLogRecyclerView.scrollToPosition(position);
+        if((item.IsUnAssignedMileRecord() && jobStatus == Constants.DRIVING) || jobStatus == Constants.DRIVING) {
             global.EldScreenToast(eldMenuBtn, "You don't have permission to delete this log.", getResources().getColor(R.color.colorVoilation));
-        }
+        }else{
+            editLogRecyclerAdapter.removeItem(position);
 
+            if (isEnabled(jobStatus)) {
+
+                Snackbar snackbar = Snackbar.make(driverLogRecyclerView, getResources().getString(R.string.action_deleted), Snackbar.LENGTH_LONG);
+                snackbar.setAction("UNDO", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        isUndo = true;
+                        editLogRecyclerAdapter.restoreItem(item, position);
+                        driverLogRecyclerView.scrollToPosition(position);
+
+                    }
+                });
+
+                snackbar.setActionTextColor(Color.YELLOW);
+                snackbar.show();
+            } else {
+                isUndo = true;
+                editLogRecyclerAdapter.restoreItem(item, position);
+                driverLogRecyclerView.scrollToPosition(position);
+                global.EldScreenToast(eldMenuBtn, "You don't have permission to delete this log.", getResources().getColor(R.color.colorVoilation));
+            }
+        }
     }
 
 
@@ -548,12 +553,27 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                         oDriverLogDetail.add(addNewModel);
 
                     }else{
-                        String startDateFormat = global.GetCurrentDeviceDateDefault(global, getActivity()) + "T00:00:00"; //2018-07-26T04:24:44.547
-                        startDateTime = global.getDateTimeObj(startDateFormat, false);
-                        startUtcDateTime = global.getDateTimeObj(startDateTime.plusHours(Math.abs(offsetFromUTC)).toString(), false);
+                        DateTime endTime , endUtc;
+                        if(IsCurrentDate) {
+                            String startDateFormat = global.GetCurrentDeviceDateDefault(global, getActivity()) + "T00:00:00"; //2018-07-26T04:24:44.547
+                            startDateTime = global.getDateTimeObj(startDateFormat, false);
+                            startUtcDateTime = global.getDateTimeObj(startDateTime.plusHours(Math.abs(offsetFromUTC)).toString(), false);
+                            endTime = currentDateTime;
+                            endUtc = currentUTCTime;
+
+                        }else {
+                            startDateTime = selectedDateTime;
+                            startUtcDateTime = selectedUtcTime; //global.getDateTimeObj(startDateTime.plusHours(Math.abs(offsetFromUTC)).toString(), false);
+                            String endTimeStr = startDateTime.toString().substring(0,11) + "23:59:59" ;
+
+                            endTime = global.getDateTimeObj(endTimeStr, false);
+                            endUtc =  global.getDateTimeObj(endTime.plusHours(Math.abs(offsetFromUTC)).toString(), false);
+                           // endUtc = endUtc.plusSeconds(1);
+
+                        }
 
                         DriverLogModel addNewModel = hMethods.GetDriverLogModel(obj, startDateTime, startUtcDateTime,
-                                currentDateTime, currentUTCTime, IsOffDutyPermission, IsSleeperPermission,
+                                endTime, endUtc, IsOffDutyPermission, IsSleeperPermission,
                                 IsDrivingPermission , IsOnDutyPermission, IsNewLogAdded, VersionCode);
                         addNewModel.setDriverVehicleTypeId(Constants.Driver);
                         addNewModel.setDriverLogId(0);
@@ -578,9 +598,9 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
             case R.id.saveBtn:
 
                 saveBtn.setEnabled(false);
+                IsAllowToUpdate = false;
                 IsWrongDateEditLog = false;
                 IsNewLogAdded = false;
-                violationMsg = "Incorrect Time. Please check your log time on RED highlighted area.";
 
                 notifyAdapterWithListUpdate(false);
 
@@ -604,7 +624,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                             }
 
                             saveBtn.setEnabled(true);
-
+                            IsAllowToUpdate = true;
                         }
                     }, 300);
 
@@ -628,6 +648,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
             JSONArray tempLogArray      = hMethods.ConvertListToJsonArray(oDriverLogDetail, getActivity());
             finalEditingArray           = hMethods.GetSameArray(logArrayBeforeSelectedDate);
             oDriverLogDetail = new ArrayList<DriverLogModel>();
+            int wrongPosCall = 0;
+            violationMsg = "Incorrect Time. Please check your log time on RED highlighted area.";
 
             DateTime lastRecordEndTime = null;
             for(int i = 0 ; i < tempLogArray.length() ; i++) {
@@ -643,6 +665,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                         if(!time.equals("00:00")){
                             IsWrongDateEditLog = true;
                             violationMsg = "Incorrect Time. Day start time should be 00:00";
+                            wrongPosCall++;
                         }
                     }else{
                         if(!IsCurrentDate){
@@ -651,6 +674,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                                 if(!time.equals("23:59")){
                                     IsWrongDateEditLog = true;
                                     violationMsg = "Incorrect Time. Day end time should be 23:59";
+                                    wrongPosCall++;
                                 }
                             }
                         }
@@ -671,34 +695,26 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                         String LastEndTimeHHMM = lastRecordEndTime.toString().substring(11, 16);
                         String StartTimeHHMM   = currentLogStartTime.toString().substring(11, 16);
 
-                        Logger.LogDebug("Time", "----LastEndTimeHHMM: " +LastEndTimeHHMM);
-                        Logger.LogDebug("Time", "----StartTimeHHMM: " +StartTimeHHMM);
+                      //  Logger.LogDebug("Time", "----LastEndTimeHHMM: " +LastEndTimeHHMM);
+                     //   Logger.LogDebug("Time", "----StartTimeHHMM: " +StartTimeHHMM);
 
                         // some times sec appears in end time and it makes time validation wrong, because here we are using hh:mm only
                         if(!LastEndTimeHHMM.equals(StartTimeHHMM)){
                             if(currentLogEndTime.isBefore(currentLogStartTime) ){
-                                /*Logger.LogDebug("Time", "lastRecordEndTime: " +lastRecordEndTime);
-                                Logger.LogDebug("Time", "currentLogStartTime: " +currentLogStartTime);
-                                long secDiff = constants.getDateTimeDuration(currentLogStartTime, lastRecordEndTime).getStandardSeconds();
-                                if(secDiff > 59) {  // some times sec appears in end time and it makes time validation wrong, because here we are using hh:mm only
-                                  } */
                                 IsWrongDateEditLog = true;
                                 violationMsg = "Incorrect Time. Start time is greater then End time in " + pos + " position.";
-
+                                wrongPosCall++;
                             }else{
-                                    /*Logger.LogDebug("Time", "lastRecordEndTime: " +lastRecordEndTime);
-                                    Logger.LogDebug("Time", "currentLogStartTime: " +currentLogStartTime);
-                                    long secDiff = constants.getDateTimeDuration(currentLogStartTime, lastRecordEndTime).getStandardSeconds();
-                                    if(secDiff > 59) {  // some times sec appears in end time and it makes time validation wrong, because here we are using hh:mm only
-                                    }*/
-
                                 IsWrongDateEditLog = true;
                                 violationMsg = "Incorrect Time. Start time is not matching in " + pos + " position with previous log End Time.";
-
+                                wrongPosCall++;
                             }
                         }
                     }
 
+                    if(wrongPosCall > 1){
+                        violationMsg = "Incorrect Time. Please check your log time on RED highlighted area.";
+                    }
 
                     lastRecordEndTime = global.getDateTimeObj(logObj.getString(ConstantsKeys.endDateTime), false);
 
@@ -994,7 +1010,13 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
             finalEditedLogArray = GetEditDataAsJson(logArray, lastDaySavedLocation, reason);
 
             Globally.EldScreenToast(saveBtn, "Saved data successfully.", getResources().getColor(R.color.colorPrimary));
-            SharedPref.SetEditedLogStatus(true, getActivity());
+
+            // set edited log status true
+            if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+                SharedPref.SetMainDriverEditedLogStatus(true, getActivity());
+            }else{
+                SharedPref.SetCoDriverEditedLogStatus(true, getActivity());
+            }
 
             // reset api call count
             failedApiTrackMethod.isAllowToCallOrReset(dbHelper, APIs.SAVE_DRIVER_EDIT_LOG_NEW, true, global, getActivity());
@@ -1284,20 +1306,20 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
 
                     if (obj.getString("Status").equals("true")) {
                         Globally.EldScreenToast(saveBtn, Message , getResources().getColor(R.color.colorPrimary));
-                        SharedPref.SetEditedLogStatus(false, getActivity());
+
+                        // set edited log status false
+                        if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+                            SharedPref.SetMainDriverEditedLogStatus(false, getActivity());
+                        }else{
+                            SharedPref.SetCoDriverEditedLogStatus(false, getActivity());
+                        }
+
                         UpdateLocalLogWithBackStack(true);
 
                     }else{
                         UpdateLocalLogWithBackStack(false);
 
-                        if(Message.contains("ServerError")){
-                            Message = "ALS server not responding";
-                        }else if(Message.contains("Network")){
-                            Message = "Internet connection problem";
-                        }else if(Message.contains("NoConnectionError")){
-                            Message = "Internet connection error";
-                        }
-
+                        Message = constants.getErrorMsg(Message);
                         Globally.EldScreenToast(saveBtn, Message , getResources().getColor(R.color.colorVoilation));
                     }
                 }catch (Exception e){
@@ -1316,7 +1338,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                     editLogProgressBar.setVisibility(View.GONE);
                     oDriverLogDetail = tempDriverLogDetail;
 
-                    SharedPref.SetEditedLogStatus(true, getActivity());
+                   // SharedPref.SetEditedLogStatus(true, getActivity());
                 }
 
 
@@ -1450,6 +1472,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
             MainDriverPref.SaveDriverLoc(getActivity(), editLogList);
 
         }else{
+
             if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) { // If Current driver is Main Driver
                 // clear data before adding
                 MainDriverPref.ClearLocFromList(getActivity());

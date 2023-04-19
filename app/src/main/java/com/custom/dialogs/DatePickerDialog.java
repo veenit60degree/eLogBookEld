@@ -12,6 +12,7 @@ import android.widget.DatePicker;
 
 import com.constants.Constants;
 import com.constants.SharedPref;
+import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.DriverPermissionMethod;
@@ -21,6 +22,7 @@ import com.als.logistic.Globally;
 import com.als.logistic.R;
 import com.als.logistic.UILApplication;
 
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -92,8 +94,21 @@ public class DatePickerDialog extends Dialog {
         setDateJob.setText("Show Details");
 
 
+        String CoDriverId = "", firstLoginTime = "";
         int DRIVER_ID           = Integer.valueOf(SharedPref.getDriverId(getContext()));
-        JSONObject logPermissionObj    = driverPermissionMethod.getDriverPermissionObj(DRIVER_ID, dbHelper);
+        if (!SharedPref.getDriverType(getContext()).equals(DriverConst.SingleDriver)) {
+            if(SharedPref.getDriverId(getContext()).equals(DriverConst.GetDriverDetails(DriverConst.DriverID, getContext()))){
+                CoDriverId   = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getContext());
+                firstLoginTime = SharedPref.getCoDriverFirstLoginTime(getContext());
+            }else{
+                CoDriverId   = DriverConst.GetDriverDetails(DriverConst.DriverID, getContext());
+                firstLoginTime = SharedPref.getDriverFirstLoginTime(getContext());
+            }
+        }else{
+            firstLoginTime = SharedPref.getDriverFirstLoginTime(getContext());
+        }
+
+        JSONObject logPermissionObj    = driverPermissionMethod.getDriverPermissionObj(DRIVER_ID, CoDriverId, dbHelper);
         IsDot                   = SharedPref.IsDOT(getContext());
 
         if(SelectedDate.length() > 6) {
@@ -136,6 +151,8 @@ public class DatePickerDialog extends Dialog {
             }
 
 
+          //  DriverPermitMaxDays = getDays(firstLoginTime, DriverPermitMaxDays);
+
             calendar.add(Calendar.DAY_OF_MONTH, -DriverPermitMaxDays);
             Date mindate = calendar.getTime();
             datePicker.setMinDate(mindate.getTime());
@@ -150,6 +167,16 @@ public class DatePickerDialog extends Dialog {
     }
 
 
+    private int getDays(String firstLoginTime, int DriverPermitMaxDays){
+        if(firstLoginTime.length() > 10) {
+           int dayDiff =  constants.getDayDiff(firstLoginTime, Globally.GetCurrentUTCTimeFormat());
+           if(dayDiff >= 0 && dayDiff < DriverPermitMaxDays){
+               DriverPermitMaxDays = dayDiff;
+           }
+        }
+
+        return DriverPermitMaxDays;
+    }
 
     private class DateJobListener implements View.OnClickListener {
         @Override

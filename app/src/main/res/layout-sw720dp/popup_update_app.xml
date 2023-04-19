@@ -94,6 +94,22 @@
 
 
 
+        <TextView
+            android:id="@+id/autoTimeSettingDescTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_height_35"
+            android:text="@string/auto_time_setting_desc"
+            android:textColor="?attr/colorVoilation"
+            android:gravity="center_horizontal"
+            android:textSize="@dimen/text_size_18"
+            android:layout_marginRight="@dimen/margin_15"
+            android:layout_marginLeft="@dimen/margin_15"
+
+
+            />
+
+
         <Button
                 android:id="@+id/btnUpdateApp"
                 android:layout_width="wrap_content"
@@ -105,7 +121,7 @@
                 android:textColor="@color/whiteee"
                 android:background="@drawable/green_selector"
                 android:textAllCaps="false"
-                android:layout_marginTop="@dimen/view_height_42"
+                android:layout_marginTop="@dimen/view_height_25"
                 android:layout_gravity="center_horizontal"
                 />
 

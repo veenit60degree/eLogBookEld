@@ -274,6 +274,10 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                 if (scrollY > 10) {
                     obdLayScrollView.scrollTo(scrollX, scrollY);
                 }
+
+                if(data.length() == 0){
+                    BleDataService.isConnected = false;
+                }
             }catch (Exception e){
                 e.printStackTrace();
             }

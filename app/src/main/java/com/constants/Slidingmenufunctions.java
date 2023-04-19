@@ -313,9 +313,20 @@ public class Slidingmenufunctions implements OnClickListener {
 
 
 	boolean isSignPending(){
-		if(SharedPref.getDriverId(context).trim().length() > 0) {
-			JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(SharedPref.getDriverId(context)), dbHelper);
-			boolean isSignPending = constants.GetCertifyLogSignStatus(recapViewMethod, SharedPref.getDriverId(context), dbHelper,
+
+		String DriverId = SharedPref.getDriverId(context).trim();
+		String CoDriverId = "";
+		if (!SharedPref.getDriverType(context).equals(DriverConst.SingleDriver)) {
+			if(DriverId.equals(DriverConst.GetDriverDetails(DriverConst.DriverID, context))){
+				CoDriverId   = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, context);
+			}else{
+				CoDriverId   = DriverConst.GetDriverDetails(DriverConst.DriverID, context);
+			}
+		}
+
+		if(DriverId.trim().length() > 0) {
+			JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DriverId), CoDriverId, dbHelper);
+			boolean isSignPending = constants.GetCertifyLogSignStatus(recapViewMethod, DriverId, dbHelper,
 										global.GetCurrentDeviceDate(null, global, context),
 							DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(context), context), logPermissionObj);
 			return isSignPending;
@@ -600,7 +611,7 @@ public class Slidingmenufunctions implements OnClickListener {
 						if (driverArray.length() == 0) {
 							LogoutUser(SharedPref.getDriverId(context));
 						} else {
-							SaveDataToServer(driverArray, MainDriver);
+							SaveDataToServer(driverArray, MainDriver, false);
 						}
 					} else {
 						//boolean isMainDriver = SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver);
@@ -611,9 +622,9 @@ public class Slidingmenufunctions implements OnClickListener {
 							LogoutUser(SharedPref.getDriverId(context));
 						} else {
 							if (mainDriverArray.length() > 0) {
-								SaveDataToServer(mainDriverArray, MainDriver);
+								SaveDataToServer(mainDriverArray, MainDriver, false);
 							} else {
-								SaveDataToServer(coDriverArray, CoDriver);
+								SaveDataToServer(coDriverArray, CoDriver, true);
 							}
 						}
 					}
@@ -629,16 +640,16 @@ public class Slidingmenufunctions implements OnClickListener {
 	}
 
 
-	private void SaveDataToServer(JSONArray DriverLogArray, int DriverType){
+	private void SaveDataToServer(JSONArray DriverLogArray, int DriverType, boolean isCoDriver){
 
 		if(DriverLogArray.length() > 0) {
-
-			String SavedLogApi = "";
-			if(SharedPref.IsEditedData(context)){
-				SavedLogApi = APIs.SAVE_DRIVER_EDIT_LOG_NEW;
+			String SavedLogApi;
+			if(isCoDriver){
+				SavedLogApi = Constants.getSaveApiInCoDriverCase(context);
 			}else{
-				SavedLogApi = APIs.SAVE_DRIVER_STATUS;
+				SavedLogApi = Constants.getSaveStatusOrEditedApi(context);
 			}
+
 
 			int socketTimeout = constants.SocketTimeout10Sec;	//10 seconds
 			if(DriverLogArray.length() > 10 ){
@@ -765,7 +776,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				} else {
 					if (DriverType == MainDriver) {
 						if (coDriverArray.length() > 0) {
-							SaveDataToServer(coDriverArray, CoDriver);
+							SaveDataToServer(coDriverArray, CoDriver, true);
 						} else {
 							LogoutUser(SharedPref.getDriverId(context));
 						}
@@ -812,7 +823,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				CoDriverBtn.setTextColor(R.attr.gray_text2);
 			}
 		}catch (Exception e){
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 
@@ -1051,15 +1062,7 @@ public class Slidingmenufunctions implements OnClickListener {
 									dialog.dismiss();
 								}
 
-								String message = error.toString();
-								if (message.contains("TimeoutError")) {
-									message = "Connection timeout. Please try again.";
-								} else if (message.contains("ServerError")) {
-									message = "ALS server not responding";
-								} else if (message.contains("NoConnectionError")) {
-									message = "Internet connection error";
-								}
-
+								String message = constants.getErrorMsg(error.toString());
 								global.EldScreenToast(MainDriverBtn, message,
 										context.getResources().getColor(R.color.red_eld));
 							}
@@ -1070,12 +1073,13 @@ public class Slidingmenufunctions implements OnClickListener {
 			@Override
 			protected Map<String, String> getParams()
 			{
+				String utcDate = Globally.GetCurrentUTCTimeFormat();
 				String date = global.GetDriverCurrentDateTime(global, context);
 
 				Map<String,String> params = new HashMap<String, String>();
 				params.put(ConstantsKeys.DriverId, DriverId);
 				params.put(ConstantsKeys.MobileDeviceCurrentDateTime, date);
-				params.put(ConstantsKeys.MobileUtcDate, Globally.GetCurrentUTCTimeFormat());
+				params.put(ConstantsKeys.MobileUtcDate, utcDate);
 				params.put(ConstantsKeys.TruckEquipment, TRUCK_NUMBER);
 				params.put(ConstantsKeys.CompanyId, DriverCompanyId);
 				params.put(ConstantsKeys.VIN, VIN);

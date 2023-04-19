@@ -9,6 +9,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 
 public class CheckIsUpdateReady extends AsyncTask<Void, String, String> {
     String appURL="";
@@ -50,7 +51,9 @@ public class CheckIsUpdateReady extends AsyncTask<Void, String, String> {
             }
         } catch (RuntimeException e) {
             e.printStackTrace();
-        } catch (Exception e) {
+        }catch (SocketTimeoutException e){
+            e.printStackTrace();
+        }catch (Exception e) {
             e.printStackTrace();
             Logger.LogDebug("CheckIsUpdateReady", "----UnknownHostException");
         }

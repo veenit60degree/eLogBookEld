@@ -752,15 +752,6 @@ public class DriverLogInfoAdapter extends BaseAdapter {
     }
 
 
-    /*================== Clear missing location diagnostic events data  ===================*/
-    void ClearDiagnosticEvents(final JSONArray eventData, final boolean isLoad, final boolean IsRecap, int socketTimeout){
-        progressDialog.show();
-        saveDriverLogPost.PostDriverLogData(eventData, APIs.CLEAR_MALFNCN_DIAGSTC_EVENT, socketTimeout, isLoad, IsRecap, 1, ClearDiagnosticEvents);
-
-    }
-
-
-
     /*================== Upload Driver Updated Log Record Data ===================*/
     void SAVE_DRIVER_RECORD_LOG(final JSONArray geoData, final boolean isLoad, final boolean IsRecap, int socketTimeout){
         progressDialog.show();

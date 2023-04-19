@@ -1302,6 +1302,27 @@ public class SharedPref {
     }
 
 
+    public static void setUserCred(String mainDriverLoginName, String coDriverLoginName, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("mainDriverLoginName", mainDriverLoginName);
+        editor.putString("coDriverLoginName", coDriverLoginName);
+
+        editor.commit();
+    }
+
+    // Get last login main driver detail -------------------
+    public static String getLastLoginMainDriver(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("mainDriverLoginName", "");
+    }
+
+    // Get last login co driver detail -------------------
+    public static String getLastLoginCoDriver(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("coDriverLoginName", "");
+    }
+
     // Set  Driver Type -------------------
     public static void setDriverType( String value, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -1980,7 +2001,7 @@ public class SharedPref {
 
 
     // Set Edited Log Status -------------------
-    public static void SetEditedLogStatus( boolean value, Context context) {
+    public static void SetMainDriverEditedLogStatus( boolean value, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("is_edited", value);
@@ -1989,10 +2010,27 @@ public class SharedPref {
 
 
     // Get Edited Log Status -------------------
-    public static boolean IsEditedData( Context context) {
+    public static boolean IsMainDriverEdited( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getBoolean("is_edited", false);
     }
+
+
+    // Set co driverEdited Log Status -------------------
+    public static void SetCoDriverEditedLogStatus( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("is_edited_co", value);
+        editor.commit();
+    }
+
+
+    // Get co driver Edited Log Status -------------------
+    public static boolean IsCoDriverEditedData( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("is_edited_co", false);
+    }
+
 
 
     // Set Edited Log Status -------------------
@@ -2230,6 +2268,34 @@ public class SharedPref {
         return preferences.getString("utc_current_time", "");
     }
 
+    // Set Driver First Login Time -------------------
+    public static void setDriverFirstLoginTime( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("DriverFirstLoginTime", value);
+        editor.commit();
+    }
+
+    // Get Driver First Login Time -------------------
+    public static String getDriverFirstLoginTime( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("DriverFirstLoginTime", "");
+    }
+
+    // Set CoDriver First Login Time -------------------
+    public static void setCoDriverFirstLoginTime( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("CoDriverFirstLoginTime", value);
+        editor.commit();
+    }
+
+    // Get CoDriver First Login Time -------------------
+    public static String getCoDriverFirstLoginTime( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("CoDriverFirstLoginTime", "");
+    }
+
 
     // Set login time (UTC) and occurrence event status -------------------
     public static void setLoginTimeUTC( String value, boolean isLoginEvent, Context context) {
@@ -2245,6 +2311,8 @@ public class SharedPref {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString("login_time_utc", "");
     }
+
+
 
     // get Login Missing Event Occurrence -------------------
     public static boolean isLoginMissingEventOcc( Context context) {
@@ -2820,7 +2888,8 @@ public class SharedPref {
     public static boolean isSuggestedEditOccur( Context context) {
         if(context != null) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            return preferences.getBoolean(ConstantsKeys.SuggestedEdit, false);
+            boolean isSuggestedEditOccur = preferences.getBoolean(ConstantsKeys.SuggestedEdit, false);
+            return isSuggestedEditOccur;
         }else{
             return false;
         }
@@ -2987,6 +3056,21 @@ public class SharedPref {
     public static String getRefreshDataTime( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString("data_refresh_time", "");
+    }
+
+
+    // Set location change Time -------------------
+    public static void setLocChangeTime(String dateTime, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("loc_change_time", dateTime);
+        editor.commit();
+    }
+
+    // Get location change Time -------------------
+    public static String getLocChangeTime( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("loc_change_time", "");
     }
 
 
@@ -3231,6 +3315,7 @@ public class SharedPref {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("highPrecisionOdometer", odometer);
         editor.putString("HighPrecesionSavedTime", savedTime);
+        Logger.LogDebug("HighPrecesionSavedTime", "HighPrecesionSavedTime: " +savedTime);
         editor.commit();
     }
 

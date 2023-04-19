@@ -1,5 +1,6 @@
 package com.adapter.logistic;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
@@ -38,6 +39,7 @@ import com.als.logistic.R;
 import com.als.logistic.UILApplication;
 import com.als.logistic.fragment.EditLogFragment;
 import com.models.DriverLogModel;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 
 import org.joda.time.DateTime;
 import org.json.JSONObject;
@@ -45,7 +47,8 @@ import org.json.JSONObject;
 import java.util.Collections;
 import java.util.List;
 
-public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecyclerViewAdapter.ViewHolderItem> implements DraggableItemAdapter<EditLogRecyclerViewAdapter.ViewHolderItem>{
+public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecyclerViewAdapter.ViewHolderItem>
+        implements DraggableItemAdapter<EditLogRecyclerViewAdapter.ViewHolderItem>{
 
 
 
@@ -60,6 +63,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
     JSONObject logPermissionObj;
     DriverPermissionMethod permitMethod;
     boolean isTouch = false, IsCurrentDate;
+    boolean IsUnAssignedRecordExist = false;
     HelperMethods hMethods;
     boolean IsOffDutyPermission ,IsSleeperPermission , IsDrivingPermission ,  IsOnDutyPermission;
     final int OFF_DUTY       = 1;
@@ -72,7 +76,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
 
     public EditLogRecyclerViewAdapter(Context context, RecyclerView eldMenuBtn, List<DriverLogModel> oDriverLogDetail, String selectedDate, int offset,
                                       JSONObject permitLog, DriverPermissionMethod pMethod, HelperMethods h_method,
-                                      boolean isCurrentDate, boolean isUnAssignedMileRecord, AdapterCallback callback) {
+                                      boolean isCurrentDate, boolean isUnAssignedRecordExist, AdapterCallback callback) {
         this.driverLogList = oDriverLogDetail;
         this.mInflater = LayoutInflater.from(context);
         this.mContext = context;
@@ -83,25 +87,23 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
         this.permitMethod = pMethod;
         this.hMethods     = h_method;
         this.IsCurrentDate = isCurrentDate;
+        this.IsUnAssignedRecordExist = isUnAssignedRecordExist;
         this.adapterCallback = callback;
         IsOffDutyPermission = permitMethod.getPermissionStatus(logPermissionObj, ConstantsKeys.OffDutyKey);
         IsSleeperPermission = permitMethod.getPermissionStatus(logPermissionObj, ConstantsKeys.SleeperKey);
         IsDrivingPermission = permitMethod.getPermissionStatus(logPermissionObj, ConstantsKeys.DrivingKey);
         IsOnDutyPermission  = permitMethod.getPermissionStatus(logPermissionObj, ConstantsKeys.OnDutyKey);
 
-        if(isUnAssignedMileRecord){
-            IsDrivingPermission = true;
-        }else{
-            if(SharedPref.IsCCMTACertified(context) ) {
-                IsOffDutyPermission = true;
-                IsSleeperPermission = true;
-                IsOnDutyPermission  = true;
-                IsDrivingPermission = false;
-            }
+
+        if(SharedPref.IsCCMTACertified(context) ) {
+            IsOffDutyPermission = true;
+            IsSleeperPermission = true;
+            IsOnDutyPermission  = true;
+            IsDrivingPermission = false;
         }
 
-        setHasStableIds(true);
 
+        setHasStableIds(true);
 
     }
 
@@ -128,6 +130,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
     }
 
 
+    @SuppressLint("RecyclerView")
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onBindViewHolder(@NonNull final ViewHolderItem viewHolder, final int position) {
@@ -180,6 +183,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
         ((ViewHolderItem) viewHolder).startTimeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 parentPosition = viewHolder.getAdapterPosition();  //getParentViewPosition(((ViewHolderItem) viewHolder).editLogSerialNoTV);
                 String time = ((ViewHolderItem) viewHolder).startTimeTV.getText().toString() ;
                 int Hour = Integer.valueOf(time.split(":")[0] );
@@ -224,25 +228,30 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
                     isTouch = false;
                     DriverLogModel logModel = EditLogFragment.oDriverLogDetail.get(parentPosition);
 
-                    logModel.setDriverStatusId(pos + 1);
-                    if (pos == 4) { // Check for Personal use
-                        logModel.setPersonal(true);
-                    } else {
-                        logModel.setPersonal(false);
-                    }
+                    if(pos != 2) {
 
-                    if (pos == 5) { // Check for YardMove
-                        logModel.setYardMove(true);
-                        logModel.setDriverStatusId(Constants.ON_DUTY);
-                    } else {
-                        logModel.setYardMove(false);
-                    }
+                        logModel.setDriverStatusId(pos + 1);
+                        if (pos == 4) { // Check for Personal use
+                            logModel.setPersonal(true);
+                        } else {
+                            logModel.setPersonal(false);
+                        }
 
-                    if(pos != 3 && pos != 5 ) {    // If status is not On Duty
-                        logModel.setRemarks("");
-                    }
+                        if (pos == 5) { // Check for YardMove
+                            logModel.setYardMove(true);
+                            logModel.setDriverStatusId(Constants.ON_DUTY);
+                        } else {
+                            logModel.setYardMove(false);
+                        }
 
-                    EditLogFragment.oDriverLogDetail.set(parentPosition, logModel);
+                        if (pos != 3 && pos != 5) {    // If status is not On Duty
+                            logModel.setRemarks("");
+                        }
+
+                        EditLogFragment.oDriverLogDetail.set(parentPosition, logModel);
+                    }else{
+                        parentView.setSelection(logModel.getDriverStatusId()-1);
+                    }
                 }
             }
 
@@ -291,14 +300,17 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
             CheckTimeInLogEditing(startDateTime, endDateTime, ((ViewHolderItem) viewHolder).endTimeLayout, false, currenDateTime, false);
 
             String time = startDateTime.toString().substring(11, 16);
-            Logger.LogDebug("time: ", "time: " + time);
+
 
             if(time.equals("00:00")){
-                EditLogFragment.IsWrongDateEditLog = false;
-                ((ViewHolderItem) viewHolder).startTimeLayout.setBackgroundResource(R.drawable.edit_log_drawable);
+                if(EditLogFragment.IsAllowToUpdate) {
+                    EditLogFragment.IsWrongDateEditLog = false;
+                    ((ViewHolderItem) viewHolder).startTimeLayout.setBackgroundResource(R.drawable.edit_log_drawable);
+                }
             }else{
                 EditLogFragment.IsWrongDateEditLog = true;
                 ((ViewHolderItem) viewHolder).startTimeLayout.setBackgroundResource(R.drawable.edit_log_red_drawable);
+                Logger.LogDebug("InvalidTime", "111");
             }
 
             if(driverLogList.size() == 1) {
@@ -334,7 +346,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
         ((ViewHolderItem) viewHolder).startTimeTV.setText(startTime);
         ((ViewHolderItem) viewHolder).endTimeTV.setText(endTime);
         ((ViewHolderItem) viewHolder).editLogDurationTV.setText(FinalValue(TotalHours));
-
+       // Logger.LogDebug("Duration", "---Duration: " + startTime + "-" + endTime + " = " +TotalHours);
 
         // Initializing an ArrayAdapter
         final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
@@ -347,7 +359,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
                 }else if(position == SLEEPER - 1){
                     return IsSleeperPermission;
                 }else if(position == DRIVING - 1){
-                    return IsDrivingPermission;
+                    return isDrivingEnabledWithPos(position);
                 }else if(position == ON_DUTY - 1){
                     return IsOnDutyPermission;
                 }else if( position == ON_DUTY + 1){
@@ -367,7 +379,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
                 }else if(position == SLEEPER - 1){
                     setViewTextColor(tv, IsSleeperPermission);
                 }else if(position == DRIVING - 1){
-                    setViewTextColor(tv, IsDrivingPermission);
+                    setViewTextColor(tv, isDrivingEnabledWithPos(position));
                 }else if(position == ON_DUTY - 1 || position == ON_DUTY + 1 ){
                     setViewTextColor(tv, IsOnDutyPermission);
                 }else{
@@ -389,7 +401,18 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
                 }else if(position == SLEEPER - 1){
                     setViewTextColor(tv, IsSleeperPermission);
                 }else if(position == DRIVING - 1){
-                    setViewTextColor(tv, IsDrivingPermission);
+
+                    /*if(!IsDrivingPermission){
+                        startTimeBtn.setEnabled(false);
+                        endTimeBtn.setEnabled(false);
+                    }else{
+                        startTimeBtn.setEnabled(true);
+                        endTimeBtn.setEnabled(true);
+                    }*/
+
+                    setViewTextColor(tv, IsDrivingPermission);  //isDrivingEnabledWithPos(position)
+
+
                 }else if(position == ON_DUTY - 1 || position == ON_DUTY + 1){
                     setViewTextColor(tv, IsOnDutyPermission);
                 }else{
@@ -403,17 +426,22 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
         spinnerArrayAdapter.setDropDownViewResource(R.layout.item_editlog_spinner);
         ((ViewHolderItem) viewHolder).editLogStatusSpinner.setAdapter(spinnerArrayAdapter);
 
-
         int spinPos = status - 1;
         if(status == OFF_DUTY ){
             if(isPersonal) {
                 ((ViewHolderItem) viewHolder).editLogStatusSpinner.setSelection(4);
-                setSpinnerViewEnabledStatus(((ViewHolderItem) viewHolder).editLogSerialNoTV, ((ViewHolderItem) viewHolder).editLogStatusSpinner, ((ViewHolderItem) viewHolder).startTimeLayout,
-                        ((ViewHolderItem) viewHolder).startTimeTV, ((ViewHolderItem) viewHolder).endTimeLayout, ((ViewHolderItem) viewHolder).endTimeTV, ((ViewHolderItem) viewHolder).editLogDurationTV, ((ViewHolderItem) viewHolder).editLogItemLay, position, true);
+                setSpinnerViewEnabledStatus(((ViewHolderItem) viewHolder).editLogSerialNoTV,
+                        ((ViewHolderItem) viewHolder).editLogStatusSpinner, ((ViewHolderItem) viewHolder).startTimeLayout,
+                        ((ViewHolderItem) viewHolder).startTimeTV, ((ViewHolderItem) viewHolder).endTimeLayout,
+                        ((ViewHolderItem) viewHolder).endTimeTV, ((ViewHolderItem) viewHolder).editLogDurationTV,
+                        ((ViewHolderItem) viewHolder).editLogItemLay, position, true, false);
             }else {
                 ((ViewHolderItem) viewHolder).editLogStatusSpinner.setSelection(0);
-                setSpinnerViewEnabledStatus(((ViewHolderItem) viewHolder).editLogSerialNoTV, ((ViewHolderItem) viewHolder).editLogStatusSpinner, ((ViewHolderItem) viewHolder).startTimeLayout,
-                        ((ViewHolderItem) viewHolder).startTimeTV, ((ViewHolderItem) viewHolder).endTimeLayout, ((ViewHolderItem) viewHolder).endTimeTV, ((ViewHolderItem) viewHolder).editLogDurationTV, ((ViewHolderItem) viewHolder).editLogItemLay, position, IsOffDutyPermission);
+                setSpinnerViewEnabledStatus(((ViewHolderItem) viewHolder).editLogSerialNoTV,
+                        ((ViewHolderItem) viewHolder).editLogStatusSpinner, ((ViewHolderItem) viewHolder).startTimeLayout,
+                        ((ViewHolderItem) viewHolder).startTimeTV, ((ViewHolderItem) viewHolder).endTimeLayout,
+                        ((ViewHolderItem) viewHolder).endTimeTV, ((ViewHolderItem) viewHolder).editLogDurationTV,
+                        ((ViewHolderItem) viewHolder).editLogItemLay, position, IsOffDutyPermission, false);
             }
         }else if(status == SLEEPER ){
             ((ViewHolderItem) viewHolder).editLogStatusSpinner.setSelection(spinPos);
@@ -421,19 +449,18 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
                     ((ViewHolderItem) viewHolder).editLogStatusSpinner, ((ViewHolderItem) viewHolder).startTimeLayout,
                     ((ViewHolderItem) viewHolder).startTimeTV, ((ViewHolderItem) viewHolder).endTimeLayout,
                     ((ViewHolderItem) viewHolder).endTimeTV, ((ViewHolderItem) viewHolder).editLogDurationTV,
-                    ((ViewHolderItem) viewHolder).editLogItemLay, position, IsSleeperPermission);
+                    ((ViewHolderItem) viewHolder).editLogItemLay, position, IsSleeperPermission, false);
 
         }else if(status == DRIVING ){
+
             ((ViewHolderItem) viewHolder).editLogStatusSpinner.setSelection(spinPos);
             setSpinnerViewEnabledStatus(((ViewHolderItem) viewHolder).editLogSerialNoTV,
                     ((ViewHolderItem) viewHolder).editLogStatusSpinner, ((ViewHolderItem) viewHolder).startTimeLayout,
                     ((ViewHolderItem) viewHolder).startTimeTV, ((ViewHolderItem) viewHolder).endTimeLayout,
                     ((ViewHolderItem) viewHolder).endTimeTV, ((ViewHolderItem) viewHolder).editLogDurationTV,
-                    ((ViewHolderItem) viewHolder).editLogItemLay, position, IsDrivingPermission);
+                    ((ViewHolderItem) viewHolder).editLogItemLay, position, isDrivingEnabledWithPos(position), true);
 
         }else if(status == ON_DUTY ){
-
-
 
             if(isYardMove){
                 ((ViewHolderItem) viewHolder).editLogStatusSpinner.setSelection(5);
@@ -444,14 +471,14 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
                             viewHolder).editLogStatusSpinner, ((ViewHolderItem) viewHolder).startTimeLayout,
                     ((ViewHolderItem) viewHolder).startTimeTV, ((ViewHolderItem) viewHolder).endTimeLayout,
                     ((ViewHolderItem) viewHolder).endTimeTV, ((ViewHolderItem) viewHolder).editLogDurationTV,
-                    ((ViewHolderItem) viewHolder).editLogItemLay, position, IsOnDutyPermission);
+                    ((ViewHolderItem) viewHolder).editLogItemLay, position, IsOnDutyPermission, false);
         }else{
             ((ViewHolderItem) viewHolder).editLogStatusSpinner.setSelection(spinPos);
             setSpinnerViewEnabledStatus(((ViewHolderItem) viewHolder).editLogSerialNoTV, ((ViewHolderItem)
                             viewHolder).editLogStatusSpinner, ((ViewHolderItem) viewHolder).startTimeLayout,
                     ((ViewHolderItem) viewHolder).startTimeTV, ((ViewHolderItem) viewHolder).endTimeLayout,
                     ((ViewHolderItem) viewHolder).endTimeTV, ((ViewHolderItem) viewHolder).editLogDurationTV,
-                    ((ViewHolderItem) viewHolder).editLogItemLay, position, IsOffDutyPermission);
+                    ((ViewHolderItem) viewHolder).editLogItemLay, position, IsOffDutyPermission, false);
         }
 
     }
@@ -594,6 +621,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
                 if(!time.equals("23:59")){
                     EditLogFragment.IsWrongDateEditLog = true;
                     view.setBackgroundResource(R.drawable.edit_log_red_drawable);
+                    Logger.LogDebug("InvalidTime", "222");
                 }else{
                    // EditGraphFragment.IsWrongDateEditLog = false;
                     view.setBackgroundResource(R.drawable.edit_log_drawable);
@@ -616,7 +644,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
 
     void setSpinnerViewEnabledStatus(TextView countTV, Spinner spinner, RelativeLayout startTimeBtn, TextView startTV,
                                      RelativeLayout endTimeBtn, TextView endTV, TextView durationTV, LinearLayout editLogItemLay,
-                                     int position, boolean isPermit){
+                                     int position, boolean isPermit, boolean isDriving){
         if(!isPermit){
             spinner.setEnabled(false);
             startTimeBtn.setEnabled(false);
@@ -627,12 +655,37 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
             endTV.setTextColor(Color.GRAY);
             editLogItemLay.setBackgroundColor(mContext.getResources().getColor(R.color.eld_gray_bg_theme));
 
+        }else{
+            spinner.setEnabled(true);
+
+            if(isDriving && !IsDrivingPermission){
+                startTimeBtn.setEnabled(false);
+                endTimeBtn.setEnabled(false);
+            }else{
+                startTimeBtn.setEnabled(true);
+                endTimeBtn.setEnabled(true);
+            }
+
+
+            countTV.setTextColor(Color.BLACK);
+            durationTV.setTextColor(Color.BLACK);
+            startTV.setTextColor(Color.BLACK);
+            endTV.setTextColor(Color.BLACK);
+            editLogItemLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
+
         }
 
         if(position == driverLogList.size() - 1 && isPermit){
             spinner.setEnabled(true);
-            startTimeBtn.setEnabled(true);
-            endTimeBtn.setEnabled(true);
+
+            if(isDriving && !IsDrivingPermission){
+                startTimeBtn.setEnabled(false);
+                endTimeBtn.setEnabled(false);
+            }else{
+                startTimeBtn.setEnabled(true);
+                endTimeBtn.setEnabled(true);
+            }
+
             if(UILApplication.getInstance().isNightModeEnabled()){
                 editLogItemLay.setBackgroundColor(mContext.getResources().getColor(R.color.layout_color_dot));
                 countTV.setTextColor(Color.WHITE);
@@ -715,7 +768,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
                 DriverLogModel logModelNextPos = EditLogFragment.oDriverLogDetail.get(position + 1);
                 int Status = logModelNextPos.getDriverStatusId();
 
-                if(isEnabled(Status)){
+                if(isEnabled(Status, position)){
                     DriverLogModel nextPosLogModel = getDriverNextLog(EditLogFragment.oDriverLogDetail, position + 1, endView.getText().toString());
                     EditLogFragment.oDriverLogDetail.set(position + 1, nextPosLogModel);
 
@@ -733,7 +786,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
     }
 
 
-    boolean isEnabled(int Status){
+    boolean isEnabled(int Status, int position){
 
         boolean isEnabled = true;
         switch (Status){
@@ -746,7 +799,17 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
                 break;
 
             case DRIVING:
-                isEnabled = IsDrivingPermission;
+
+                if(IsUnAssignedRecordExist){
+                    if(driverLogList.get(position).IsUnAssignedMileRecord()){
+                        isEnabled = true;
+                    }else{
+                        isEnabled = IsDrivingPermission;
+                    }
+                }else{
+                    isEnabled = IsDrivingPermission;
+                }
+
                 break;
 
             case ON_DUTY:
@@ -759,22 +822,41 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
 
     }
 
+    boolean isDrivingEnabledWithPos(int position){
+
+        if(IsUnAssignedRecordExist){
+            if(driverLogList.get(position).IsUnAssignedMileRecord()){
+                return true;
+            }else{
+                return IsDrivingPermission;
+            }
+        }else{
+            return IsDrivingPermission;
+        }
+
+    }
+
+
     void CheckTimeInLogEditing(DateTime startDate, DateTime endDate, View view, boolean IsPreviousEndAndNewStart,   DateTime selectedDateTime, boolean isLast ){
 
         long LastJobTotalMin = Constants.getDateTimeDuration(startDate, endDate).getStandardMinutes();
         if(IsPreviousEndAndNewStart){
+           // Logger.LogDebug("time", "time: "+startDate.toString().substring(11, 16));
 
-            if (LastJobTotalMin == 0) {    //== 0         // || LastJobTotalMin == 1         //compareDate.equals(viewDate)
+            if (LastJobTotalMin == 0 &&
+                    startDate.toString().substring(11, 16).equals(endDate.toString().substring(11, 16))) {
                 view.setBackgroundResource(R.drawable.edit_log_drawable);
             } else {
                 EditLogFragment.IsWrongDateEditLog = true;
                 view.setBackgroundResource(R.drawable.edit_log_red_drawable);
+                Logger.LogDebug("InvalidTime", "333");
             }
 
             int dayDiff = hMethods.DayDiff(startDate, endDate);
             if ( dayDiff > 0 ){
                 EditLogFragment.IsWrongDateEditLog = true;
                 view.setBackgroundResource(R.drawable.edit_log_red_drawable);
+                Logger.LogDebug("InvalidTime", "444");
             }
 
 
@@ -788,6 +870,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
                 } else {
                     EditLogFragment.IsWrongDateEditLog = true;
                     view.setBackgroundResource(R.drawable.edit_log_red_drawable);
+                    Logger.LogDebug("InvalidTime", "555");
                 }
             }
 
@@ -795,6 +878,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
             if(endDate.isAfter(selectedDateTime)){
                 EditLogFragment.IsWrongDateEditLog = true;
                 view.setBackgroundResource(R.drawable.edit_log_red_drawable);
+                Logger.LogDebug("InvalidTime", "666");
             }
 
         }
@@ -818,7 +902,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
 
 
         DriverLogModel logModel = list.get(position);
-        // logModel.setDriverStatusId(DriverStatus);
+            // logModel.setDriverStatusId(DriverStatus);
 
         int LastJobTotalMin = (int) Constants.getDateTimeDuration(utcStartDateTime, utcEndDateTime).getStandardMinutes();
         logModel.setTotalMinutes(LastJobTotalMin);

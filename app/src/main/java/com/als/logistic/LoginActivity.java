@@ -55,6 +55,8 @@ import com.constants.DualSimManager;
 import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.Utils;
+import com.constants.VolleyRequest;
+import com.constants.VolleyRequestWithoutRetry;
 import com.custom.dialogs.BleAvailableDevicesDialog;
 import com.custom.dialogs.TimeZoneDialog;
 import com.driver.details.DriverConst;
@@ -89,7 +91,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	final int STORAGE_UTIL 				= 104;
 	final int FINE_LOCATION 			= 105;
 
-
+	String userName = "", password = "";
 	public static boolean isDriving = false;
 	EditText userNameText, passwordText, coDriverUserNameText, coDriverPasswordText;
 	TextView driverTitleTV, appVersion, appTypeView, welcomeToAlsTV;
@@ -117,6 +119,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 	BleAvailableDevicesDialog bleAvailableDevicesDialog;
 	List<String> availableDevicesList = new ArrayList<>();
+	boolean isBleNearByScanCalled = false;
 
 
 	@Override
@@ -327,9 +330,24 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			}
 		}
 
+		userName = SharedPref.getUserName( LoginActivity.this);
+		password = SharedPref.getPassword( LoginActivity.this);
+
+		CheckUserCredientials();
 
 	}
 
+
+	/*========= Some times on splash screen user cred returns null and login screen opens default, we are cross checking here user cred if exist then open home screen =============*/
+	void CheckUserCredientials(){
+		if (userName.length() > 0 && password.length() > 0) {
+			Intent intent = new Intent(LoginActivity.this, TabAct.class);
+			intent.putExtra("user_type", "splash");
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			startActivity(intent);
+			finish();
+		}
+	}
 
 
 	@RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -337,36 +355,39 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	protected void onResume() {
 		super.onResume();
 
-		IsLoginSuccess = false;
-		loginBtn.setEnabled(true);
-		ObdPreference = SharedPref.getObdPreference(getApplicationContext());
+		if (userName.length() == 0 && password.length() == 0) {
+			IsLoginSuccess = false;
+			loginBtn.setEnabled(true);
+			ObdPreference = SharedPref.getObdPreference(getApplicationContext());
 
-		if(ObdPreference == Constants.OBD_PREF_BLE){
+			if (ObdPreference == Constants.OBD_PREF_BLE) {
 
-			if(!IsBleConnected && CompanyId.length() > 0){
+				if (!IsBleConnected && CompanyId.length() > 0) {
+					loginBleStatusBtn.setVisibility(View.VISIBLE);
+					loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+				}
+
+			} else if (ObdPreference == Constants.OBD_PREF_WIRED) {
 				loginBleStatusBtn.setVisibility(View.VISIBLE);
-				loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+
+				if (!WiredConnected) {
+					loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+				}
+
 			}
 
-		}else if(ObdPreference == Constants.OBD_PREF_WIRED){
-			loginBleStatusBtn.setVisibility(View.VISIBLE);
-
-			if(!WiredConnected){
-				loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+			if (UILApplication.getInstance().isNightModeEnabled()) {
+				askLoginIV.setColorFilter(getResources().getColor(R.color.dark_cream_white));
+				logoImg.setColorFilter(getResources().getColor(R.color.dark_cream_white));
 			}
+
+
+			startService();
+			UILApplication.activityResumed();
 
 		}
 
-		if(UILApplication.getInstance().isNightModeEnabled()){
-			askLoginIV.setColorFilter(getResources().getColor(R.color.dark_cream_white));
-			logoImg.setColorFilter(getResources().getColor(R.color.dark_cream_white));
-		}
-
-
-
-		startService();
-		UILApplication.activityResumed();
-		LocalBroadcastManager.getInstance(LoginActivity.this).registerReceiver( progressReceiver, new IntentFilter(ConstantsKeys.IsEventUpdate));
+		LocalBroadcastManager.getInstance(LoginActivity.this).registerReceiver(progressReceiver, new IntentFilter(ConstantsKeys.IsEventUpdate));
 
 	}
 
@@ -714,6 +735,13 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				Logger.LogVerbose("TAG","Permission is revoked");
 				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_SCAN,
 						Manifest.permission.BLUETOOTH_CONNECT}, NEARBY_DEVICES_REQUEST);
+
+				if(isBleNearByScanCalled) {
+					login();
+				}
+				isBleNearByScanCalled = true;
+
+
 				return false;
 			}
 		} else { //permission is automatically granted on sdk<23 upon installation
@@ -765,7 +793,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	protected void onPause() {
 		super.onPause();
 		UILApplication.activityPaused();
+
 		LocalBroadcastManager.getInstance(LoginActivity.this).unregisterReceiver(progressReceiver);
+
 	}
 
 	protected void onStop() {
@@ -825,8 +855,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 							checkNullInputs();
 
 							/*========== LOGIN API =========== */
-							LoginUser(global.registrationId, StrSingleUserame, StrSinglePass, StrCoDriverUsername, StrCoDriverPass, LoginUserType, StrOSType, DeviceSimInfo, Sim2);
-
+							//LoginUser(global.registrationId, StrSingleUserame, StrSinglePass, StrCoDriverUsername, StrCoDriverPass, LoginUserType, StrOSType, DeviceSimInfo, Sim2);
+							GetServerCurrentUtcTime();
 						}
 					} else {
 						global.EldScreenToast(mainLoginLayout, getString(R.string.enter_your_pass), getResources().getColor(R.color.colorVoilation));
@@ -841,6 +871,93 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			global.EldScreenToast(mainLoginLayout, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
 		}
 	}
+
+
+
+
+	VolleyRequest.VolleyCallback ResponseCallBack = new VolleyRequest.VolleyCallback() {
+
+		@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+		@Override
+		public void getResponse(String response, int flag) {
+
+			Logger.LogDebug("response", "TimeZone logout response: " + response);
+
+			try {
+				String status = "";
+
+				JSONObject obj = new JSONObject(response);
+				status = obj.getString("Status");
+
+				if(status.equalsIgnoreCase("true")){
+
+					// Save current UTC date time
+					SharedPref.setCurrentUTCTime( obj.getString("Data") , getApplicationContext() );
+					boolean isCorrectTime = global.isCorrectLoginTime(getApplicationContext());
+
+					if( isCorrectTime){
+						/*========== LOGIN API =========== */
+						LoginUser(global.registrationId, StrSingleUserame, StrSinglePass, StrCoDriverUsername, StrCoDriverPass, LoginUserType, StrOSType, DeviceSimInfo, Sim2);
+					}else{
+						if (progressDialog != null && progressDialog.isShowing()) {
+							progressDialog.dismiss();
+						}
+						global.EldScreenToast(mainLoginLayout, "Incorrect device time. Set your time automatic or correct time from settings and try again." , getResources().getColor(R.color.colorVoilation));
+					}
+
+
+				}else{
+
+					if (global.isCurrentTimeBigger(getApplicationContext())) {
+						SharedPref.setCurrentUTCTime(global.GetCurrentUTCTimeFormat(), getApplicationContext());
+						/*========== LOGIN API =========== */
+						LoginUser(global.registrationId, StrSingleUserame, StrSinglePass, StrCoDriverUsername, StrCoDriverPass, LoginUserType, StrOSType, DeviceSimInfo, Sim2);
+					} else {
+						if (progressDialog != null && progressDialog.isShowing()) {
+							progressDialog.dismiss();
+						}
+
+						global.EldScreenToast(mainLoginLayout, "Connection Error !!" , getResources().getColor(R.color.colorVoilation));
+					}
+				}
+
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+
+		}
+	};
+
+	VolleyRequest.VolleyErrorCall ErrorCallBack = new VolleyRequest.VolleyErrorCall() {
+
+		@Override
+		public void getError(VolleyError error, int flag) {
+			// Logger.LogDebug("onDuty error", "onDuty error: " + error.toString());
+
+			try {
+				if(SharedPref.getCurrentUTCTime(getApplicationContext()).length() == 0){
+					SharedPref.setCurrentUTCTime(global.GetCurrentUTCTimeFormat(), getApplicationContext());
+					global.EldScreenToast(mainLoginLayout, "Connection Error !!" , getResources().getColor(R.color.colorVoilation));
+				}else {
+					if (global.isCurrentTimeBigger(getApplicationContext())) {
+						SharedPref.setCurrentUTCTime(global.GetCurrentUTCTimeFormat(), getApplicationContext());
+
+						LoginUser(global.registrationId, StrSingleUserame, StrSinglePass, StrCoDriverUsername, StrCoDriverPass, LoginUserType, StrOSType, DeviceSimInfo, Sim2);
+					} else {
+						if (progressDialog != null && progressDialog.isShowing()) {
+							progressDialog.dismiss();
+						}
+
+						global.EldScreenToast(mainLoginLayout, "Connection Error !!" , getResources().getColor(R.color.colorVoilation));
+					}
+				}
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+
+		}
+	};
+
 
 
 	private void checkNullInputs(){
@@ -939,7 +1056,10 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.setAgricultureExemption(false, getApplicationContext());
 			SharedPref.saveCoDriverSwitchingStatus(false, getApplicationContext());
 			SharedPref.setObdStatusAfterLogin(false, getApplicationContext());
-			SharedPref.SetEditedLogStatus(false, getApplicationContext());
+			// set edited log status false
+			SharedPref.SetMainDriverEditedLogStatus(false, getApplicationContext());
+			SharedPref.SetCoDriverEditedLogStatus(false, getApplicationContext());
+
 			SharedPref.SetHighPrecisionUnit("M", getApplicationContext());
 			SharedPref.setPuExceedCheckDate("", getApplicationContext());
 
@@ -954,6 +1074,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 					false, false, false, getApplicationContext());
 			//SharedPref.setApiCallStatus("[]", getApplicationContext());
 			SharedPref.updateApiCallStatus( 0, false, global, getApplicationContext());
+			SharedPref.setUnIdenLastDutyStatus("", getApplicationContext());
 
 			// clear array in table
 			if(CompanyId.length() > 0) {
@@ -980,7 +1101,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				   final String CoDriverPassword, final String TeamDriverType, final String OSType,
 				   final String DeviceSimInfo, final String Sim2) {
 
-		if(SharedPref.isLoginAllowed(LoginActivity.this)) {
+		//if(SharedPref.isLoginAllowed(LoginActivity.this)) {
 
 			if(!isApiCalled) {
 				isApiCalled = true;
@@ -1019,11 +1140,11 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 					deviceType = "Mob";
 				}
 
-				progressDialog = new ProgressDialog(LoginActivity.this);
+				/*progressDialog = new ProgressDialog(LoginActivity.this);
 				progressDialog.setMessage("Loading...");
 				progressDialog.setCancelable(false);
 				progressDialog.show();
-
+*/
 				StringRequest postRequest = new StringRequest(Request.Method.POST, APIs.LOGIN_NEW,
 						new Response.Listener<String>() {
 							@Override
@@ -1032,6 +1153,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 								isApiCalled = false;
 								SharedPref.setServiceOnDestoryStatus(false, getApplicationContext());
+
 								//SharedPref.SetConnectionType(constants.ConnectionMalfunction, getApplicationContext());
 								Globally.TEMP_USERNAME = userNameText.getText().toString();
 								Globally.TEMP_PASSWORD = passwordText.getText().toString();
@@ -1088,7 +1210,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 											progressDialog.dismiss();
 										}
 
-										String errorStr = getErrorMsg(message);
+										String errorStr = constants.getErrorMsg(message);
 										global.EldScreenToast(mainLoginLayout, errorStr, getResources().getColor(R.color.colorVoilation));
 
 									}
@@ -1117,14 +1239,10 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 									loginBtn.setEnabled(true);
 
 									Logger.LogDebug("error", "error: " + error);
-									String message = error.toString();    ////  com.android.volley.TimeoutError
-									if (message.contains("TimeoutError")) {
-										message = "Connection timeout. Please try again.";
-									} else if (message.contains("ServerError")) {
-										message = "ALS server not responding";
-									} else if (message.contains("NoConnectionError")) {
-										message = "Internet connection error";
-									}
+									queue 					= Volley.newRequestQueue(LoginActivity.this);
+
+									String message = constants.getErrorMsg(error.toString());
+
 									global.EldScreenToast(mainLoginLayout, message, getResources().getColor(R.color.colorVoilation));
 								} catch (Exception e) {
 									e.printStackTrace();
@@ -1151,7 +1269,10 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 					protected Map<String, String> getParams() {
 						Map<String, String> params = new HashMap<String, String>();
 
+
+						String utcDate = Globally.GetCurrentUTCTimeFormat();
 						String date = global.GetDriverCurrentDateTime(global, getApplicationContext());
+						String IsOffsetAvailable = IsOffsetAvailable(username, CoDriverUsername);
 
 						params.put(ConstantsKeys.DeviceId, DeviceId);
 						params.put(ConstantsKeys.Password, pass);
@@ -1163,10 +1284,14 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 						params.put(ConstantsKeys.OSType, OSType);
 						params.put(ConstantsKeys.DeviceType, deviceType);
 						params.put(ConstantsKeys.MobileDeviceCurrentDateTime, date);
+						params.put(ConstantsKeys.MobileUtcDate, utcDate);
 
 						params.put(ConstantsKeys.SIM1, DeviceSimInfo);
-						//params.put("SIM2, "");
 
+						params.put(ConstantsKeys.IsOffsetAvailable, IsOffsetAvailable);
+						params.put(ConstantsKeys.AppBuildVersion, AppVersion);
+
+						//IsOffsetAvailable   AppBuildVersion
 						//Logger.LogDebug("DateLogin", ">>>MobileDeviceCurrentDateTime: " +date);
 
 						return params;
@@ -1178,31 +1303,68 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 			}
 
-		}else{
+		/*}else{
 			global.EldScreenToast(mainLoginLayout, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
 					getString(R.string.login_speed_alert), getResources().getColor(R.color.colorVoilation));
-		}
+		}*/
 
 	}
 
 
-	private String getErrorMsg(String errorStr){
-		if (errorStr.contains("Object reference")) {
-			errorStr = "Invalid Username/Password.";
-		}else if( errorStr.contains("timeout")){
-			errorStr = "Connection timeout error";
-		}else if (errorStr.contains("NoConnectionError") || errorStr.contains("SSLHandshakeException")) {
-			errorStr = "Internet connection error";
-		}else if(errorStr.contains("Network")){
-			errorStr = "Network Error";
-		} else if (errorStr.contains("ServerError")) {
-			errorStr = "ALS server not responding";
+
+	String IsOffsetAvailable(String mainDriverUsername, String CoDriverUsername){
+		String IsOffsetAvailable = "false";
+		String lastLoginMainDr = SharedPref.getLastLoginMainDriver(getApplicationContext());
+		String lastLoginCoDr = SharedPref.getLastLoginCoDriver(getApplicationContext());
+		long savedOffSet = SharedPref.getDriverTimeZoneOffSet(getApplicationContext());
+		if(savedOffSet < 0 ){
+			if(lastLoginCoDr.length() > 0){
+				if(CoDriverUsername.length() == 0) {
+					if (lastLoginMainDr.equals(mainDriverUsername) || lastLoginCoDr.equals(mainDriverUsername)) {
+						IsOffsetAvailable = "true";
+					}
+				}else{
+					if ( (lastLoginMainDr.equals(mainDriverUsername) || lastLoginMainDr.equals(CoDriverUsername)) ||
+							(lastLoginCoDr.equals(mainDriverUsername) || lastLoginCoDr.equals(CoDriverUsername))) {
+						IsOffsetAvailable = "true";
+					}
+				}
+			}else{
+				if(CoDriverUsername.length() == 0) {
+					if (lastLoginMainDr.equals(mainDriverUsername)) {
+						IsOffsetAvailable = "true";
+					}
+				}else{
+					if (lastLoginMainDr.equals(mainDriverUsername) || lastLoginMainDr.equals(CoDriverUsername)) {
+						IsOffsetAvailable = "true";
+					}
+				}
+			}
 		}
 
-		// intilize request queue object again to notify network.
-		queue 					= Volley.newRequestQueue(LoginActivity.this);
-		return errorStr;
+		return IsOffsetAvailable;
 	}
+
+
+
+	void GetServerCurrentUtcTime(){
+		if(SharedPref.isLoginAllowed(LoginActivity.this)) {
+			progressDialog = new ProgressDialog(LoginActivity.this);
+			progressDialog.setMessage("Loading...");
+			progressDialog.setCancelable(false);
+			progressDialog.show();
+
+			VolleyRequestWithoutRetry GetServerTimeRequest = new VolleyRequestWithoutRetry(getApplicationContext());
+			Map<String, String> params = new HashMap<String, String>();
+			GetServerTimeRequest.executeRequest(Request.Method.GET, APIs.CONNECTION_UTC_DATE, params, 1001,
+					Constants.SocketTimeout4Sec, ResponseCallBack, ErrorCallBack);
+
+
+		}
+
+
+	}
+
 
 	@Override
 	public void onConnected(@Nullable Bundle bundle) {
@@ -1237,6 +1399,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 				SharedPref.setUserName(StrSingleUserame, LoginActivity.this);
 				SharedPref.setPassword(StrSinglePass, LoginActivity.this);
+				SharedPref.setUserCred(StrSingleUserame, StrCoDriverUsername, LoginActivity.this);
 
 				DriverConst.SetDriverLoginDetails(StrSingleUserame, StrSinglePass, LoginActivity.this);
 				DriverConst.SetCoDriverLoginDetails(StrCoDriverUsername, StrCoDriverPass, LoginActivity.this);
@@ -1302,7 +1465,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 							checkNullInputs();
 
 							/*========== LOGIN API =========== */
-							LoginUser(global.registrationId, StrSingleUserame, StrSinglePass, StrCoDriverUsername, StrCoDriverPass, LoginUserType, StrOSType, DeviceSimInfo, Sim2);
+							//LoginUser(global.registrationId, StrSingleUserame, StrSinglePass, StrCoDriverUsername, StrCoDriverPass, LoginUserType, StrOSType, DeviceSimInfo, Sim2);
+							GetServerCurrentUtcTime();
 
 						//	ViewOnlyLogin(StrSingleUserame, StrSinglePass);
 						} else {

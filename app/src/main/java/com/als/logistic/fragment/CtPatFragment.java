@@ -817,7 +817,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         ctPatDateTimeTv.setText(CreatedDate.substring(0, 11));
 
         JSONObject inspectionData = ctPatInspectionMethod.AddUnPostedCtPatInspObj(DRIVER_ID, DeviceId, Globally.PROJECT_ID,
-                DriverName, CompanyId, EldFragment.VehicleId, VIN_NUMBER,
+                DriverName, CompanyId, SharedPref.getVehicleId(getActivity()), VIN_NUMBER,
                 SharedPref.getTruckNumber(getActivity()), SharedPref.getTrailorNumber(getActivity()), CreatedDate,
                 ArrivalSealNumber , DepartureSealNumber, SecurityInspectionPersonName , FollowUpInspectionPersonName,
                 AffixedSealPersonName , VerificationPersonName, Globally.LATITUDE, Globally.LONGITUDE, TruckIssueType,

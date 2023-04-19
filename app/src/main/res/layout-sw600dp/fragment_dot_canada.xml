@@ -21,7 +21,7 @@
     <androidx.core.widget.NestedScrollView
         android:id="@+id/canDotScrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/view_height_85"
         android:scrollbars="none"
         android:layout_below="@+id/canadaDotActionBar"
         android:background="@color/dot_titles_bg"
@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/view_height_70"
             android:background="?attr/bgColor"
-            android:layout_marginTop="@dimen/margin_15"
+            android:layout_marginTop="@dimen/margin_10"
 
             >
 
@@ -54,6 +54,7 @@
                 android:text="@string/ELDViewLogCanada"
                 android:textColor="?attr/txt_eld_color"
                 android:textSize="@dimen/text_size_22"
+                android:visibility="gone"
 
 
                 />
@@ -97,6 +98,7 @@
         android:paddingBottom="@dimen/margin_10"
         android:paddingRight="@dimen/margin_10"
         android:paddingLeft="@dimen/margin_15"
+            android:visibility="gone"
 
 
         >
@@ -154,6 +156,7 @@
         android:paddingBottom="@dimen/margin_10"
         android:paddingRight="@dimen/margin_10"
         android:paddingLeft="@dimen/margin_15"
+        android:visibility="gone"
 
 
 
@@ -206,6 +209,7 @@
         android:paddingBottom="@dimen/margin_10"
         android:paddingRight="@dimen/margin_10"
         android:paddingLeft="@dimen/margin_15"
+        android:visibility="gone"
 
         >
 
@@ -260,6 +264,7 @@
         android:paddingBottom="@dimen/margin_10"
         android:paddingRight="@dimen/margin_10"
         android:paddingLeft="@dimen/margin_15"
+        android:visibility="gone"
 
 
 
@@ -312,6 +317,7 @@
             android:paddingTop="@dimen/margin_10"
             android:paddingRight="@dimen/margin_10"
             android:paddingBottom="@dimen/margin_10"
+            android:visibility="gone"
 
 
             >
@@ -364,6 +370,7 @@
         android:paddingBottom="@dimen/margin_10"
         android:paddingRight="@dimen/margin_10"
         android:paddingLeft="@dimen/margin_15"
+            android:visibility="gone"
 
 
         >
@@ -421,6 +428,7 @@
         android:paddingBottom="@dimen/margin_10"
         android:paddingRight="@dimen/margin_10"
         android:paddingLeft="@dimen/margin_15"
+     android:visibility="gone"
 
 
      >
@@ -476,6 +484,7 @@
         android:paddingBottom="@dimen/margin_10"
         android:paddingRight="@dimen/margin_10"
         android:paddingLeft="@dimen/margin_15"
+                android:visibility="gone"
 
 
 
@@ -530,7 +539,7 @@
             android:visibility="gone"
 
             >
-
+<!-- already gone -->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -1601,6 +1610,8 @@
             android:padding="@dimen/margin_15"
             android:text="@string/view_more"
             android:textStyle="bold"
+            android:visibility="gone"
+
             />
 
 
@@ -1612,6 +1623,7 @@
             android:minWidth="@dimen/view_height_500"
             android:minHeight="@dimen/view_height_150"
             android:layout_marginBottom="@dimen/margin_10"
+            android:visibility="gone"
 
             >
 
@@ -1640,6 +1652,9 @@
             android:padding="@dimen/margin_short_6"
             android:paddingLeft="@dimen/margin_10"
             android:layout_marginTop="@dimen/margin_15"
+            android:visibility="gone"
+
+
             >
 
 
@@ -1685,6 +1700,7 @@
             android:background="?attr/bgColor"
             android:padding="@dimen/margin_short_6"
             android:layout_marginTop="@dimen/margin_15"
+            android:visibility="gone"
 
             >
 
@@ -1729,6 +1745,7 @@
             android:background="?attr/bgColor"
             android:padding="@dimen/margin_short_6"
             android:layout_marginTop="@dimen/margin_15"
+            android:visibility="gone"
 
             >
 
@@ -1773,6 +1790,7 @@
             android:background="?attr/bgColor"
             android:padding="@dimen/margin_short_6"
             android:layout_marginTop="@dimen/margin_15"
+            android:visibility="gone"
 
             >
 
@@ -1821,6 +1839,7 @@
             android:background="?attr/bgColor"
             android:padding="@dimen/margin_short_6"
             android:layout_marginTop="@dimen/margin_15"
+            android:visibility="gone"
 
             >
 
@@ -1867,7 +1886,7 @@
             android:visibility="gone"
 
             >
-
+<!-- already gone -->
 
             <TextView
                 android:layout_width="match_parent"
@@ -1952,7 +1971,7 @@
         android:layout_marginRight="@dimen/margin_18"
         android:layout_above="@+id/scrollDownBtn"
         android:layout_marginBottom="@dimen/margin_11"
-
+        android:visibility="gone"
 
         >
 
@@ -1978,6 +1997,7 @@
         android:layout_marginRight="@dimen/margin_18"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/view_height_30"
+        android:visibility="gone"
 
         >
 
@@ -1992,6 +2012,18 @@
 
 
     </RelativeLayout>
+
+
+
+    <WebView
+        android:id="@+id/canDotWebView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/canDotScrollView"
+
+        />
+
+
 
 
     <ProgressBar

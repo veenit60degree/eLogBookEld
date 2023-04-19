@@ -1,5 +1,6 @@
 package com.als.logistic.fragment;
 
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -99,8 +100,9 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     TextView currentLocTV, fileCommentTV, PrintDisplayDateTV, placeOfBusinessTV;
 
     ListView dotDataListView, shippingDotListView;
-    ScrollViewExt dotScrollView;
+   // ScrollViewExt dotScrollView;
     SwitchMultiButton usDotSwitchBtn;
+    WebView usDotWebView;
 
     GenerateRodsDialog generateRodsDialog;
     DatePickerDialog dateDialog;
@@ -119,9 +121,9 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
     String INDIAN_URL       = "http://182.73.78.171:8286/";
    // String PRODUCTION_URL   = "https://alsrealtime.com/";
-   // String logUrl = PRODUCTION_URL + "DriverLog/MobileELDView?driverId=";
+    String logUrl = "https://alsrealtime.com/Home/AppUsaEldView?Date=";
     String LogDate, DayName, MonthFullName , MonthShortName , CurrentCycleId, selectedCountryRods = "";
-    String CurrentDate, DRIVER_ID, DeviceId ;   //CountryCycle
+    String CurrentDate = "", DRIVER_ID = "", CoDriverId = "", DeviceId = "";   //CountryCycle
     String DefaultLine      = " <g class=\"event \">\n";
 
     String htmlAppendedText = "";
@@ -142,7 +144,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     String TotalSleeperBerthHours   = "00:00";
     boolean IsMalfunction = false;
 
-    String LogSignImage = "", DriverId = "";    //LogSignImageInByte = ""
+    String LogSignImage = "";   //, DriverId = "" , LogSignImageInByte = ""
     int SelectedDayOfMonth  = 0;
     int UsaMaxDays          = 7;
     int CanMaxDays          = 14;
@@ -190,6 +192,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                 .considerExifParams(true)
                 .build();
 
+        usDotWebView        = (WebView)view.findViewById(R.id.usDotWebView);
         dotDataListView     = (ListView)view.findViewById(R.id.dotDataListView);
         shippingDotListView = (ListView)view.findViewById(R.id.shippingDotListView);
 
@@ -210,7 +213,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         dotProgressBar      = (ProgressBar)view.findViewById(R.id.dotProgressBar);
 
         dotGraphWebView     = (WebView) view.findViewById(R.id.dotGraphWebView);
-        dotScrollView       = (ScrollViewExt)view.findViewById(R.id.dotScrollView);
+       // dotScrollView       = (ScrollViewExt)view.findViewById(R.id.dotScrollView);
         usDotSwitchBtn      = (SwitchMultiButton)view.findViewById(R.id.usDotSwitchBtn);
 
         usDotSwitchBtn.setOnSwitchListener (onSwitchListener);
@@ -218,8 +221,12 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         initilizeTextView(view);
         getBundleData();
 
+        countryList.add("Select");
+        countryList.add("CANADA");
+        countryList.add("USA");
 
-        new Handler().postDelayed(new Runnable() {
+
+     /*   new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 try{
@@ -245,9 +252,6 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
             }
         }, 800);
 
-        countryList.add("Select");
-        countryList.add("CANADA");
-        countryList.add("USA");
 
         WebSettings webSettings = dotGraphWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -261,6 +265,21 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         dotGraphWebView.setWebChromeClient(new WebChromeClient());
         dotGraphWebView.addJavascriptInterface( new WebAppInterface(), "Android");
 
+*/
+
+//04/18/2023&Id=129851
+
+        // Javascript enabled on webview
+
+        WebSettings webSettings = usDotWebView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+       // webSettings.setPluginState(WebSettings.PluginState.ON);
+       // webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        webSettings.setSupportZoom(true);
+
+        usDotWebView.setWebViewClient(new WebViewClient());
+        usDotWebView.loadUrl(logUrl + LogDate + "&Id=" + DRIVER_ID);
+
 
         nextDateBtn.setOnClickListener(this);
         previousDateBtn.setOnClickListener(this);
@@ -269,6 +288,26 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         eldMenuLay.setOnClickListener(this);
 
     }
+
+
+    public class WebViewClient extends android.webkit.WebViewClient {
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
+            dotProgressBar.setVisibility(View.VISIBLE);
+        }
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            view.loadUrl(url);
+            return true;
+        }
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            dotProgressBar.setVisibility(View.GONE);
+        }
+    }
+
 
     private void initilizeTextView(View view){
 
@@ -369,10 +408,18 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         DeviceId                = SharedPref.GetSavedSystemToken(getActivity());
         DRIVER_ID               = SharedPref.getDriverId( getActivity());
 
+        if (!SharedPref.getDriverType(getActivity()).equals(DriverConst.SingleDriver)) {
+            if(DRIVER_ID.equals(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()))){
+                CoDriverId   = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
+            }else{
+                CoDriverId   = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
+            }
+        }
+
         try {
             DBHelper dbHelper = new DBHelper(getActivity());
             DriverPermissionMethod driverPermissionMethod = new DriverPermissionMethod();
-            JSONObject logPermissionObj    = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), dbHelper);
+            JSONObject logPermissionObj    = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), CoDriverId, dbHelper);
             CanMaxDays = constants.GetDriverPermitDaysCount(logPermissionObj, CurrentCycleId, true);
 
             if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS) ) {
@@ -411,11 +458,11 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         StateArrayList =  SharedPref.getStatesInList(getActivity());
         StateArrayList.add(0, "Select");
 
-        if (global.isConnected(getActivity())) {
+       /* if (global.isConnected(getActivity())) {
             GetDriverDotDetails(DRIVER_ID, LogDate);
         }else{
             Globally.EldScreenToast(getActivity().findViewById(android.R.id.content), global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
-        }
+        }*/
     }
 
 
@@ -567,7 +614,8 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
                 EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " (" + dayOfTheWeek + " )");
 
-                GetDriverDotDetails(DRIVER_ID, LogDate);
+               // GetDriverDotDetails(DRIVER_ID, LogDate);
+                usDotWebView.loadUrl(logUrl + LogDate + "&Id=" + DRIVER_ID);
 
             }
 
@@ -745,7 +793,8 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                 Logger.LogDebug("DaysDiff", "DaysDiff: " + DaysDiff);
 
                 DOTBtnVisibility(DaysDiff, MaxDays);
-                GetDriverDotDetails(DRIVER_ID, LogDate);
+               // GetDriverDotDetails(DRIVER_ID, LogDate);
+                usDotWebView.loadUrl(logUrl + LogDate + "&Id=" + DRIVER_ID);
 
             }else{
                 global.EldScreenToast(eldMenuLay, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
@@ -1253,8 +1302,11 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
             SharedPref.SetDOTStatus( false, getActivity());
             getActivity().finish();
             System.exit(2);
+
+
         }
     };
+
 
 
 

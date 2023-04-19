@@ -52,18 +52,19 @@ public class ParseLoginDetails {
 
         try {
             for(int resultCount = 0 ; resultCount < resultJson.length() ; resultCount ++){
-                int DriverId = 0;
+               // int DriverId = 0;
                 JSONObject dataObj = (JSONObject)resultJson.get(resultCount);
 
                 if(!dataObj.isNull("DriverDetail")) {
                     JSONObject DriverDetail     = new JSONObject(dataObj.getString("DriverDetail"));
                     ParseDriverDetail(DriverDetail, resultCount, context);
 
-                    DriverId = DriverDetail.getInt(ConstantsKeys.DriverId);
+                    //DriverId = DriverDetail.getInt(ConstantsKeys.DriverId);
 
                     // Save current UTC date time
                     SharedPref.setCurrentUTCTime( DriverDetail.getString("CurrentUTCDateTime") , context );
-                   // SharedPref.setLoginTimeUTC(Globally.GetCurrentUTCTimeFormat(), false, context);   //DriverDetail.getString("CurrentUTCDateTime")
+
+                    //SharedPref.setLoginTimeUTC(DriverDetail.getString("CurrentUTCDateTime"), false, context);   //DriverDetail.getString("CurrentUTCDateTime")
 
                     if(DriverDetail.has(ConstantsKeys.FirstTimeLogin) && !DriverDetail.isNull(ConstantsKeys.FirstTimeLogin)) {
                         boolean FirstTimeLogin = DriverDetail.getBoolean(ConstantsKeys.FirstTimeLogin);
@@ -79,6 +80,13 @@ public class ParseLoginDetails {
                             SharedPref.setFirstLoginTime("", context);
                         }
                     }
+
+                    if(resultCount == 0){
+                        SharedPref.setDriverFirstLoginTime(DriverDetail.getString("DriverFirstLoginDateTime"), context);
+                    }else{
+                        SharedPref.setCoDriverFirstLoginTime(DriverDetail.getString("DriverFirstLoginDateTime"), context);
+                    }
+
                 }
 
                 if(!dataObj.isNull("DriverSetting")) {
@@ -107,6 +115,7 @@ public class ParseLoginDetails {
                             JSONArray supportArray = new JSONArray(dataObj.getString("SupportDetail"));
                             supportMethod.SupportHelper(dbHelper, supportArray);
                         }
+
 
 
                  /*       int stateListSize = 0;
@@ -313,7 +322,6 @@ public class ParseLoginDetails {
 
 
             if(position == 0) {
-               // SharedPref.setVINNumber( VINs, context);
                 SharedPref.setTrailorNumber(Trailors, context);
             /*    Globally.CONSIGNEE_NAME = ConsigneeNames;
                 Globally.SHIPPER_NAME = ShipperNames;

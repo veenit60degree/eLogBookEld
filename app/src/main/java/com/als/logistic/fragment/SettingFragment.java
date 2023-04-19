@@ -18,7 +18,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.StatFs;
-import android.os.storage.StorageManager;
 import android.provider.Settings;
 import android.text.Html;
 import android.view.InflateException;
@@ -72,11 +71,11 @@ import com.constants.SyncDataUpload;
 import com.constants.VolleyRequest;
 import com.custom.dialogs.AdverseRemarksDialog;
 import com.custom.dialogs.AgricultureDialog;
+import com.als.logistic.AppPermissionActivity;
 import com.custom.dialogs.ChangeCycleDialog;
 import com.custom.dialogs.ConfirmationDialog;
 import com.custom.dialogs.DeferralDialog;
 import com.custom.dialogs.DriverAddressDialog;
-import com.custom.dialogs.DriverLocationDialog;
 import com.custom.dialogs.ObdDataInfoDialog;
 import com.local.db.DeferralMethod;
 import com.local.db.MalfunctionDiagnosticMethod;
@@ -135,7 +134,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     ImageView updateAppDownloadIV, downloadHintImgView, opZoneTmgView, canEditImgView, usEditImgView;
     LoadingSpinImgView settingSpinImgVw, downloadBlinkIV;
     RelativeLayout rightMenuBtn, eldMenuLay, checkAppUpdateBtn, haulExceptionLay, SyncDataBtn, checkInternetBtn,
-            obdDiagnoseBtn, docBtn, deferralRuleLay, brightnessSoundEditBtn, settingsMainLay, actionbarMainLay, updateBlinkLayout;
+            obdDiagnoseBtn, docBtn, deferralRuleLay, brightnessSoundEditBtn, settingsMainLay, actionbarMainLay,
+            updateBlinkLayout, checkPermissionBtn;
     LinearLayout canCycleLayout, usaCycleLayout, timeZoneLayout;
     SwitchCompat deferralSwitchButton, haulExceptnSwitchButton, adverseSwitchButton,adverseCanadaSwitchButton,agricultureSwitchButton,dayNightSwitchButton;
     List<CycleModel> CanCycleList;
@@ -359,6 +359,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         docBtn               = (RelativeLayout) v.findViewById(R.id.docBtn);
         deferralRuleLay      = (RelativeLayout) v.findViewById(R.id.deferralRuleLay);
         updateBlinkLayout    = (RelativeLayout) v.findViewById(R.id.updateBlinkLayout);
+        checkPermissionBtn   = (RelativeLayout) v.findViewById(R.id.checkPermissionBtn);
 
         rightMenuBtn         = (RelativeLayout) v.findViewById(R.id.rightMenuBtn);
         settingsMainLay      = (RelativeLayout)v.findViewById(R.id.settingsMainLay);
@@ -747,6 +748,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         canCycleLayout.setOnClickListener(this);
         usaCycleLayout.setOnClickListener(this);
         timeZoneLayout.setOnClickListener(this);
+        checkPermissionBtn.setOnClickListener(this);
 
         caCycleSpinner.setOnItemSelectedListener(this);
         usCycleSpinner.setOnItemSelectedListener(this);
@@ -833,7 +835,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         }
 
         try{
-            JSONObject logPermissionObj    = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DriverId), dbHelper);
+            JSONObject logPermissionObj    = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DriverId), CoDriverId, dbHelper);
 
 
             if(logPermissionObj != null) {
@@ -1585,6 +1587,14 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 break;
 
 
+            case R.id.checkPermissionBtn:
+
+               Intent i = new Intent(getActivity(), AppPermissionActivity.class);
+               startActivity(i);
+
+                break;
+
+
         }
     }
 
@@ -1918,13 +1928,14 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
                 }else{
 
-                    if(IsLogPermission) {
-                        DriverLogFile = global.GetSavedFile(getActivity(), ConstantsKeys.ViolationTest, "txt");
+
+                        DriverLogFile = global.GetViolationFile(getActivity(), ConstantsKeys.ViolationTest, "txt");
 
                         // use only testing time with DEV domain
-                        postDriverLogForTestingInDev();
+                       // postDriverLogForTestingInDev();
 
                         // Save Cycle record in file on local storage
+                    if(IsLogPermission) {
                         try {
                             JSONArray cycleArray = new JSONArray(SharedPref.GetCycleDetails(getActivity()));
                             if(cycleArray.length() > 0) {
@@ -1967,7 +1978,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     IsLogPermission = true;
                     JSONArray driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
                     Globally.SaveFileInSDCard(ConstantsKeys.ViolationTest, driverLogArray.toString(), true, getActivity());
-                    DriverLogFile = global.GetSavedFile(getActivity(), ConstantsKeys.ViolationTest, "txt");
+                    DriverLogFile = global.GetViolationFile(getActivity(), ConstantsKeys.ViolationTest, "txt");
 
                 }
 
@@ -2743,15 +2754,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     if(DriverLogFile != null && DriverLogFile.exists())
                         DriverLogFile.delete();
 
-                    String message = obj.getString("Message");
-                    if(message.contains("ServerError")){
-                        message = "ALS server not responding";
-                    }else if(message.contains("Network")){
-                        message = "Internet connection problem";
-                    }else if(message.contains("NoConnectionError")){
-                        message = "Internet connection error";
-                    }
 
+                    String message = constants.getErrorMsg(obj.getString("Message"));
                     global.EldScreenToast(SettingSaveBtn, message, getResources().getColor(R.color.colorVoilation));
 
                     if(message.equalsIgnoreCase("Device Logout") && constant.GetDriverSavedArray(getActivity()).length() == 0 ){

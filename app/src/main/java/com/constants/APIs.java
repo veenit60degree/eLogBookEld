@@ -32,7 +32,7 @@ public class APIs {
 
     /*========================= API URLs =========================*/
     public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_PRODUCTION ;     	// ALS DOMAIN
-    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_PRODUCTION  ;  	// ELD DOMAIN
+    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_PRODUCTION ;  	// ELD DOMAIN
 
     public static String DOT_LOG_URL                        = DOMAIN_URL_ALS + "/DriverLog/MobileELDView?driverId=";
     public static String LOGIN_DEMO 						= DOMAIN_URL_ALS + "LoginDemo";
@@ -136,7 +136,7 @@ public class APIs {
     public static String SAVE_CERTIFY_SIGN_REJECTED_AUDIT   = DOMAIN_URL_ELD + "SaveCertifySignRejectedAudit";
     public static String GET_DRIVER_SETTINGS                = DOMAIN_URL_ELD + "GetDriverSettings";
     public static String GET_DRIVER_DEVICE_ID               = DOMAIN_URL_ELD + "GetDriverDeviceId";
-    public static String UPDATE_DRIVER_ELD_SETTING_NOTIFICATIONS               = DOMAIN_URL_ELD + "UpdateDriverELDSettingNotifications";
+    public static String UPDATE_ELD_SETTING_NOTIFICATIONS   = DOMAIN_URL_ELD + "UpdateDriverELDSettingNotifications";
     public static String SAVE_ENGINE_ON_OFF_EVENTS          = DOMAIN_URL_ELD + "SaveEngineOnOffEvents";
 
     public static String CHECK_IS_UNASSIGNED_REQUIRED       = DOMAIN_URL_ELD + "CheckIsUnassignedRequired";

@@ -59,6 +59,7 @@ public class DriverLogModel {
     private String Odometer;
     private String DriverVehicleTypeId;
     private String AppVersionCode;
+    private boolean IsUnAssignedMileRecord;
 
     public DriverLogModel() {
     }
@@ -113,6 +114,7 @@ public class DriverLogModel {
         this.Odometer = logModel.getOdometer();
         this.DriverVehicleTypeId = logModel.getDriverVehicleTypeId();
         this.AppVersionCode = logModel.getAppVersionCode();
+        this.IsUnAssignedMileRecord = logModel.IsUnAssignedMileRecord();
 
     }
 
@@ -456,6 +458,8 @@ public class DriverLogModel {
         return IsCycleChanged;
     }
 
+
+
     public void setCycleChanged(boolean cycleChanged) {
         IsCycleChanged = cycleChanged;
     }
@@ -533,6 +537,14 @@ public class DriverLogModel {
 
     public String getAppVersionCode() {
         return AppVersionCode;
+    }
+
+    public void setUnAssignedMileRecord(boolean isUnAssignedRecord) {
+        IsUnAssignedMileRecord = isUnAssignedRecord;
+    }
+
+    public boolean IsUnAssignedMileRecord() {
+        return IsUnAssignedMileRecord;
     }
 
 }

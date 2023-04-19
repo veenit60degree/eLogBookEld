@@ -160,7 +160,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     RelativeLayout rightMenuBtn, signLay, SignatureMainLay, eldMenuLay, recapItemLay, viewDetailMaiLay,
             certifyRecordsListLay, malfunctionLay, graphLayout;
 
-    String LogDate = "", CurrentDate = "", CurrentDateDefault = "", DayName = "", MonthFullName = "", MonthShortName = "", DRIVER_ID = "";
+    String LogDate = "", CurrentDate = "", CurrentDateDefault = "", DayName = "", MonthFullName = "", MonthShortName = "",
+            DRIVER_ID = "", CoDriverNameStr = "";;
     String CountryCycle = "",  CompanyId = "", TruckNumber = "", TrailorNumber = "";
     String MainDriverName = "",CoDriverName = "N/A", DeviceId = "", CurrentCycleId = "", VehicleId = "";
     public static String SelectedCoDriverId = "", SelectedCoDriverName = "";
@@ -1081,27 +1082,29 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             JSONArray DriverJsonArray = hMethods.GetDriversSavedData(getActivity(), DriverType, MainDriverPref, CoDriverPref, constants);
             int socketTimeout;
             int logArrayCount = DriverJsonArray.length();
-            if (logArrayCount < 3) {
-                socketTimeout = Constants.SocketTimeout10Sec;  //10 seconds
-            } else if (logArrayCount < 10) {
-                socketTimeout = Constants.SocketTimeout20Sec;  //20 seconds
-            } else {
-                socketTimeout = Constants.SocketTimeout40Sec;  //40 seconds
+            if(logArrayCount > 0) {
+                if (logArrayCount < 3) {
+                    socketTimeout = Constants.SocketTimeout10Sec;  //10 seconds
+                } else if (logArrayCount < 10) {
+                    socketTimeout = Constants.SocketTimeout20Sec;  //20 seconds
+                } else {
+                    socketTimeout = Constants.SocketTimeout40Sec;  //40 seconds
+                }
+
+                String SavedLogApi = Constants.getSaveStatusOrEditedApi(getActivity());
+                EldFragment.IsSaveOperationInProgress = true;
+
+                saveCertifyLogPost.PostDriverLogData(DriverJsonArray, SavedLogApi, socketTimeout, false, false,
+                        DriverType, SaveEditedLog);
+            }else{
+                // set edited log status false
+                if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+                    SharedPref.SetMainDriverEditedLogStatus(false, getActivity());
+                }else{
+                    SharedPref.SetCoDriverEditedLogStatus(false, getActivity());
+                }
+
             }
-
-            EldFragment.IsSaveOperationInProgress = true;
-
-            String SavedLogApi = "";
-            if (SharedPref.IsEditedData(getActivity())) {
-                SavedLogApi = APIs.SAVE_DRIVER_EDIT_LOG_NEW;
-            } else {
-                SavedLogApi = APIs.SAVE_DRIVER_STATUS;
-            }
-
-            EldFragment.IsSaveOperationInProgress = true;
-
-            saveCertifyLogPost.PostDriverLogData(DriverJsonArray, SavedLogApi, socketTimeout, false, false,
-                    DriverType, SaveEditedLog);
         }
     }
 
@@ -1184,6 +1187,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             Carrier             = DriverConst.GetCoDriverDetails(DriverConst.CoCarrier, getActivity());
         }
 
+
         if(IsAOBRD){
             certifyEldView.setText(getString(R.string.aobrd));
         }
@@ -1247,9 +1251,30 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         }*/
 
         try {
+            String CoDriverId = "";
+            if (!SharedPref.getDriverType(getActivity()).equals(DriverConst.SingleDriver)) {
+                if(DRIVER_ID.equals(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()))){
+                    CoDriverId   = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
+                    CoDriverNameStr = DriverConst.GetCoDriverDetails(DriverConst.CoDriverName, getActivity());
+                }else{
+                    CoDriverId   = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
+                    CoDriverNameStr   = DriverConst.GetDriverDetails(DriverConst.DriverName, getActivity());
+                }
+            }
+
             selectedDateRecap = Globally.getDateTimeObj(global.ConvertDateFormat(LogDate), false);
-            logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), dbHelper);
-            DriverPermitMaxDays = logPermissionObj.getInt(ConstantsKeys.ViewCertifyDays);
+            logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), CoDriverId, dbHelper);
+            if(logPermissionObj.has(ConstantsKeys.ViewCertifyDays)){
+                DriverPermitMaxDays = logPermissionObj.getInt(ConstantsKeys.ViewCertifyDays);
+            }else{
+
+                if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS) ) {
+                    DriverPermitMaxDays = UsaMaxDays;
+                }else{
+                    DriverPermitMaxDays = CanMaxDays;
+                }
+            }
+
             MaxDays = DriverPermitMaxDays;
             if (logPermissionObj.has(ConstantsKeys.EditDays)) {
                 EditDaysCount = logPermissionObj.getInt(ConstantsKeys.EditDays);
@@ -1773,7 +1798,54 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     }
 
 
+    void getCoDriverName(JSONArray selectedArray, boolean isSingleDriver){
 
+        ArrayList<String> coDriverList = new ArrayList<>();
+        if(!isSingleDriver && LogDate.equals(CurrentDate)) {
+            String coDriverName = "";
+            if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+                coDriverName   = DriverConst.GetCoDriverDetails( DriverConst.CoDriverName, getActivity());
+            } else {
+                coDriverName   = DriverConst.GetDriverDetails( DriverConst.DriverName, getActivity());
+            }
+            coDriverList.add(coDriverName);
+        }
+
+        for(int i = selectedArray.length()-1 ; i >= 0 ; i--){
+            try {
+                JSONObject itemObj = (JSONObject)selectedArray.get(i);
+                String selectedCoDriver = itemObj.getString(ConstantsKeys.CoDriverName);
+                selectedCoDriver = selectedCoDriver.replaceAll("  ", " ");
+                if(selectedCoDriver.length() > 0 && !selectedCoDriver.equals("null")) {
+                    boolean isExistTruck = false;
+                    for (int tt = 0; tt < coDriverList.size(); tt++) {
+                        if (coDriverList.get(tt).equalsIgnoreCase(selectedCoDriver)) {
+                            isExistTruck = true;
+                            break;
+                        }
+                    }
+
+                    if (selectedCoDriver.length() > 0 && !isExistTruck) {
+                        coDriverList.add(selectedCoDriver);
+                    }
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        String coDriver = "";
+        for(int aa = 0; aa < coDriverList.size() ; aa++){
+            if(aa == 0){
+                coDriver = coDriverList.get(aa) ;
+            }else{
+                coDriver = coDriver + "; " + coDriverList.get(aa);
+            }
+        }
+        certifyCoDriverNameTV.setText(coDriver);
+
+    }
 
     void GetTruckTrailer(JSONArray selectedArray){
         TruckNo = "";
@@ -2119,6 +2191,11 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             hLineX1 = 0;    hLineX2 = 0;    hLineY  = 0;
             vLineX  = 0;    vLineY1 = 0;    vLineY2 = 0;
 
+            boolean isSingleDriver = false;
+            if (sharedPref.getDriverType(getContext()).equals(DriverConst.SingleDriver)) {
+                isSingleDriver = true;
+            }
+
             if(isOffline){
 
                 ParseJsonArray(selectedArray, isOffline);
@@ -2134,10 +2211,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         GetCorrectTime(selectedArray, CurrentDate, LogDate);
                     }
 
-                    boolean isSingleDriver = false;
-                    if (sharedPref.getDriverType(getContext()).equals(DriverConst.SingleDriver)) {
-                        isSingleDriver = true;
-                    }
+
 
 
                     // if(isCertifyLog) {
@@ -2148,7 +2222,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                     } else {
                         IsCurrentDate = false;
                     }
-                    //  }
+
 
 
                     if (LogDate.equals(CurrentDate)) {    //DayStartLat != 0.0 && CurrentLat != 0.0 &&
@@ -2157,9 +2231,30 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
                         EngineMileage = constants.getOdometersDistance(getActivity());  // new DecimalFormat("##.##").format(distance);
                         certifyDistanceTV.setText(EngineMileage);
+
+                        certifyCoDriverNameTV.setText(CoDriverNameStr);
+
                     } else {
                         CalculateCycleTime(selectedDateTime, selectedUtcTime, isSingleDriver, false);
                         certifyDistanceTV.setText("--");
+
+                        String loginTimeUtcStr = SharedPref.getLoginTimeUTC(getActivity());
+                        if(loginTimeUtcStr.length() > 10) {
+                            DateTime loginTimeUtc = Globally.getDateTimeObj(loginTimeUtcStr, false);
+
+                            String selectedDateStr = Globally.ConvertDateFormat(LogDate);
+                            DateTime selectedDateTime = Globally.getDateTimeObj(selectedDateStr, false);
+
+                            long dayDiff = Constants.getDateTimeDuration(loginTimeUtc, selectedDateTime).getStandardDays();
+                            if(dayDiff>= 0){
+                                certifyCoDriverNameTV.setText(CoDriverNameStr);
+                            }
+                        }
+                        /*if(){
+                            certifyCoDriverNameTV.setText(CoDriverNameStr);
+                        }else{
+                            certifyCoDriverNameTV.setText("");
+                        }*/
                     }
 
                     if (isExceptionEnabledForDay) {
@@ -2188,6 +2283,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 String CloseTag = constants.HtmlCloseTag(TotalOffDutyHours, TotalSleeperBerthHours, TotalDrivingHours, TotalOnDutyHours);
                 ReloadWebView(CloseTag);
 
+                getCoDriverName(selectedArray, isSingleDriver);
 
             }else {
                 if (!dataObj.isNull("DriverLogModel")) {
@@ -2227,7 +2323,6 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                     NullCheckJson(dataObj, certifyDistanceTV, ConstantsKeys.EngineMileage, "0");
                     NullCheckJson(SPJson, certifyVehicleTV, ConstantsKeys.Truck, TruckNo);
                     PlateNumber  = SPJson.getString(ConstantsKeys.PlateNumber);
-
 
 
                     GetTruckTrailer(selectedArray);
@@ -2291,7 +2386,11 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                     e.printStackTrace();
                 }
 
-
+                if(dataObj.has(ConstantsKeys.Allcodriver) && !dataObj.isNull(ConstantsKeys.Allcodriver)) {
+                    certifyCoDriverNameTV.setText( dataObj.getString(ConstantsKeys.Allcodriver));
+                }else{
+                    getCoDriverName(selectedArray, isSingleDriver);
+                }
             }
 
 
@@ -2805,8 +2904,12 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                                 saveSignatureBtn.setText(getString(R.string.save_and_certify));
                             }
                         }
+                        if (LogDate.equals(CurrentDate)){
+                            saveSignatureBtn.setVisibility(View.GONE);
+                        }else{
+                            saveSignatureBtn.setVisibility(View.VISIBLE);
+                        }
 
-                        saveSignatureBtn.setVisibility(View.VISIBLE);
                         if (LogSignImage.length() == 0 && LogSignImageInByte.length() == 0) {
 
                             signImageView.setBackground(null);
@@ -2819,6 +2922,10 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                     }
 
                 }
+
+            if(selectedArray.length() == 0 ){
+                saveSignatureBtn.setVisibility(View.GONE);
+            }
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -3330,7 +3437,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             fragmentTran.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
                     android.R.anim.fade_in, android.R.anim.fade_out);
             fragmentTran.replace(R.id.job_fragment, editLogFragment);
-            fragmentTran.addToBackStack(null);
+            fragmentTran.addToBackStack("eld_certify_log"); //
             fragmentTran.commitAllowingStateLoss();
         } else {
             global.EldScreenToast(eldMenuBtn, "You don't have edit permission to edit your log. Please contact to your company.", Color.parseColor(colorVoilation));
@@ -3361,12 +3468,19 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
                     if(flag == SaveEditedLog){
                         EldFragment.IsSaveOperationInProgress = false;
-                        SharedPref.SetEditedLogStatus(false, getActivity());
+
                         // Clear edited Log locally in offline table After Success
                         if (DriverType == Constants.MAIN_DRIVER_TYPE) // Single Driver Type and Position is 0
                             MainDriverPref.ClearLocFromList(getActivity());
                         else
                             CoDriverPref.ClearLocFromList(getActivity());
+
+                        // set edited log status false
+                        if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+                            SharedPref.SetMainDriverEditedLogStatus(false, getActivity());
+                        }else{
+                            SharedPref.SetCoDriverEditedLogStatus(false, getActivity());
+                        }
 
                         GetDriverLog18Days(DRIVER_ID, DeviceId, Globally.GetCurrentUTCDate());
                     }
@@ -3705,19 +3819,10 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                             }
 
                             if(obj.has("Message")){
-                                String message = obj.getString("Message");
-
-                               if(message.contains("ServerError")){
-                                    message = "ALS server not responding";
-                                }else if(message.contains("Network")){
-                                    message = "Internet connection problem";
-                                }else if(message.contains("NoConnectionError")){
-                                    message = "Internet connection error";
-                                }
+                                String message = constants.getErrorMsg(obj.getString("Message"));
 
                                 if(!message.equals("null"))
                                     global.EldScreenToast(eldMenuBtn, message, eldWarningColor);
-
 
                                 if(message.equals("Device Logout")){
 
@@ -3999,7 +4104,11 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
                         ParseRecapData(recapSelectedJson);
 
-                        NullCheckJson(recapSelectedJson, certifyCoDriverNameTV, ConstantsKeys.CoDriverName, "N/A");
+                        if(recapSelectedJson.getString(ConstantsKeys.CoDriverName).length() > 0){
+                            NullCheckJson(recapSelectedJson, certifyCoDriverNameTV, ConstantsKeys.CoDriverName, "N/A");
+                        }
+
+
                         if( !LogDate.equals(CurrentDate) ) {
                             NullCheckJson(recapSelectedJson, certifyDistanceTV, ConstantsKeys.EngineMileage, "0");
                             EngineMileage = certifyDistanceTV.getText().toString();

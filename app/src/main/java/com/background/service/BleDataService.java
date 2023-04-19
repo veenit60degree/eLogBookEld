@@ -59,7 +59,6 @@ public class BleDataService extends Service {
     private ArrayList<HTBleDevice> mHTBleDevices = new ArrayList<>();
 
     public static boolean isConnected = false;
-    private static final long OBD_TIME_LOCATION_UPDATES = 10 * 1000;   // 10 sec
 
     private Handler bleHandler = new Handler();
     Constants constants;
@@ -224,7 +223,13 @@ public class BleDataService extends Service {
             }else {
                 boolean isHtBleConnected = isConnected && HTBleSdk.Companion.getInstance().isConnected();
                 if (!isHtBleConnected) {
-                    checkPermissionsBeforeScanBle();
+                   String macAddress = HTBleSdk.Companion.getInstance().getAddress();
+                    if (IsScanClick && macAddress != null && macAddress.length() > 7) {
+                        ClearCacheBeforeConnect();
+                    }else {
+                        checkPermissionsBeforeScanBle();
+                    }
+                    IsScanClick = false;
                 } else {
                     if (IsScanClick) {
                         IsScanClick = false;
@@ -401,10 +406,11 @@ public class BleDataService extends Service {
                 sendEcmBroadcast(false, "onConnectionError");
                 isConnected = false;
                 isBleConnected = false;
+                BackgroundLocationService.obdVehicleSpeed = 0;
 
-                constants.saveBleLog("onConnectionError", Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext(), dbHelper,
+              /*  constants.saveBleLog("onConnectionError", Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext(), dbHelper,
                         driverPermissionMethod, obdUtil);
-
+*/
 
             }
 
@@ -418,7 +424,7 @@ public class BleDataService extends Service {
                     isBleConnected = false;
 
                     HTBleSdk.Companion.getInstance().unRegisterCallBack();
-
+                    BackgroundLocationService.obdVehicleSpeed = 0;
                     EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_DISCONNECTED, address));
 
                     sendBroadCast(getString(R.string.ht_disconnected), "");

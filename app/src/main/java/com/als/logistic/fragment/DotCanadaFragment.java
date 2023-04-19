@@ -1,6 +1,7 @@
 package com.als.logistic.fragment;
 
 import android.animation.ObjectAnimator;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -111,7 +112,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     LinearLayout canDotViewMorelay , unIdnfdcanDotViewMorelay, unidentifiedLayout;
     ImageView eldMenuBtn, nextDateBtn, previousDateBtn; // canDotModeImgVw;
 
-    WebView canDotGraphWebView,unIdnfdcanDotGraphWebView;
+    WebView canDotGraphWebView,unIdnfdcanDotGraphWebView, canDotWebView;
     ProgressBar canDotProgressBar;
     NestedScrollView canDotScrollView;
     SwitchMultiButton canDotSwitchBtn;
@@ -170,16 +171,10 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     boolean isUnidentified = false;
     int CURRENT_JOB_STATUS  = 0;
 
-   /* public static int DutyStatusHeaderCount  = 1;
-    public static int LoginLogoutHeaderCount = 1;
-    public static int CycleOpZoneHeaderCount = 1;
-    public static int EnginePowerHeaderCount = 1;
-*/
-
     String DayName, MonthFullName , MonthShortName , CurrentCycleId;  // CountryCycle;
     String DefaultLine      = " <g class=\"event \">\n";
 
-    String DriverId = "", DeviceId = "", AddressLine = "", AddressLat = "", AddressLon = "";
+    String DriverId = "", CoDriverId = "", DeviceId = "", AddressLine = "", AddressLat = "", AddressLon = "";
     String htmlAppendedText = "", LogDate = "", CurrentDate = "", LogSignImage = "", selectedCountryRods = "";
     String htmlUnidentifiedAppendedText = "";
     String TotalOnDutyHours         = "00:00";
@@ -202,6 +197,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     int endHour         = 0;
     int endMin          = 0;
 
+    String logUrl = "https://alsrealtime.com/Home/AppCanadaELDView?Date=";
 
 
     @Override
@@ -364,6 +360,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
         canDotGraphWebView  = (WebView)view.findViewById(R.id.canDotGraphWebView);
         unIdnfdcanDotGraphWebView = (WebView)view.findViewById(R.id.unIdnfdcanDotGraphWebView);
+        canDotWebView           = (WebView)view.findViewById(R.id.canDotWebView);
 
         canDotProgressBar   = (ProgressBar)view.findViewById(R.id.canDotProgressBar);
         canDotScrollView    = (NestedScrollView) view.findViewById(R.id.canDotScrollView);
@@ -389,6 +386,13 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         countryList.add("CANADA");
         countryList.add("USA");
 
+        WebSettings webSettings = canDotWebView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setSupportZoom(true);
+
+        canDotWebView.setWebViewClient(new WebViewClient());
+
+
         if (global.isConnected(getActivity())) {
 
             String selectedDateStr = global.ConvertDateFormat(LogDate);
@@ -400,7 +404,12 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
             DOTBtnVisibility(DaysDiff, MaxDays);
 
-            GetDriverDotDetails(DriverId, LogDate);
+        //    GetDriverDotDetails(DriverId, LogDate);
+
+            canDotWebView.loadUrl(logUrl + LogDate + "&Id=" + DriverId);
+
+
+
 
         }else{
             Globally.EldScreenToast(getActivity().findViewById(android.R.id.content), global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
@@ -435,7 +444,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         dotSwitchBtn.setTrackDrawable(new SwitchTrackTextDrawable(getActivity(),"CAN", "US"));
 */
 
-        new Handler().postDelayed(new Runnable() {
+   /*     new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 int graphLayoutHeight = canGraphLayout.getMeasuredHeight();
@@ -453,7 +462,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 }
             }
         }, 800);
-
+*/
 
         eldMenuLay.setOnClickListener(this);
         viewMoreTV.setOnClickListener(this);
@@ -474,6 +483,27 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         //Clear the Activity's bundle of the subsidiary fragments' bundles.
         outState.clear();
     }
+
+
+
+    public class WebViewClient extends android.webkit.WebViewClient {
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
+            canDotProgressBar.setVisibility(View.VISIBLE);
+        }
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            view.loadUrl(url);
+            return true;
+        }
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            canDotProgressBar.setVisibility(View.GONE);
+        }
+    }
+
 
 
     SwitchMultiButton.OnSwitchListener onSwitchListener = new SwitchMultiButton.OnSwitchListener() {
@@ -508,6 +538,14 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             DeviceId                = SharedPref.GetSavedSystemToken(getActivity());
             DriverId                = SharedPref.getDriverId( getActivity());
 
+            if (!SharedPref.getDriverType(getActivity()).equals(DriverConst.SingleDriver)) {
+                if(DriverId.equals(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()))){
+                    CoDriverId   = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
+                }else{
+                    CoDriverId   = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
+                }
+            }
+
             try {
                 Bundle getBundle = this.getArguments();
                 if (getBundle != null) {
@@ -529,7 +567,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             try {
                 DBHelper dbHelper = new DBHelper(getActivity());
                 DriverPermissionMethod driverPermissionMethod = new DriverPermissionMethod();
-                JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DriverId), dbHelper);
+                JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DriverId), CoDriverId, dbHelper);
                 CanMaxDays = constants.GetDriverPermitDaysCount(logPermissionObj, CurrentCycleId, true);
 
                 if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
@@ -740,7 +778,8 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
                 if(LogDate.length() > 1){
                     EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " (" + dayOfTheWeek + " )");
-                    GetDriverDotDetails(DriverId, LogDate);
+                   // GetDriverDotDetails(DriverId, LogDate);
+                    canDotWebView.loadUrl(logUrl + LogDate + "&Id=" + DriverId);
                 }
             }
 
@@ -857,7 +896,8 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 Logger.LogDebug("DaysDiff", "DaysDiff: " + DaysDiff);
 
                 DOTBtnVisibility(DaysDiff, MaxDays);
-                GetDriverDotDetails(DriverId, LogDate);
+                //GetDriverDotDetails(DriverId, LogDate);
+                canDotWebView.loadUrl(logUrl + LogDate + "&Id=" + DriverId);
 
             }else{
                 global.EldScreenToast(scrollUpBtn, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
@@ -1377,31 +1417,10 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     }
 
 
-    //*================== Get Address From Lat Lng ===================*//*
-    void GetAddFromLatLng() {
-
-        AddressLine = "";
-        AddressLat = Globally.LATITUDE;
-        AddressLon = Globally.LONGITUDE;
-
-        if(Globally.LATITUDE.length() > 4) {
-            params = new HashMap<String, String>();
-            params.put(ConstantsKeys.Latitude, AddressLat);
-            params.put(ConstantsKeys.Longitude, AddressLon);
-            params.put(ConstantsKeys.IsAOBRDAutomatic, String.valueOf(SharedPref.IsAOBRDAutomatic(getActivity())));
-
-            GetAddFromLatLngRequest.executeRequest(Request.Method.POST, APIs.GET_Add_FROM_LAT_LNG, params, GetAddFromLatLng,
-                    Constants.SocketTimeout3Sec, ResponseCallBack, ErrorCallBack);
-        }
-    }
-
-
-
 
     /* ================== Get Driver CANADA DOT Details =================== */
     void GetDriverDotDetails( final String DriverId, final String date) {
 
-     //   GetAddFromLatLng();
 
         canDotProgressBar.setVisibility(View.VISIBLE);
 

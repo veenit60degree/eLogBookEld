@@ -117,52 +117,54 @@ public class NotificationManagerSmart {
     }
 
     public void showLocalNotification(String title, String message, int ID, Intent intent) {
-        Globally.PlaySound(mCtx);
-        int flag = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-            flag = PendingIntent.FLAG_MUTABLE;
+
+        if(message.trim().length() > 0) {
+            Globally.PlaySound(mCtx);
+            int flag = PendingIntent.FLAG_UPDATE_CURRENT;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                flag = PendingIntent.FLAG_MUTABLE;
+            }
+
+            PendingIntent resultPendingIntent = PendingIntent.getActivity(mCtx, ID_BIG_NOTIFICATION, intent, flag);
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mCtx);
+            NotificationManager notificationManager = (NotificationManager) mCtx.getSystemService(Context.NOTIFICATION_SERVICE);
+            Notification notification;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                String CHANNEL_ID = "als_01";// The id of the channel.
+                CharSequence name = mCtx.getResources().getString(R.string.app_name);
+                int importance = NotificationManager.IMPORTANCE_HIGH;
+                NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+
+                // Create a notification and set the notification channel.
+                notification = mBuilder
+                        .setAutoCancel(true)
+                        .setContentTitle(title)
+                        .setContentText(message)
+                        .setContentIntent(resultPendingIntent)
+                        .setSmallIcon(R.drawable.als_notification)
+                        .setLargeIcon(BitmapFactory.decodeResource(mCtx.getResources(), R.drawable.als_notification_big))
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
+                        .setChannelId(CHANNEL_ID)
+                        .build();
+
+                notificationManager.createNotificationChannel(mChannel);
+            } else {
+                notification = mBuilder
+                        .setAutoCancel(true)
+                        .setContentTitle(title)
+                        .setContentText(message)
+                        .setContentIntent(resultPendingIntent)
+                        .setSmallIcon(R.drawable.als_notification)
+                        .setLargeIcon(BitmapFactory.decodeResource(mCtx.getResources(), R.drawable.als_notification_big))
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
+                        .build();
+
+            }
+
+            notification.flags |= Notification.FLAG_AUTO_CANCEL;
+            notificationManager.notify(ID, notification);
         }
-
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(mCtx, ID_BIG_NOTIFICATION, intent, flag  );
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mCtx);
-        NotificationManager notificationManager = (NotificationManager) mCtx.getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification notification;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String CHANNEL_ID = "als_01";// The id of the channel.
-            CharSequence name = mCtx.getResources().getString(R.string.app_name);
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
-
-            // Create a notification and set the notification channel.
-            notification = mBuilder
-                    .setAutoCancel(true)
-                    .setContentTitle(title)
-                    .setContentText(message)
-                    .setContentIntent(resultPendingIntent)
-                    .setSmallIcon(R.drawable.als_notification)
-                    .setLargeIcon(BitmapFactory.decodeResource(mCtx.getResources(), R.drawable.als_notification_big))
-                    .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
-                    .setChannelId(CHANNEL_ID)
-                    .build();
-
-            notificationManager.createNotificationChannel(mChannel);
-        }else {
-            notification = mBuilder
-                    .setAutoCancel(true)
-                    .setContentTitle(title)
-                    .setContentText(message)
-                    .setContentIntent(resultPendingIntent)
-                    .setSmallIcon(R.drawable.als_notification)
-                    .setLargeIcon(BitmapFactory.decodeResource(mCtx.getResources(), R.drawable.als_notification_big))
-                    .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
-                    .build();
-
-        }
-
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        notificationManager.notify(ID, notification);
-
     }
 
 

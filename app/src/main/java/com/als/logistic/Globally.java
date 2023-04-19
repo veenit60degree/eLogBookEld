@@ -772,6 +772,9 @@ public class Globally {
 		DateTime savedUtcDateTime = getDateTimeObj(utcDate, false);
 		DateTime currentUtcDateTime = GetCurrentUTCDateTime();
 
+		//DateTime savedUtcDateTime = getDateTimeObj("2023-03-14T17:58:45.000Z", false);
+	//	DateTime currentUtcDateTime = getDateTimeObj("2023-03-14T18:00:42.000Z", false);
+
 		if(savedUtcDateTime != null && savedUtcDateTime.toString().length() > 16 && currentUtcDateTime.toString().length() > 16) {
 			int dayDiff = Constants.getDayDiff(savedUtcDateTime.toString(), currentUtcDateTime.toString());
 
@@ -798,6 +801,38 @@ public class Globally {
 		return isTimeCorrect;
 	}
 
+
+	@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+	public boolean isCorrectLoginTime(Context context){
+		boolean isTimeCorrect = true;
+		String utcDate = SharedPref.getCurrentUTCTime(context);
+		DateTime savedUtcDateTime = getDateTimeObj(utcDate, false);
+		DateTime currentUtcDateTime = GetCurrentUTCDateTime();
+
+		//DateTime savedUtcDateTime = getDateTimeObj("2023-03-14T17:58:45.000Z", false);
+		//	DateTime currentUtcDateTime = getDateTimeObj("2023-03-14T18:00:42.000Z", false);
+
+		if(savedUtcDateTime != null && savedUtcDateTime.toString().length() > 16 && currentUtcDateTime.toString().length() > 16) {
+			int dayDiff = Constants.getDayDiff(savedUtcDateTime.toString(), currentUtcDateTime.toString());
+
+			if (dayDiff >= 0) {
+				int minDiff = (int) Constants.getDateTimeDuration(savedUtcDateTime, currentUtcDateTime).getStandardMinutes();
+				if (Math.max(-10, minDiff) == Math.min(minDiff, 10)) {	//minDiff >= -5
+					isTimeCorrect = true;
+				} else {
+					if(isConnected(context) ) {
+						isTimeCorrect = false;
+					}
+				}
+			}else{
+				if(isConnected(context)) {
+					isTimeCorrect = false;
+				}
+			}
+		}
+
+		return isTimeCorrect;
+	}
 
 
 	public boolean isSingleDriver(Context context){
@@ -1467,7 +1502,7 @@ public class Globally {
 					savedOffsetInHr = SharedPref.getDriverTimeZoneOffSet(context);
 					if (savedOffsetInHr == 0) {
 						savedOffsetInHr = GetDefaultTimeZoneOffSet(context);
-						SharedPref.setDriverTimeZoneOffSet(savedOffsetInHr, context);
+						//SharedPref.setDriverTimeZoneOffSet(savedOffsetInHr, context);
 					}
 				}else{
 					Logger.LogDebug("GetDriverTimeZoneOffSet", "context null: " + TabAct.Offset );
@@ -1849,7 +1884,27 @@ public class Globally {
 
 	public static File GetSavedFile(Context context, String fileName, String extension) {
 		// External sdcard location	Environment.getExternalStorageDirectory()
-		File mediaStorageDir = new File(context.getExternalFilesDir(null),"Logistic");
+		String folderName = "Logistic";
+		File mediaStorageDir = new File(context.getExternalFilesDir(null), folderName);
+		// Create the storage directory if it does not exist
+		if (!mediaStorageDir.exists()) {
+			if (!mediaStorageDir.mkdirs()) {
+				Logger.LogDebug("Text_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
+				return null;
+			}
+		}
+
+		File mediaFile = new File(mediaStorageDir.getPath() + File.separator + fileName + "." + extension);
+		//Logger.LogDebug("fileeee", "fileeeee: " + mediaFile);
+
+		return mediaFile;
+	}
+
+
+	public static File GetViolationFile(Context context, String fileName, String extension) {
+		// External sdcard location	Environment.getExternalStorageDirectory()
+		String folderName = "ViolationFile";
+		File mediaStorageDir = new File(context.getExternalFilesDir(null), folderName);
 		// Create the storage directory if it does not exist
 		if (!mediaStorageDir.exists()) {
 			if (!mediaStorageDir.mkdirs()) {
@@ -1899,7 +1954,12 @@ public class Globally {
 		try {
 			SavedFileName = FileNameStr(fileType, DriverName, Is18DaysLog);
 			if(isExternalStorageAvailable()) {
-				myFile = GetSavedFile(context, SavedFileName, "txt");
+				if(fileType.equals(ConstantsKeys.ViolationTest)){
+					myFile = GetViolationFile(context, SavedFileName, "txt");
+				}else {
+					myFile = GetSavedFile(context, SavedFileName, "txt");
+				}
+
 				myFile.createNewFile();
 
 				FileOutputStream fOut = new FileOutputStream(myFile);
@@ -2448,6 +2508,42 @@ public class Globally {
 	}
 
 
+
+
+	public void AppPerformanceAlert(Activity context){
+		try {
+			AlertDialog alertDialog = new AlertDialog.Builder(context,R.style.AlertDialogStyle).create();
+			alertDialog.setTitle(Html.fromHtml("App performance issue !!"));
+			alertDialog.setMessage(Html.fromHtml("LogBook performance is too slow. Need to restart your book to improve performance?"));
+			alertDialog.setCancelable(false);
+
+			String defaultColor = "#1A3561";
+			if(UILApplication.getInstance().isNightModeEnabled()) {
+				defaultColor = "#ffffff";
+			}
+
+			// Setting OK Button
+			alertDialog.setButton(Html.fromHtml("<font color='"+ defaultColor +"'><b>Ok</b></font>"), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+
+					Constants.deleteCache(context);
+					restartApp(context);
+
+					dialog.dismiss();
+				}
+			});
+
+			// Showing Alert Message
+			if(context != null) {
+				alertDialog.show();
+				if(UILApplication.getInstance().isNightModeEnabled()) {
+					alertDialog.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+				}
+			}
+		}catch (Exception e){e.printStackTrace();}
+	}
+
+
 	public static void ReadViolationDialog(final String title, final Context context){
 		try {
 			AlertDialog alertDialog = new AlertDialog.Builder(context,R.style.AlertDialogStyle).create();
@@ -2738,13 +2834,6 @@ public class Globally {
 			e.printStackTrace();
 		}
 
-		//SECOND_DRIVER_NAME = "--";
-		//TRUCK_NUMBER = "--";
-		//TRAILOR_NUMBER = "--";
-		/*SHIPPER_NAME = "--";
-		CONSIGNEE_NAME = "--";
-		TRIP_NUMBER = "--";*/
-
 		try {
 			SharedPref.setDriverId("", c);
 			SharedPref.setDriverStatusId("", c);
@@ -2839,7 +2928,6 @@ public class Globally {
 				dbHelper.DeleteMalfunctionDiagnosticTable1();
 				dbHelper.DeleteMalDiaOccTimeTable();
 				dbHelper.DeletePowerComplianceTable();
-				//dbHelper.DeleteUnidentifiedLogoutTable();
 				dbHelper.DeleteMalDiaDurationTable();
 				dbHelper.DeleteBleGpsAppLaunchTable();
 				dbHelper.DeleteVehiclePowerEventTable();

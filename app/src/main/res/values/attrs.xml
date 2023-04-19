@@ -115,9 +115,9 @@
 
 
    <attr name="blue_login_hover" format="color"/>
-    <!--   <attr name="" format="color"/>
-    <attr name="" format="color"/>
-    <attr name="" format="color"/>
+       <attr name="divider_light_blue_line" format="color"/>
+  <attr name="permission_blue" format="color"/>
+    <!--  <attr name="" format="color"/>
 -->
 
 

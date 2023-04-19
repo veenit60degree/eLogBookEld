@@ -928,7 +928,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:layout_toLeftOf="@+id/sleeperTxtVw"
                     android:layout_centerVertical="true"
                     android:maxLength="7"
                     android:text="@string/time_default"
@@ -953,7 +952,7 @@
                     />
 
 
-              <!--  <TextView
+                <TextView
                     android:id="@+id/sleeperTxtVw"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -962,10 +961,11 @@
                     android:layout_marginRight="@dimen/margin_12"
                     android:text="@string/Sleeper"
                     android:textAllCaps="true"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
 
                     android:textSize="@dimen/text_size_18" />
--->
+
+
 
                 <TextView
                     android:id="@+id/asPerDateSleepTV"
@@ -1006,7 +1006,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:layout_toLeftOf="@+id/offDutyTxtVw"
                     android:layout_centerVertical="true"
                     android:maxLength="7"
                     android:text="@string/time_default"
@@ -1029,7 +1028,7 @@
                     android:visibility="gone"
                     />
 
-<!--
+
                 <TextView
                     android:id="@+id/offDutyTxtVw"
                     android:layout_width="wrap_content"
@@ -1040,7 +1039,7 @@
                     android:text="@string/Off_Duty"
                     android:textAllCaps="true"
                     android:textColor="@color/color_eld_theme"
-                    android:textSize="@dimen/text_size_18" />-->
+                    android:textSize="@dimen/text_size_18" />
 
 
                 <TextView

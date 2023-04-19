@@ -50,7 +50,7 @@ public class DownloadLogsAdapter extends BaseAdapter {
     private final List<DownloadLogsModel> downloadLogsModels;
     LayoutInflater mInflater;
     Globally globally;
-    DownloadPdf downloadDocService = new DownloadPdf();
+  //  DownloadPdf downloadDocService = new DownloadPdf();
     ArrayList<String> docFilesList;
     List downloadLogslocalDocList = new ArrayList<>();
     Globally global;

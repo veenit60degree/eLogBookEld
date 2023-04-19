@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    >
+
+
+
+    <include
+        android:id="@+id/actionbarAppPermission"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/actionbar_eld"
+
+        />
+
+
+    <TextView
+        android:id="@+id/permissionTitleTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/actionbarAppPermission"
+        android:layout_marginLeft="@dimen/margin_15"
+        android:layout_marginTop="@dimen/margin_short_8"
+        android:paddingTop="@dimen/margin_10"
+        android:text="@string/need_permissions"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="@dimen/text_size_21"
+        android:textStyle="bold" />
+
+
+    <TextView
+        android:id="@+id/permissionDescTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/permissionTitleTV"
+        android:layout_marginLeft="@dimen/margin_15"
+        android:layout_marginTop="@dimen/margin_short_4"
+        android:layout_marginRight="@dimen/margin_15"
+        android:text="@string/permissions_desc"
+        android:textColor="?attr/divider_light_blue_line"
+        android:textSize="@dimen/text_size_16"
+
+        />
+
+
+    <ListView
+        android:id="@+id/permissionListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/permissionDescBottomTV"
+        android:layout_below="@+id/permissionDescTV"
+        android:paddingLeft="@dimen/margin_25"
+        android:paddingTop="@dimen/margin_13"
+        android:paddingRight="@dimen/margin_25"
+        android:paddingBottom="@dimen/margin_15"
+        tools:listitem="@layout/items_permissions"
+
+        />
+
+
+    <TextView
+        android:id="@+id/permissionDescBottomTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/permissions_desc2"
+        android:textColor="?attr/divider_light_blue_line"
+        android:textSize="@dimen/text_size_15"
+        android:layout_marginLeft="@dimen/margin_15"
+        android:layout_marginRight="@dimen/margin_15"
+        android:paddingBottom="@dimen/margin_short_8"
+        />
+
+
+
+
+</RelativeLayout>

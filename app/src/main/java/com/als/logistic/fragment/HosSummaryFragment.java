@@ -200,6 +200,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             e.printStackTrace();
         }
 
+        Constants.IS_ACTIVE_ELD = false;
 
         initView(rootView);
 
@@ -473,7 +474,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         hosDistanceCardView.setOnClickListener(this);
         hosLocationCardView.setOnClickListener(this);
         rightMenuBtn.setOnClickListener(this);
-        EldFragment.summaryBtn.setEnabled(true);
+      //  EldFragment.summaryBtn.setEnabled(true);
 
         if(Constants.IS_HOS_AUTO_CALLED){
             Constants.IS_HOS_AUTO_CALLED = false;
@@ -739,6 +740,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     public void onDestroy() {
         super.onDestroy();
         Constants.IS_ACTIVE_HOS = false;
+        Constants.IS_ACTIVE_ELD = true;
     }
 
 
@@ -1615,7 +1617,6 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
             case R.id.hosLocationCardView:
 
-                //   Toast.makeText(getActivity(), "OBD Vin: "+ SharedPref.getVehicleVin(getActivity()) + "\nAPI Vin: "+ SharedPref.getVINNumber(getActivity()), Toast.LENGTH_LONG).show();
 
                 break;
 

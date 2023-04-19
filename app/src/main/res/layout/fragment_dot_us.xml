@@ -41,7 +41,7 @@
         <com.constants.ScrollViewExt
             android:id="@+id/dotScrollView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/view_height_60"
             android:layout_below="@+id/dotActionBar"
             android:background="@color/whiteee"
 
@@ -51,10 +51,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="@dimen/margin_10"
                 android:background="?attr/dot_titles_bg"
 
                 >
+                <!--android:padding="@dimen/margin_10"-->
+
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -67,12 +68,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:paddingLeft="@dimen/margin_short_9"
+                        android:text="@string/ELDViewLogUs"
                         android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_24"
-                        android:text="@string/ELDViewLogUs"
-                        android:layout_centerVertical="true"
                         android:textStyle="bold"
-                        android:paddingLeft="@dimen/margin_short_9"
+                        android:visibility="gone"
+
                         />
 
 
@@ -126,6 +129,7 @@
                     android:orientation="vertical"
                     android:layout_marginTop="@dimen/margin_10"
                     android:layout_marginBottom="@dimen/margin_10"
+                    android:visibility="gone"
 
 
                     >
@@ -1124,6 +1128,7 @@
                     android:layout_height="@dimen/view_height_190"
                     android:minWidth="@dimen/view_height_500"
                     android:minHeight="@dimen/view_height_190"
+                    android:visibility="gone"
 
                     >
 
@@ -1154,6 +1159,8 @@
                     android:layout_marginTop="@dimen/margin_10"
                     android:background="?attr/bgColor"
                     android:padding="@dimen/margin_short_5"
+                    android:visibility="gone"
+
                     >
 
 
@@ -1308,6 +1315,8 @@
                 android:layout_marginTop="@dimen/margin_10"
                 android:background="?attr/bgColor"
                 android:padding="@dimen/margin_short_5"
+                android:visibility="gone"
+
                 >
 
                 <include
@@ -1336,6 +1345,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="@dimen/margin_20"
+                    android:visibility="gone"
+
                     >
 
                     <TextView
@@ -1403,6 +1414,12 @@
 
 
 
+        <WebView
+            android:id="@+id/usDotWebView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            />
 
 
 
@@ -1411,14 +1428,14 @@
 </LinearLayout>
 
 
-<ProgressBar
-android:id="@+id/dotProgressBar"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:layout_centerInParent="true"
-android:visibility="gone"
+    <ProgressBar
+    android:id="@+id/dotProgressBar"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:visibility="gone"
 
-    />
+        />
 
 
 

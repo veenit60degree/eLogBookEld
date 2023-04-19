@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_75"
+
+        >
+
+
+        <ImageView
+            android:id="@+id/permissionImgView"
+            android:layout_width="@dimen/view_height_55"
+            android:layout_height="@dimen/view_height_55"
+            android:padding="@dimen/margin_short_9"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/margin_short_5"
+            android:src="@drawable/ble_ic" />
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+            android:layout_toRightOf="@+id/permissionImgView"
+
+            >
+
+
+            <TextView
+                android:id="@+id/permissionNameTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_permission"
+                android:textColor="?attr/hos_send_log"
+                android:textSize="@dimen/text_size_21"
+                android:textStyle="bold"
+
+
+                />
+
+
+            <TextView
+                android:id="@+id/permissionStatusDescTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_permission"
+                android:textColor="?attr/gray_text"
+                android:textSize="@dimen/text_size_19"
+                android:layout_marginTop="@dimen/margin_short_1"
+                android:layout_below="@+id/permissionNameTV"
+
+                />
+
+
+        </LinearLayout>
+
+
+
+
+        <TextView
+            android:id="@+id/permissionStatusBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="Allow"
+            android:paddingRight="@dimen/margin_12"
+            android:paddingLeft="@dimen/margin_12"
+            android:paddingBottom="@dimen/margin_short_8"
+            android:paddingTop="@dimen/margin_short_8"
+            android:textSize="@dimen/text_size_20"
+            android:textAllCaps="true"
+            android:background="@drawable/green_default"
+
+
+            />
+
+
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

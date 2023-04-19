@@ -69,6 +69,11 @@
     <string name="op_zone_change_check">You can change Operating Zone in OnDuty.</string>
     <string name="setting_soundbrightness">Adjust Sound and Brightness</string>
 
+    <string name="storage_per_granted">Storage permission granted</string>
+    <string name="loc_per_granted">Location permission granted</string>
+    <string name="ble_scan_per_granted">Bluetooth nearby scan permission granted</string>
+
+    <string name="auto_time_setting_desc">Set your device time settings to automatic so that your logbook times run correctly.</string>
     <string name="AdjustTimeZone">Adjust TimeZone</string>
     <string name="AdjustTime">Adjust Time</string>
     <string name="incorrect_time">Incorrect Time !</string>
@@ -512,6 +517,7 @@
     <string name="ELD_Auth">ELD Authentication Value</string>
     <string name="CanadaELDViewLog">Canada ELD View Log</string>
 
+
     <string name="Reminder">Reminder !!</string>
     <string name="exempt_reminder_desc">You are logged in as a Exempt Driver.</string>
     <string name="exempt_logout_desc">You are logging out as a Exempt Driver.</string>
@@ -557,6 +563,7 @@
     <string name="onduty_seven_days_last_eight">Total hours onduty last 8 days (---)</string>
     <string name="onduty_seven_days_last_seven">Total hours onduty last 7 days (---)</string>
 
+    <string name="please_wait_data_syncing">Please wait for a while. Offline data syncing is in progress.</string>
     <string name="stop_vehicle_alert">Please stop your vehicle first to take this action.</string>
     <string name="not_change_status_from">You can\'t change your status from </string>
     <string name="until_not_conn_with_ecm">until ELD is not connected with ECM.</string>
@@ -574,6 +581,8 @@
     <string name="loc_per_revoked">Location permission is revoked</string>
     <string name="phone_per_revoked">Phone permission is revoked</string>
     <string name="loc_per_denied">Location permission denied</string>
+    <string name="ble_per_revoked">Bluetooth near by scan permission is revoked</string>
+    <string name="ble_per_revoked_sett">Bluetooth near by scan permission is revoked. Please change permission settings from device App Settings.</string>
 
     <string name="DOT">DOT</string>
     <string name="inspection_date">Inspection Date : </string>
@@ -632,7 +641,7 @@
     <string name="statusNotChangedFromDriving">You can\'t change the status from Driving while vehicle is moving.</string>
     <string name="other_suggested_log">You have suggested review log for other date also.</string>
     <string name="view_other_suggested_log">View other logs</string>
-
+    <string name="app_permission">App Permissions</string>
 
     <string name="hos_per_shift">PER SHIFT</string>
     <string name="hos_driving_shift">Driving</string>
@@ -713,6 +722,11 @@
     <!-- dialog text sign in vehicle-->
     <string name="sign_in_vehicle">Sign in to vehicle</string>
     <string name="sign_in_vehicle_hint">Please stop the vehicle and sign in \n to log your hours.</string>
+
+    <string name="app_permissions">App Permissions</string>
+    <string name="need_permissions">Need Permissions</string>
+    <string name="permissions_desc">In order for you user certain features of this app, you need to give permissions</string>
+    <string name="permissions_desc2">Permissions are necessary for all the features and functions to work properly. If not allowed, you have to enable permissions in settings.</string>
 
     <!--operating zone change-->
     <string name="operating_zone_changee">Operating Zone Change</string>

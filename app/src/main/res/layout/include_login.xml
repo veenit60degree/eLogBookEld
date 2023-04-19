@@ -160,17 +160,16 @@
             android:id="@+id/loginBtn"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/view_height_40"
-            android:text="Login"
-            android:textColor="@color/whiteee"
             android:layout_below="@+id/passLay"
-            android:textSize="@dimen/text_size_17"
-            android:layout_marginTop="@dimen/view_height_35"
             android:layout_centerHorizontal="true"
-            android:paddingRight="@dimen/view_height_100"
-            android:paddingLeft="@dimen/view_height_100"
+            android:layout_marginTop="@dimen/view_height_35"
             android:background="@drawable/green_selector"
+            android:paddingLeft="@dimen/view_height_100"
+            android:paddingRight="@dimen/view_height_100"
+            android:text="Login"
             android:textAllCaps="false"
-            />
+            android:textColor="@color/whiteee"
+            android:textSize="@dimen/text_size_17" />
 
 
     </RelativeLayout>

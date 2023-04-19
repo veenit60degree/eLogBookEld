@@ -32,6 +32,7 @@ import com.constants.VolleyRequest;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
+import com.local.db.HelperMethods;
 import com.local.db.OdometerHelperMethod;
 import com.als.logistic.Globally;
 import com.als.logistic.LoginActivity;
@@ -73,6 +74,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
     JSONObject dataJson;
     ProgressBar odoProgressBar;
     DBHelper dbHelper;
+    HelperMethods helperMethods;
     OdometerHelperMethod odometerhMethod;
     VolleyRequest GetOdometerRequest, SaveOdometerRequest;
     Map<String, String> params;
@@ -104,6 +106,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
     void initView(View view) {
 
         dbHelper                = new DBHelper(getActivity());
+        helperMethods           = new HelperMethods();
         odometerhMethod         = new OdometerHelperMethod();
         postRequest             = new ShippingPost(getActivity(), requestResponse);
         Global                  = new Globally();
@@ -462,8 +465,12 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
         odometerArray = odometerhMethod.getSavedOdometerArray(Integer.valueOf(DRIVER_ID), dbHelper);
         IsOdometerSaved = true;
 
+        JSONArray driverLogArray = helperMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
+        int DriverStatusId = helperMethods.getLastStatus( Integer.valueOf(DRIVER_ID), dbHelper);
+        boolean isPersonal = helperMethods.isPersonal(driverLogArray);
+
         JSONObject odoJson = odometerhMethod.AddOdometerInArray(DRIVER_ID, DeviceId, VIN_NUMBER, StartOdometer, EndOdometer, DistanceType,
-                SelectedDate, IsEditOdometer, TruckOdometerId, TruckNumber, EldFragment.DriverStatusId);
+                SelectedDate, IsEditOdometer, TruckOdometerId, TruckNumber, ""+DriverStatusId, isPersonal);
 
         odometerArray.put(odoJson);
         odometerhMethod.OdometerHelper(Integer.valueOf(DRIVER_ID), dbHelper, odometerArray);
@@ -529,13 +536,18 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
             params.put(ConstantsKeys.CreatedDate, CreatedDate );
         }
 
-        if(!EldFragment.DriverStatusId.equals("1")) {
-            params.put(ConstantsKeys.DriverStatusID, EldFragment.DriverStatusId); // OnDuty, Driving, Sleeper
+        JSONArray driverLogArray = helperMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
+        int DriverStatusId = helperMethods.getLastStatus( Integer.valueOf(DriverId), dbHelper);
+
+        if(DriverStatusId != Constants.OFF_DUTY) {
+            params.put(ConstantsKeys.DriverStatusID, ""+DriverStatusId);
         }else{
-            if(EldFragment.isPersonal.equals("true")){
+            boolean isPersonal = helperMethods.isPersonal(driverLogArray);
+
+            if(isPersonal){
                 params.put(ConstantsKeys.DriverStatusID, "5"); // Personal
             }else{
-                params.put(ConstantsKeys.DriverStatusID, EldFragment.DriverStatusId ); // Off Duty
+                params.put(ConstantsKeys.DriverStatusID, ""+DriverStatusId ); // Off Duty
             }
         }
 

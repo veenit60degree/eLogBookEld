@@ -345,9 +345,11 @@ public class HelperMethods {
                 selectedDriverId = MainDriverId;
             }
 
-            ArrayList<String> coDriverInfo = GetDriverStatusWithPCUse(Integer.valueOf(selectedDriverId), dbHelper);
-            if (coDriverInfo.size() > 2) {
-                CoDriverStatus = Integer.valueOf(coDriverInfo.get(0));
+            if(selectedDriverId.length() > 0) {
+                ArrayList<String> coDriverInfo = GetDriverStatusWithPCUse(Integer.valueOf(selectedDriverId), dbHelper);
+                if (coDriverInfo.size() > 2) {
+                    CoDriverStatus = Integer.valueOf(coDriverInfo.get(0));
+                }
             }
         } catch (Exception e){
             e.printStackTrace();
@@ -380,6 +382,8 @@ public class HelperMethods {
         return isDrivingAllowed;
 
     }
+
+
 
 
     public boolean isCoDriverInDrYMPC(Context context, Globally Global, String selectedDriverId,DBHelper dbHelper){
@@ -530,7 +534,8 @@ public class HelperMethods {
                                     String adverseExceptionRemark, String LocationType, String malAddInfo,
                                     boolean IsNorthCanada, String StartLocationKm, boolean IsCycleChanged,
                                     String StartOdometer, String EndOdometer, String CoDriverId, String CoDriverName,
-                                    String UnAssignedVehicleMilesId, String EngHour, String odometer, String DriverVehicleTypeId){
+                                    String UnAssignedVehicleMilesId, String EngHour, String odometer,
+                                    String DriverVehicleTypeId, boolean isUnAssignedRecord){
 
         JSONObject driverLogJson = new JSONObject();
 
@@ -593,12 +598,13 @@ public class HelperMethods {
             driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
             driverLogJson.put(ConstantsKeys.CoDriverName, CoDriverName);
 
-            driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, false);
+            driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, isUnAssignedRecord);
             driverLogJson.put(ConstantsKeys.UnAssignedVehicleMilesId, UnAssignedVehicleMilesId);
 
             driverLogJson.put(ConstantsKeys.EngineHours, EngHour);
             driverLogJson.put(ConstantsKeys.Odometer, odometer);
             driverLogJson.put(ConstantsKeys.DriverVehicleTypeId, DriverVehicleTypeId);
+
 
 
         }catch (Exception e){
@@ -656,6 +662,28 @@ public class HelperMethods {
         }
 
         return isPCYM;
+    }
+
+
+    public boolean isPersonal(JSONArray array){
+        boolean isPersonal = false;
+        try {
+
+            if(array != null && array.length() > 0) {
+
+                JSONObject lastJob = GetLastJsonFromArray(array);
+                int lastStatus = lastJob.getInt(ConstantsKeys.DriverStatusId);
+                boolean Personal = lastJob.getBoolean(ConstantsKeys.Personal);
+
+                if(lastStatus == Constants.OFF_DUTY && Personal){
+                    isPersonal = true;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return isPersonal;
     }
 
 
@@ -2404,7 +2432,11 @@ public class HelperMethods {
                             DateTime startDate = Globally.getDateTimeObj(logObj.getString(ConstantsKeys.startDateTime), false);
                             double totalMin = (int) Constants.getDateTimeDuration(startDate, endDateTime).getStandardMinutes();
 
-                            driverLogJson.put(ConstantsKeys.endDateTime, String.valueOf(endDateTime));
+                            if(UtcCurrentDate.toString().contains(":00:00")){
+                                UtcCurrentDate = Globally.GetCurrentUTCDateTime();
+                            }
+                            DateTime currentDateTime = Globally.GetDriverCurrentTime(UtcCurrentDate.toString(), new Globally(), context);
+                            driverLogJson.put(ConstantsKeys.endDateTime, String.valueOf(currentDateTime));
                             driverLogJson.put(ConstantsKeys.utcEndDateTime, String.valueOf(UtcCurrentDate));
                             driverLogJson.put(ConstantsKeys.totalMin, totalMin);
 
@@ -2652,40 +2684,43 @@ public class HelperMethods {
         }else {
             try {
                 if (driverLogJsonArray.length() > 0) {
-                    JSONObject mainLogObj = (JSONObject) driverLogJsonArray.get(0);
+                    JSONObject eighteenDaysLogObj = (JSONObject) driverLogJsonArray.get(0);
 
                     if (selectedLogArray.length() > 0) {
                         JSONObject selectedLogObj = (JSONObject) selectedLogArray.get(0);
 
-                        String selectedStart = mainLogObj.getString(ConstantsKeys.StartDateTime);
-                        String selectedStartUtc = mainLogObj.getString(ConstantsKeys.UTCStartDateTime);
-                        DateTime mainObjStartTime = Globally.getDateTimeObj(selectedStart, false);
-                        DateTime selObjStartTime = Globally.getDateTimeObj(selectedLogObj.getString(ConstantsKeys.StartDateTime), false);
-                        int mainObjLogId = mainLogObj.getInt(ConstantsKeys.DriverLogId);
-                        int selObjLogId = selectedLogObj.getInt(ConstantsKeys.DriverLogId);
-                        int mainObjLogStatus = mainLogObj.getInt(ConstantsKeys.DriverStatusId);
-                        int selObjLogStatus = selectedLogObj.getInt(ConstantsKeys.DriverStatusId);
-                        Logger.LogDebug("---date", "date: " + mainObjStartTime.toString().substring(11, 16));
-                        if (mainObjStartTime.equals(selObjStartTime) && mainObjStartTime.toString().substring(11, 16).equals("00:00") &&
-                                selObjStartTime.toString().substring(11, 16).equals("00:00")) {
-                            if (mainObjLogId == selObjLogId && mainObjLogStatus == selObjLogStatus) {
+                        String eighteenStart = eighteenDaysLogObj.getString(ConstantsKeys.StartDateTime);
+                        if(eighteenStart.length() > 16 && !eighteenStart.substring(11, 16).equals("00:00")){
+                            String selectedStartUtc = eighteenDaysLogObj.getString(ConstantsKeys.UTCStartDateTime);
+                            DateTime eightnDaysObjStartTime = Globally.getDateTimeObj(eighteenStart, false);
+                            DateTime selObjStartTime = Globally.getDateTimeObj(selectedLogObj.getString(ConstantsKeys.StartDateTime), false);
+
+                            if (eightnDaysObjStartTime.equals(selObjStartTime) ) {
+                                int mainObjLogId = eighteenDaysLogObj.getInt(ConstantsKeys.DriverLogId);
+                                int selObjLogId = selectedLogObj.getInt(ConstantsKeys.DriverLogId);
+                                int mainObjLogStatus = eighteenDaysLogObj.getInt(ConstantsKeys.DriverStatusId);
+                                int selObjLogStatus = selectedLogObj.getInt(ConstantsKeys.DriverStatusId);
+
+                                if (mainObjLogId == selObjLogId && mainObjLogStatus == selObjLogStatus) {
 
 
-                                JSONObject defaultObjForNewDriver = AddOffDutyStatusForFreshLogin(DRIVER_ID,
-                                        currentDateTime, currentUTCTime, offsetFromUTC, CurrentCycleId, selectedStart, selectedStartUtc, context);
+                                    JSONObject defaultObjForNewDriver = AddOffDutyStatusForFreshLogin(DRIVER_ID,
+                                            currentDateTime, currentUTCTime, offsetFromUTC, CurrentCycleId, eighteenStart, selectedStartUtc, context);
 
 
-                                // reverse Array to add item at the end
-                                JSONArray reverseArray = shipmentHelper.ReverseArray(selectedLogArray);
-                                reverseArray.put(defaultObjForNewDriver);
+                                    // reverse Array to add item at the end
+                                    JSONArray reverseArray = shipmentHelper.ReverseArray(selectedLogArray);
+                                    reverseArray.put(defaultObjForNewDriver);
 
-                                // again reverse Array to show last item at top
-                                selectedLogArray = new JSONArray();
-                                selectedLogArray = shipmentHelper.ReverseArray(reverseArray);
+                                    // again reverse Array to show last item at top
+                                    selectedLogArray = new JSONArray();
+                                    selectedLogArray = shipmentHelper.ReverseArray(reverseArray);
 
 
+                                }
                             }
                         }
+
 
                     }
 
@@ -3477,10 +3512,6 @@ public class HelperMethods {
                                                     boolean isCurrentDate, final int offsetFromUTC){
 
         DriverLogModel driverLogModel = new DriverLogModel();
-        //String IsStatusAutomatic = "false", DecesionSource = "", OBDSpeed = "0", GPSSpeed = "0", PlateNumber = "";
-       // String adverseExceptionRemark = "", UnAssignedVehicleMilesId = "0";
-       // boolean HaulHourException = false, IsAdverseException = false;
-      //  boolean IsNorthCanada = false;
 
         try {
             DateTime startDateTime       = Globally.getDateTimeObj(json.getString(ConstantsKeys.startDateTime),  false);
@@ -3518,7 +3549,7 @@ public class HelperMethods {
 
                     driverLogModel.setEndDateTime(dateTime);
                     driverLogModel.setUtcEndDateTime(endUtcDate);
-                    int minDiff = (int) Constants.getDateTimeDuration(utcStartDateTime, dateTime).getStandardMinutes();
+                    int minDiff = (int) Constants.getDateTimeDuration(utcStartDateTime, endUtcDate).getStandardMinutes();
                     driverLogModel.setTotalMinutes(minDiff);
 
                 }
@@ -3570,6 +3601,8 @@ public class HelperMethods {
             boolean IsAdverseException = Boolean.parseBoolean(Constants.checkStringBoolInJsonObj(json, ConstantsKeys.IsAdverseException));
             String adverseExceptionRemark = Constants.checkStringBoolInJsonObj(json, ConstantsKeys.AdverseExceptionRemarks);
             boolean IsNorthCanada = Boolean.parseBoolean(Constants.checkStringBoolInJsonObj(json, ConstantsKeys.IsNorthCanada));
+            boolean isUnAssignedMileRecord = Boolean.parseBoolean(Constants.checkStringBoolInJsonObj(json, ConstantsKeys.IsUnAssignedMileRecord));
+
             String UnAssignedVehicleMilesId = Constants.checkIntInJsonObj(json, ConstantsKeys.UnAssignedVehicleMilesId);
             String CoDriverId = Constants.checkStringInJsonObj(json, ConstantsKeys.CoDriverId);
             String CoDriverName = Constants.checkStringInJsonObj(json, ConstantsKeys.CoDriverName);
@@ -3596,6 +3629,7 @@ public class HelperMethods {
             driverLogModel.setEngineHours(EngHour);
             driverLogModel.setOdometer(odometer);
             driverLogModel.setDriverVehicleTypeId(DriverVehicleTypeId);
+            driverLogModel.setUnAssignedMileRecord(isUnAssignedMileRecord);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -3705,9 +3739,11 @@ public class HelperMethods {
                         logModel.getUnAssignedVehicleMilesId(),
                         logModel.getEngineHours(),
                         logModel.getOdometer(),
-                        logModel.getDriverVehicleTypeId()
+                        logModel.getDriverVehicleTypeId(),
+                        logModel.IsUnAssignedMileRecord()
 
                 );
+
                 obj.put(ConstantsKeys.isNewRecord, logModel.IsNewRecord());
 
                 obj.put(ConstantsKeys.CoDriverId, logModel.getCoDriverId());
@@ -3743,7 +3779,7 @@ public class HelperMethods {
             }
 
             boolean HaulHourException = false, IsAdverseException = false;
-            boolean IsNorthCanada = false;
+            boolean IsNorthCanada = false, isUnAssignedRecord = false;
             String IsStatusAutomatic = "false", OBDSpeed = "0", GPSSpeed = "0", PlateNumber = "", DecesionSource = "";
             String adverseExceptionRemark = "", LocationType = "", MalfunctionDefinition = "", UnAssignedVehicleMilesId = "0";
 
@@ -3754,6 +3790,7 @@ public class HelperMethods {
                 status = GetStatusWithPermissionCheck(status, IsOffDutyPermission, IsSleeperPermission, IsDrivingPermission, IsOnDutyPermission);
 
                 driverLogModel.setPersonal(false);
+                driverLogModel.setYardMove(false);
 
             }else{
                 if(json.has(ConstantsKeys.IsStatusAutomatic))
@@ -3764,6 +3801,13 @@ public class HelperMethods {
                 }else {
                     driverLogModel.setPersonal(json.getBoolean(ConstantsKeys.Personal));
                 }
+
+                if(status == ON_DUTY){
+                    driverLogModel.setYardMove(json.getBoolean(ConstantsKeys.YardMove));
+                }else{
+                    driverLogModel.setYardMove(false);
+                }
+
 
             }
 
@@ -3805,6 +3849,11 @@ public class HelperMethods {
                 UnAssignedVehicleMilesId = json.getString(ConstantsKeys.UnAssignedVehicleMilesId);
             }
 
+            if (json.has(ConstantsKeys.IsUnAssignedMileRecord) && !json.getString(ConstantsKeys.IsUnAssignedMileRecord).equals("null")) {
+                isUnAssignedRecord = json.getBoolean(ConstantsKeys.IsUnAssignedMileRecord);
+            }
+
+
             String CoDriverId = Constants.checkStringInJsonObj(json, ConstantsKeys.CoDriverId);
             String CoDriverName = Constants.checkStringInJsonObj(json, ConstantsKeys.CoDriverName);
 
@@ -3829,8 +3878,6 @@ public class HelperMethods {
             driverLogModel.setStartLongitude(json.getString(ConstantsKeys.StartLongitude));
             driverLogModel.setEndLatitude(json.getString(ConstantsKeys.EndLatitude));
             driverLogModel.setEndLongitude(json.getString(ConstantsKeys.EndLongitude));
-
-            driverLogModel.setYardMove(json.getBoolean(ConstantsKeys.YardMove));
 
             if(status == ON_DUTY){
                 driverLogModel.setRemarks(json.getString(ConstantsKeys.Remarks));
@@ -3883,6 +3930,7 @@ public class HelperMethods {
             driverLogModel.setOdometer(odometer);
             driverLogModel.setDriverVehicleTypeId(DriverVehicleTypeId);
             driverLogModel.setAppVersionCode(AppVersionCode);
+            driverLogModel.setUnAssignedMileRecord(isUnAssignedRecord);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -4355,6 +4403,7 @@ public class HelperMethods {
             if (rs != null & rs.getCount() > 0) {
                 rs.moveToFirst();
                 dbHelper.UpdateUnidentifiedRecordLog(companyId, driverLogArray);        // UPDATE DRIVER LOG
+            Logger.LogDebug("driverLogArray", "-----trDriverLogArray: "+driverLogArray);
             } else {
                 dbHelper.InsertUnidetifiedRecordLog(companyId, driverLogArray);      // INSERT DRIVER LOG
             }

@@ -197,7 +197,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
     int DriverType = 0, LastObdSpeed = -1;
     boolean isStopService = false,  RestartObdFlag = false, isTeamDriverLogin = false, isDriverLogout = false;
-    JSONArray shipmentArray, odometerArray, driverLogArray;
+    JSONArray shipmentArray, odometerArray, driverLogArray, driverLog18DaysArray;
     DBHelper dbHelper;
     HelperMethods hMethods;
     ShipmentHelperMethod shipmentHelper;
@@ -233,16 +233,15 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     boolean isDeferralAlreadyPostingCo = false;
     boolean IsMissingDiaInProgress = false;
     boolean MalDiaEventsApiInProcess = false;
-    public static boolean isReceiverInit = false;
 
     boolean isWiredObdRespond = false;
-    public static boolean IsAutoChange = false; //, IsAutoLogSaved = false;
+    public static boolean IsAutoChange = false;
 
     private Handler mHandler = new Handler();
     private Handler speedAlertHandler = new Handler();
     private Handler dismissAlertHandler = new Handler();
 
-    File locDataFile;
+
     private TextToSpeech tts;
     String ViolationReason = "";
     SaveDriverLogPost saveDriverLogPost, saveNotificationReq;
@@ -364,7 +363,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         isTeamDriverLogin = SharedPref.getDriverType(getApplicationContext()).equals(DriverConst.TeamDriver);
 
 
-        startLocationService();
+        startLocationService(false);
 
         getDriverIDs();
 
@@ -1012,9 +1011,9 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 DateTime currentTime = Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getApplicationContext());
                 DateTime lastCallDateTime = Globally.getDateTimeObj(lastCallTime, false);
                 long secDiff = Constants.getDateTimeDuration(lastCallDateTime, currentTime).getStandardSeconds();
-                long CheckIntervalInSec = 120;   // 2 min
+                long CheckIntervalInSec = 240;   // 4 min
                 if(ignitionStatus.equals("OFF")){
-                    CheckIntervalInSec = 180;   // 3 min
+                    CheckIntervalInSec = 420;   // 7 min
                 }
 
                 if (secDiff >= CheckIntervalInSec) {
@@ -1059,9 +1058,9 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 if (speed >= 8 && !truckRPM.equals("0")) {
 
                     try {
-                        get18DaysLogArrayLocally();
+                        driverLog18DaysArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
 
-                        boolean isYardMove = hMethods.isPCYM(EldFragment.driverLogArray);
+                        boolean isYardMove = hMethods.isPCYM(driverLog18DaysArray);
                         if (isYardMove) {
                             //String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getApplicationContext());
                             String CurrentCycleId = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getApplicationContext()), getApplicationContext());
@@ -1123,9 +1122,9 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                             timeDuration = Constants.SocketTimeout15Sec;
                             saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "Sleeper-Speed: " + speed);
                         } else {
-                            get18DaysLogArrayLocally();
+                            driverLog18DaysArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
 
-                            boolean isPersonal = hMethods.isPCYM(EldFragment.driverLogArray);
+                            boolean isPersonal = hMethods.isPCYM(driverLog18DaysArray);
                             if (isPersonal) {
                                 String puSavedTime = SharedPref.getPuExceedCheckDate(getApplicationContext());
                                 if (puSavedTime.length() > 10) {
@@ -1189,12 +1188,6 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         }
     }
 
-    private JSONArray get18DaysLogArrayLocally(){
-        if (EldFragment.driverLogArray == null || EldFragment.driverLogArray.length() == 0) {
-            EldFragment.driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
-        }
-        return EldFragment.driverLogArray;
-    }
 
     void callWiredDataService(int timeDuration){
         try {
@@ -1250,7 +1243,6 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 if(BleDataService.isBleConnected){
                     // Logger.LogError("LoginService", "onReceive==" + htBleData);
                     onReceiveTotalCountOnReq = 0;
-                    isReceiverInit = true;
 
 
                     String[] decodedDataArray = BleUtil.decodedDataArray(data);
@@ -1905,16 +1897,16 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 isEventOccurred = true;
                 String PowerClearEventCallTime = SharedPref.getPowerClearEventCallTime(getApplicationContext());
                 if(PowerClearEventCallTime.length() == 0){
-                    PowerClearEventCallTime = global.GetDriverCurrentDateTime(global, getApplicationContext());
+                    PowerClearEventCallTime = Globally.GetCurrentUTCTimeFormat();
                     SharedPref.setPowerClearEventCallTime(PowerClearEventCallTime, getApplicationContext());
                 }
                 String dateee = SharedPref.getPowerMalOccTime(getApplicationContext());
                 int minDiff = constants.getMinDifference(dateee, currentDate);
-                int callTimeSecDiff = constants.getSecDifference(PowerClearEventCallTime, global.getCurrentDate());
+                int callTimeSecDiff = constants.getSecDifference(PowerClearEventCallTime, Globally.GetCurrentUTCTimeFormat());  //global.getCurrentDate()
 
                 // clear Power Diagnostic event after 2 min automatically when ECM is connected.
                 if (minDiff > 1 && callTimeSecDiff > 18) {  // callTimeMinDiff this check is used to avoid clear method calling after 3 sec each because checkPowerMalDiaEvent is calling after 3 sec when data coming from obd
-                    SharedPref.setPowerClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
+                    SharedPref.setPowerClearEventCallTime(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
                     String eventOccuredDriverId = "";
                     powerEventInputArray = new JSONArray();
 
@@ -1932,8 +1924,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
 
                     if(powerEventInputArray.length() == 0){
-                        DateTime clearEventCallTime = Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getApplicationContext()).plusSeconds(40);
-                        SharedPref.setPowerClearEventCallTime(clearEventCallTime.toString(), getApplicationContext());
+                       // DateTime clearEventCallTime = Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getApplicationContext()).plusSeconds(40);
+                        SharedPref.setPowerClearEventCallTime(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
 
                         if (global.isConnected(getApplicationContext())) {
                             JSONArray savedEvents = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(dbHelper);
@@ -1997,7 +1989,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                     // update EndTime with TotalMinutes instantly but not cleared, because we are clearing it after 5 min
                     //  malfunctionDiagnosticMethod.updateTimeInPowerDiagnoseDia(dbHelper, getApplicationContext());
                     if(callTimeSecDiff < 0){
-                        SharedPref.setPowerClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
+                        SharedPref.setPowerClearEventCallTime(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
                     }
                 }
 
@@ -2236,30 +2228,31 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
 
 
-
-    private void clearPowerEventAtLogout(){
-        try{
-            JSONArray clearEventArray = malfunctionDiagnosticMethod.updateAutoClearEvent(dbHelper, DriverId, Constants.PowerComplianceDiagnostic,
-                    true, true, getApplicationContext());
-            ClearEventType = Constants.PowerComplianceDiagnostic;
-
-            if(clearEventArray.length() > 0 && global.isConnected(getApplicationContext())) {
-                // call clear event API.
-                saveDriverLogPost.PostDriverLogData(clearEventArray, APIs.CLEAR_MALFNCN_DIAGSTC_EVENT_BY_DATE,
-                        Constants.SocketTimeout30Sec, true, false, 0, ClearMalDiaEvent);
-            }
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-
     private void ClearMissingDiagnostics(){
         try{
             int rpm = Integer.valueOf(truckRPM);
             if(rpm > 400){
                 boolean isMissingDiaOccur = SharedPref.isMissingDiaOccur(getApplicationContext());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 if(isMissingDiaOccur && !IsMissingDiaInProgress ){
 
                     IsMissingDiaInProgress = true;  // this check is use to avoid call again and again. When timer interval will be 0 if will be false;
@@ -2790,14 +2783,14 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         // call cycle rule
         try {
             getDriverIDs();
-            get18DaysLogArrayLocally();
+            driverLog18DaysArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
 
             int obdType = constants.WIRED_OBD;
             if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
                 obdType = constants.BLE_OBD;
             }
 
-            serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, EldFragment.driverLogArray, CoDriverName, speed,
+            serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, driverLog18DaysArray, CoDriverName, speed,
                     hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, true, obdType, obdUtil);
         }catch (Exception e){
             e.printStackTrace();
@@ -2983,9 +2976,9 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         Constants.isDriverSwitchEvent = false;
         SharedPref.SetPingStatus("", getApplicationContext());
 
-        if(Globally.LATITUDE.length() < 4){
+       /* if(Globally.LATITUDE.length() < 4){
             startLocationService();
-        }
+        }*/
 
 
         //Make it stick to the notification panel so it is less prone to get cancelled by the Operating System.
@@ -2994,14 +2987,32 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
 
 
-    void startLocationService(){
+    void startLocationService(boolean isTimer){
         try {
-            // call location service
-            locServiceIntent = new Intent(getApplicationContext(), LocationListenerService.class);
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(locServiceIntent);
+            if(isTimer) {
+                if(getApplicationContext() != null) {
+                    locServiceIntent = new Intent(getApplicationContext(), LocationListenerService.class);
+                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        startForegroundService(locServiceIntent);
+                    }
+                    startService(locServiceIntent);
+                }
+
+            }else{
+                // call location service. 5 sec delay due to loc service is destroying in logout service and we again initializing it here.
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (getApplicationContext() != null) {
+                            locServiceIntent = new Intent(getApplicationContext(), LocationListenerService.class);
+                            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                startForegroundService(locServiceIntent);
+                            }
+                            startService(locServiceIntent);
+                        }
+                    }
+                }, 5000);
             }
-            startService(locServiceIntent);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -3346,6 +3357,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                         // Update UTC date time after 60 seconds
                         global.updateCurrentUtcTime(getApplicationContext());
 
+                        checkLocationUpdateStatus();
+
                     } else {
                         SpeedCounter += LocRefreshTime;
                     }
@@ -3364,6 +3377,23 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     };
 
 
+    // some times location updates are stopping, so we are checking if last location update was 4 min ago then calling is again
+    private void checkLocationUpdateStatus(){
+        if(!constants.isObdConnectedWithELD(getApplicationContext()) && UILApplication.isActivityVisible()) {
+            String onLocationChangedTime = SharedPref.getLocChangeTime(getApplicationContext());
+            if (onLocationChangedTime.length() > 10) {
+                final DateTime locChangedDateTime = global.getDateTimeObj(onLocationChangedTime, false);
+                long timeDiffInMin = Constants.getDateTimeDuration(locChangedDateTime, Globally.GetCurrentUTCDateTime()).getStandardMinutes();
+                if (timeDiffInMin >= 4) {
+                    startLocationService(true);
+                    SharedPref.setLocChangeTime(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
+                }
+            } else {
+                startLocationService(true);
+                SharedPref.setLocChangeTime(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
+            }
+        }
+    }
 
     void checkMissingDiaEvent(boolean isObdConnectedWithELD){
         try{
@@ -3478,12 +3508,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 DriverType = Constants.CO_DRIVER_TYPE;
             }
 
-            String SavedLogApi = "";
-            if (SharedPref.IsEditedData(getApplicationContext())) {
-                SavedLogApi = APIs.SAVE_DRIVER_EDIT_LOG_NEW;
-            } else {
-                SavedLogApi = APIs.SAVE_DRIVER_STATUS;
-            }
+            String SavedLogApi = Constants.getSaveStatusOrEditedApi(getApplicationContext());
 
             int socketTimeout;
             int logArrayCount = driverLogArray.length();
@@ -3515,6 +3540,11 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             mTimer = null;
         } catch (Exception e) {
         }
+
+        if(locServiceIntent != null) {
+            stopService(locServiceIntent);
+        }
+
         stopForeground(true);
         stopSelf();
     }
@@ -3671,7 +3701,6 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
 
-                isReceiverInit = false;
             }
 
             if(locServiceIntent != null){
@@ -4261,8 +4290,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 if (constants.minDiff(savedDate, global, false, getApplicationContext()) > 0) {
                     SharedPref.saveHighPrecisionOdometer(HighPrecisionOdometer, currentLogDate, getApplicationContext());
 
-                    get18DaysLogArrayLocally();
-                    serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, EldFragment.driverLogArray, CoDriverName,
+                    driverLog18DaysArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
+                    serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, driverLog18DaysArray, CoDriverName,
                             obdVehicleSpeed,  hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError,
                             true, constants.WIFI_OBD,  obdUtil);
                 }
@@ -4274,9 +4303,9 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                         obdVehicleSpeed      = (int)speedCalculated;
                     }
 
-                    get18DaysLogArrayLocally();
+                    driverLog18DaysArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
                     SharedPref.saveHighPrecisionOdometer(HighPrecisionOdometer,currentLogDate, getApplicationContext());
-                    serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, EldFragment.driverLogArray, CoDriverName,
+                    serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, driverLog18DaysArray, CoDriverName,
                             obdVehicleSpeed, hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError,
                             true, constants.WIFI_OBD, obdUtil);
 
@@ -4284,9 +4313,9 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                     ServiceCycle.ContinueSpeedCounter = 0;
                     if (constants.minDiff(savedDate, global, false, getApplicationContext()) > 0 ) {    //|| (isYmPcAlertShown && isYardMove())
-                        get18DaysLogArrayLocally();
+                        driverLog18DaysArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
                         SharedPref.saveHighPrecisionOdometer(HighPrecisionOdometer, currentLogDate, getApplicationContext());
-                        serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, EldFragment.driverLogArray, CoDriverName,
+                        serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, driverLog18DaysArray, CoDriverName,
                         obdVehicleSpeed, hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError,
                                 true, constants.WIFI_OBD, obdUtil);
                     }
@@ -4304,8 +4333,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 if (obdVehicleSpeed <= DrivingSpeedLimit || speedCalculated <= DrivingSpeedLimit ) {
                     ServiceCycle.ContinueSpeedCounter = 0;
                 } else {
-                    get18DaysLogArrayLocally();
-                    serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, EldFragment.driverLogArray, CoDriverName,
+                    driverLog18DaysArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
+                    serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, driverLog18DaysArray, CoDriverName,
                             obdVehicleSpeed, hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError,
                             true, constants.WIFI_OBD, obdUtil);
                 }
@@ -4535,10 +4564,10 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
             if( obdStatus != Constants.NO_CONNECTION && !SharedPref.GetNewLoginStatus(getApplicationContext())) {
                 try {
-                    get18DaysLogArrayLocally();
+                    driverLog18DaysArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
 
-                    if (EldFragment.driverLogArray.length() > 0) {  //UILApplication.isActivityVisible() &&
-                        JSONObject lastJsonItem =  hMethods.GetLastJsonFromArray(EldFragment.driverLogArray);
+                    if (driverLog18DaysArray.length() > 0) {  //UILApplication.isActivityVisible() &&
+                        JSONObject lastJsonItem =  hMethods.GetLastJsonFromArray(driverLog18DaysArray);
                         int currentJobStatus = lastJsonItem.getInt(ConstantsKeys.DriverStatusId);
                         boolean isYard = lastJsonItem.getBoolean(ConstantsKeys.YardMove);
                         boolean isPersonal = lastJsonItem.getBoolean(ConstantsKeys.Personal);
@@ -4649,7 +4678,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 syncingFile = global.SaveFileInSDCard("Sync_", savedSyncedArray.toString(), false, getApplicationContext());
             }
 
-            ViolationFile = global.GetSavedFile(getApplicationContext(),ConstantsKeys.ViolationTest, "txt");
+            ViolationFile = global.GetViolationFile(getApplicationContext(),ConstantsKeys.ViolationTest, "txt");
 
             if(SharedPref.IsAutoSync(getApplicationContext())){
                 if(ViolationFile.exists() && syncingFile.exists() ) {
@@ -4911,7 +4940,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                                 if (resultArray.length() > 0) {
                                     if(flag == GetDriverLog18Days){
-                                        hMethods.DriverLogHelper(Integer.valueOf(SelectedDriverId), dbHelper, resultArray);
+                                        if(SelectedDriverId.length() > 0)
+                                            hMethods.DriverLogHelper(Integer.valueOf(SelectedDriverId), dbHelper, resultArray);
 
                                         if(resultArray.length() > 0) {
                                             JSONObject lastItemJson = hMethods.GetLastJsonFromArray(resultArray);
@@ -5581,8 +5611,16 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                          BackgroundLocationService.IsAutoChange = false;
                         driverLogArray = constants.GetDriversSavedArray(getApplicationContext(), MainDriverPref, CoDriverPref);
                         //boolean IsDuplicateStatusAllowed = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.IsDuplicateStatusAllowed, getApplicationContext());
-                        boolean IsEditedData = SharedPref.IsEditedData(getApplicationContext());
-                        SharedPref.SetEditedLogStatus(false, getApplicationContext());
+                        boolean IsEditedData = Constants.isEditedLog(getApplicationContext());
+
+
+                      //  SharedPref.SetMainDriverEditedLogStatus(false, getApplicationContext());
+                        // set edited log status true
+                        if (SharedPref.getCurrentDriverType(getApplicationContext()).equals(DriverConst.StatusSingleDriver)) {
+                            SharedPref.SetMainDriverEditedLogStatus(false, getApplicationContext());
+                        }else{
+                            SharedPref.SetCoDriverEditedLogStatus(false, getApplicationContext());
+                        }
 
                         try {
                             if (driverLogArray.length() == 1 || IsEditedData) {
@@ -5688,6 +5726,14 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
 
                     case SaveCoDriverLogData:
+
+                       // SharedPref.SetCoDriverEditedLogStatus(false, getApplicationContext());
+                        // set edited log status true
+                        if (SharedPref.getCurrentDriverType(getApplicationContext()).equals(DriverConst.StatusSingleDriver)) {
+                            SharedPref.SetCoDriverEditedLogStatus(false, getApplicationContext());
+                        }else{
+                            SharedPref. SetMainDriverEditedLogStatus(false, getApplicationContext());
+                        }
                         EldFragment.IsSaveOperationInProgress = false;
                         ClearLogAfterSuccess(driver_id);
                         RePostDataCountCo = 0;
@@ -5956,15 +6002,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
         if (!global.isSingleDriver(getApplicationContext())) {
 
-            String SavedLogApi = "";
-            if (SharedPref.IsEditedData(getApplicationContext())) {
-                SavedLogApi = APIs.SAVE_DRIVER_EDIT_LOG_NEW;
-            } else {
-                SavedLogApi = APIs.SAVE_DRIVER_STATUS;
-            }
-
-
-
+            String SavedLogApi = Constants.getSaveApiInCoDriverCase(getApplicationContext());
             if(DriverType == Constants.MAIN_DRIVER_TYPE) {  // Current active driver is Main Driver. So we need co driver details and we are getting co driver's details.
 
                 try {
@@ -6169,11 +6207,11 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
             if(isPU75Crossed && wasPU75Crossed == false){
                 try {
-                    get18DaysLogArrayLocally();
+                    driverLog18DaysArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
 
                     boolean isPersonal = true;
-                    if (EldFragment.driverLogArray.length() > 0) {
-                        JSONObject lastJsonItem = hMethods.GetLastJsonFromArray(EldFragment.driverLogArray);
+                    if (driverLog18DaysArray.length() > 0) {
+                        JSONObject lastJsonItem = hMethods.GetLastJsonFromArray(driverLog18DaysArray);
                         //  int currentJobStatus = lastJsonItem.getInt(ConstantsKeys.DriverStatusId);
                         isPersonal = lastJsonItem.getBoolean(ConstantsKeys.Personal);
                     }

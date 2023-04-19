@@ -856,6 +856,63 @@
 
                     </RelativeLayout>
 
+
+                    <RelativeLayout
+                        android:id="@+id/checkPermissionBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/view_height_55"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:layout_margin="@dimen/margin_short_2"
+
+                        >
+
+                        <RelativeLayout
+                            android:id="@+id/checkPermissionLayout"
+                            android:layout_width="@dimen/view_height_40"
+                            android:layout_height="@dimen/view_height_40"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/circle_shape_checkinternet"
+                            >
+
+
+                            <ImageView
+                                android:id="@+id/checkPermissionImgView"
+                                android:layout_width="@dimen/margin_18"
+                                android:layout_height="@dimen/margin_18"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/permission"
+                                android:tint="?attr/checkInternet_icon_color" />
+                        </RelativeLayout>
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/checkPermissionLayout"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:text="@string/app_permission"
+                            android:textColor="?attr/gray_category_color"
+                            android:textSize="@dimen/text_size_17" />
+
+
+
+
+                        <ImageView
+                            android:layout_width="@dimen/margin_17"
+                            android:layout_height="@dimen/margin_17"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerInParent="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/margin_23"
+                            android:src="@drawable/arrow_next_unidentfied"
+                            android:tint="@color/gray_category_color" />
+
+
+                    </RelativeLayout>
+
+
+
                     <RelativeLayout
                         android:id="@+id/SyncDataBtn"
                         android:layout_width="match_parent"
@@ -1170,6 +1227,11 @@
 
 
                     </RelativeLayout>
+
+
+
+
+
 
 
                 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.local.db;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 
@@ -26,7 +27,7 @@ public class OdometerHelperMethod {
 
         if (rs != null && rs.getCount() > 0) {
             rs.moveToFirst();
-            String logList = rs.getString(rs.getColumnIndex(DBHelper.ODOMETER_LIST));
+            @SuppressLint("Range") String logList = rs.getString(rs.getColumnIndex(DBHelper.ODOMETER_LIST));
             try {
                 logArray = new JSONArray(logList);
             } catch (JSONException e) {
@@ -64,7 +65,8 @@ public class OdometerHelperMethod {
                                          String VIN, String StartOdometer,
                                          String EndOdometer, String DistanceType,
                                          String CreatedDate, String IsEditOdometer,
-                                         String TruckOdometerId, String VehicleNumber, String DriverStatusId
+                                         String TruckOdometerId, String VehicleNumber,
+                                         String DriverStatusId, boolean isPersonal
     ) {
 
         JSONObject jsonObj = new JSONObject();
@@ -87,10 +89,10 @@ public class OdometerHelperMethod {
                 jsonObj.put(ConstantsKeys.CreatedDate, CreatedDate);
             }
 
-            if(!EldFragment.DriverStatusId.equals(Globally.OFF_DUTY)) {
-                jsonObj.put(ConstantsKeys.DriverStatusID, DriverStatusId); // OnDuty, Driving, Sleeper
+            if(!DriverStatusId.equals(Globally.OFF_DUTY)) {
+                jsonObj.put(ConstantsKeys.DriverStatusID, DriverStatusId);
             }else{
-                if(EldFragment.isPersonal.equals("true")){
+                if(isPersonal){
                     jsonObj.put(ConstantsKeys.DriverStatusID, "5"); // Personal
                 }else{
                     jsonObj.put(ConstantsKeys.DriverStatusID, DriverStatusId ); // Off Duty
@@ -148,7 +150,7 @@ public class OdometerHelperMethod {
 
         if (rs != null && rs.getCount() > 0) {
             rs.moveToFirst();
-            String logList = rs.getString(rs.getColumnIndex(DBHelper.ODOMETER_18DAYS_LIST));
+            @SuppressLint("Range") String logList = rs.getString(rs.getColumnIndex(DBHelper.ODOMETER_18DAYS_LIST));
             try {
                 logArray = new JSONArray(logList);
             } catch (JSONException e) {
@@ -484,6 +486,9 @@ public class OdometerHelperMethod {
             String VIN_NUMBER       = SharedPref.getVINNumber(context);
             String TRUCK_NUMBER     = SharedPref.getTruckNumber(context); //DriverConst.GetDriverTripDetails(DriverConst.Truck, context);
 
+            HelperMethods helperMethods   = new HelperMethods();
+            JSONArray driverLogArray = helperMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
+            boolean isPersonal = helperMethods.isPersonal(driverLogArray);
 
             if(odometer18DaysArray.length() > 0) {
                 JSONObject lastJsonObj  = GetLastJsonObject(odometer18DaysArray, 1);
@@ -502,7 +507,7 @@ public class OdometerHelperMethod {
 
 
                 JSONObject odoJson = AddOdometerInArray(DriverId, DeviceId, VIN_NUMBER, StartOdometer, EndOdometer, DistanceType,
-                        CreatedDate, "false", "", TRUCK_NUMBER, DriverStatusId);
+                        CreatedDate, "false", "", TRUCK_NUMBER, DriverStatusId, isPersonal);
 
                 if(isUpdate){
                     odometer18DaysArray.put(odometer18DaysArray.length()-1, odoJson);
@@ -515,7 +520,7 @@ public class OdometerHelperMethod {
 
             }else{
                 JSONObject odoJson = AddOdometerInArray(DriverId, DeviceId, VIN_NUMBER, odometerValue, odometerValue, "km",
-                        CreatedDate, "false", "", TRUCK_NUMBER, DriverStatusId);
+                        CreatedDate, "false", "", TRUCK_NUMBER, DriverStatusId, isPersonal);
 
                 odometer18DaysArray.put(odoJson);
 

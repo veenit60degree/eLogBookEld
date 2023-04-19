@@ -53,7 +53,7 @@ public class SplashActivity extends Activity implements
     boolean isFirst = false;
     Handler handler;
     PermissionInfoDialog permissionInfoDialog;
-
+    boolean isBleNearByScanCalled = false;
 
     protected static final String TAG = "SplashActivity";
 
@@ -251,10 +251,23 @@ public class SplashActivity extends Activity implements
 
                 return true;
             } else {
-                Logger.LogVerbose("TAG","Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_SCAN,
-                        Manifest.permission.BLUETOOTH_CONNECT}, NEARBY_DEVICES_REQUEST);
-                return false;
+                if(!isBleNearByScanCalled) {
+                    Logger.LogVerbose("TAG", "Permission is revoked");
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_SCAN,
+                            Manifest.permission.BLUETOOTH_CONNECT}, NEARBY_DEVICES_REQUEST);
+                    isBleNearByScanCalled = true;
+
+                    return false;
+                }else{
+                    Globally.EldScreenToast(appVersionSplash, getString(R.string.ble_per_revoked), getResources().getColor(R.color.colorVoilation));
+
+                    statusCheck();
+
+                    return true;
+
+                }
+
+
             }
         } else { //permission is automatically granted on sdk<23 upon installation
 

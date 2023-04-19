@@ -13,6 +13,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.RequiresApi;
 
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -84,7 +88,9 @@ public class ShippingDocDialog extends Dialog {
     final int Save18DaysList    = 5;
     int DriverType;
     private boolean IsShippingCleared;
-    JSONObject lastSavedJson;
+    JSONObject lastSavedJson, lastUsedJson;
+    private String blockCharacterSet = "~#^|$%&*!";
+
 
     public ShippingDocDialog(Context context, String driverId, String deviceId, String selectedDate, DBHelper db_helper,
                              int driverType, boolean isShippingCleare) {
@@ -96,6 +102,36 @@ public class ShippingDocDialog extends Dialog {
         IsShippingCleared   = isShippingCleare;
         DriverType          = driverType;
     }
+
+
+    private InputFilter filter = new InputFilter() {
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            if (source != null) {
+                /*String data = shipperNoEditText.getText().toString();
+                // data = data.replaceAll("\\p{M}", "");
+                String text = data.replaceAll("[^\\x00-\\x7F]", "");
+
+                // erases all the ASCII control characters
+                text = text.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
+
+                // removes non-printable characters from Unicode
+                text = text.replaceAll("\\p{C}", "");
+                shipperNoEditText.setText(text);
+*/
+                return "";
+            }
+
+
+          /*  if (source != null && blockCharacterSet.contains(("" + source))) {
+                return "";
+            }*/
+            return null;
+        }
+    };
+
 
 
     @Override
@@ -187,6 +223,7 @@ public class ShippingDocDialog extends Dialog {
             }else {
                 if(!IsShippingCleared) {
                     ParseShippingData(lastSavedJson);
+                    setDataOnField();
                 }
             }
         }else{
@@ -200,6 +237,7 @@ public class ShippingDocDialog extends Dialog {
                     lastSavedJson = shipmentHelper.GetLastJsonObject(MainDriver18DaysJsonArray, 0);
 
                     ParseShippingData(lastSavedJson);
+                    setDataOnField();
                 }
             }
 
@@ -212,6 +250,7 @@ public class ShippingDocDialog extends Dialog {
                 if(!IsShippingCleared && DriverType == Constants.CO_DRIVER_TYPE) {   // DriverType = 1 means Co driver
                     lastSavedJson = shipmentHelper.GetLastJsonObject(CoDriver18DaysJsonArray, 0);
                     ParseShippingData(lastSavedJson);
+                    setDataOnField();
                 }
             }
 
@@ -227,8 +266,33 @@ public class ShippingDocDialog extends Dialog {
             }
         });
 
+        blockCharacterSet = "[^\\\\p{ASCII}]";
+       // String data = shipperNoEditText.getText().toString();
+       // data = data.replaceAll("\\p{M}", "");
+
+       // shipperNoEditText.setFilters(new InputFilter[] { filter });
+
+
+
+       // shipperNoEditText.setText(data);
     }
 
+
+
+
+    private static String cleanTextContent(String text)
+    {
+        // strips off all non-ASCII characters
+        text = text.replaceAll("[^\\x00-\\x7F]", "");
+
+        // erases all the ASCII control characters
+        text = text.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
+
+        // removes non-printable characters from Unicode
+        text = text.replaceAll("\\p{C}", "");
+
+        return text.trim();
+    }
 
     @Override
     protected void onStop() {
@@ -248,6 +312,12 @@ public class ShippingDocDialog extends Dialog {
                 String tempFromAddress         = FromEditText.getText().toString().trim();
                 String tempToAddress           = ToEditText.getText().toString().trim();
                 String tempCommodity           = commodityEditText.getText().toString().trim();
+
+                tempShipperNumber = cleanTextContent(tempShipperNumber);
+                tempShipperName = cleanTextContent(tempShipperName);
+                tempFromAddress = cleanTextContent(tempFromAddress);
+                tempToAddress = cleanTextContent(tempToAddress);
+                tempCommodity = cleanTextContent(tempCommodity);
 
                 if(IsShippingCleared) {
                     if (tempShipperNumber.equals(getContext().getResources().getString(R.string.Empty))) {
@@ -279,25 +349,28 @@ public class ShippingDocDialog extends Dialog {
 
                         } else {
 
-
-
                             ShipperNumber = shipperNoEditText.getText().toString().trim();
                             ShipperName = shipperNameEditText.getText().toString().trim();
                             FromAddress = FromEditText.getText().toString().trim();
                             ToAddress = ToEditText.getText().toString().trim();
                             Commodity = commodityEditText.getText().toString().trim();
 
+                            ShipperNumber = cleanTextContent(ShipperNumber);
+                            ShipperName = cleanTextContent(ShipperName);
+                            FromAddress = cleanTextContent(FromAddress);
+                            ToAddress = cleanTextContent(ToAddress);
+                            Commodity = cleanTextContent(Commodity);
 
-                            boolean isContainSpclChar = false;
+                            /*boolean isContainSpclChar = false;
                             String spclCharAlert = "";
                             String alphabetNumAlertMsg = " Only accept alphabet and numeric char";
 
-                            if(isContainSpecialChar(ShipperNumber)) {
-                                isContainSpclChar = true;
-                                spclCharAlert = "Shipper number field contain special char." + alphabetNumAlertMsg;
-                            }else if(isContainSpecialChar(ShipperName)){
+                            if(isContainSpecialChar(ShipperName)){
                                 isContainSpclChar = true;
                                 spclCharAlert = "Shipper name field contain special char." + alphabetNumAlertMsg;
+                            }else if(isContainSpecialChar(ShipperNumber)) {
+                                isContainSpclChar = true;
+                                spclCharAlert = "Shipper number field contain special char." + alphabetNumAlertMsg;
                             }else if(isContainSpecialChar(FromAddress)){
                                 isContainSpclChar = true;
                                 spclCharAlert = "From address field contain special char." + alphabetNumAlertMsg;
@@ -311,8 +384,10 @@ public class ShippingDocDialog extends Dialog {
 
 
                             if(isContainSpclChar){
+                                ParseShippingData(lastUsedJson);
                                 global.EldScreenToast(shippingDocSaveBtn, spclCharAlert, UILApplication.getInstance().getThemeColor());
-                            }else {
+                            }else {*/
+
                                 if (SharedPref.IsDrivingShippingAllowed(getContext())) {
                                     if (ToAddress.length() > 0) {
                                         CallApiToSaveShipping(false);
@@ -323,7 +398,8 @@ public class ShippingDocDialog extends Dialog {
                                 } else {
                                     CallApiToSaveShipping(false);
                                 }
-                            }
+
+                        //}
 
 
                         }
@@ -348,9 +424,10 @@ public class ShippingDocDialog extends Dialog {
 
 
     private boolean isContainSpecialChar(String str){
-        Pattern pattern = Pattern.compile("[^a-zA-Z0-9]");
+        Pattern pattern = Pattern.compile("[^a-zA-Z0-9\\s]");
         Matcher matcher = pattern.matcher(str);
-        return matcher.find();
+        boolean isContainSpecChar = matcher.find();
+        return isContainSpecChar;
 
     }
     private void CallApiToSaveShipping(boolean IsUnloadingSaved) {
@@ -424,36 +501,44 @@ public class ShippingDocDialog extends Dialog {
 
 
     void ParseShippingData(JSONObject dataObj){
+        lastUsedJson = dataObj;
         try {
-            if(!dataObj.isNull(ConstantsKeys.ShippingDocumentNumber))
-                ShipperNumber    = dataObj.getString(ConstantsKeys.ShippingDocumentNumber);
-            if(!dataObj.isNull(ConstantsKeys.Commodity))
-                Commodity       = dataObj.getString(ConstantsKeys.Commodity);
-            if(!dataObj.isNull(ConstantsKeys.ShipperName))
-                ShipperName     = dataObj.getString(ConstantsKeys.ShipperName);
-            if(!dataObj.isNull(ConstantsKeys.FromAddress))         // ShipperState is used as From address
-                FromAddress     = dataObj.getString(ConstantsKeys.FromAddress);
-            if(!dataObj.isNull(ConstantsKeys.ToAddress))    // ShipperState is used as To address
-                ToAddress       = dataObj.getString(ConstantsKeys.ToAddress);
-         //   if(dataObj.has(ConstantsKeys.IsShippingCleared) && !dataObj.isNull(ConstantsKeys.IsShippingCleared))    // ShipperState is used as To address
-              //   IsShippingCleared     = dataObj.getBoolean(ConstantsKeys.IsShippingCleared);
+            if(dataObj != null) {
+                if (!dataObj.isNull(ConstantsKeys.ShippingDocumentNumber))
+                    ShipperNumber = dataObj.getString(ConstantsKeys.ShippingDocumentNumber);
+                if (!dataObj.isNull(ConstantsKeys.Commodity))
+                    Commodity = dataObj.getString(ConstantsKeys.Commodity);
+                if (!dataObj.isNull(ConstantsKeys.ShipperName))
+                    ShipperName = dataObj.getString(ConstantsKeys.ShipperName);
+                if (!dataObj.isNull(ConstantsKeys.FromAddress))         // ShipperState is used as From address
+                    FromAddress = dataObj.getString(ConstantsKeys.FromAddress);
+                if (!dataObj.isNull(ConstantsKeys.ToAddress))    // ShipperState is used as To address
+                    ToAddress = dataObj.getString(ConstantsKeys.ToAddress);
+                //   if(dataObj.has(ConstantsKeys.IsShippingCleared) && !dataObj.isNull(ConstantsKeys.IsShippingCleared))    // ShipperState is used as To address
+                //   IsShippingCleared     = dataObj.getBoolean(ConstantsKeys.IsShippingCleared);
 
-            if(ShipperNumber.equals(getContext().getResources().getString(R.string.Empty))){
-                ShipperNumber = "";
+                if (ShipperNumber.equals(getContext().getResources().getString(R.string.Empty))) {
+                    ShipperNumber = "";
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
+    }
+
+
+    void setDataOnField(){
+
         try {
             if(!IsShippingCleared) {
                 SetTextOnView();
                 if (ShipperNumber.length() > 0) {
-                   // shippingDocSaveBtn.setText("Update");
+                    // shippingDocSaveBtn.setText("Update");
                     shipperNoEditText.setSelection(ShipperNumber.length());
                 } else {
-                   // shippingDocSaveBtn.setText("Save");
+                    // shippingDocSaveBtn.setText("Save");
                 }
             }else{
 
@@ -476,7 +561,6 @@ public class ShippingDocDialog extends Dialog {
 
         HideKeyboard();
     }
-
 
     void AddDataInDB(String MainDriverId, String CoDriverId, boolean IsShippingCleared){
 
@@ -715,6 +799,7 @@ public class ShippingDocDialog extends Dialog {
                             dataObj = new JSONObject(obj.getString("Data"));
                             if (dataObj != null) { // && shipmentJsonArray.length() == 0
                                 ParseShippingData(dataObj);
+                                setDataOnField();
                             }
                         }
                         break;

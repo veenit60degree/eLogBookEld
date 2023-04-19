@@ -10,7 +10,8 @@
         <item name="color_eld_theme">#1A3561</item>
         <item name="color_eld_hover_theme">#F2003561</item>
         <item name="color_eld_hover_btn">#F2003561</item>
-
+        <item name="divider_light_blue_line">#9BB7CC</item>
+        <item name="permission_blue">#38566E</item>
 
         <item name="eld_icon_color">#1A3561</item>
         <item name="eld_gray_bg1">#EEEEEE</item>
@@ -125,6 +126,8 @@
         <item name="color_eld_theme">#444366</item>
         <item name="color_eld_hover_theme">#363454</item>   <!--15132B-->
         <item name="color_eld_hover_btn">#444366</item>
+        <item name="divider_light_blue_line">#FFFFFF</item>
+        <item name="permission_blue">#FFFFFF</item>
 
         <item name="metaTextColor">#F3F3F3</item>
         <item name="eld_gray_bg1">#0D0B22</item>    <!--4E4E4E-->

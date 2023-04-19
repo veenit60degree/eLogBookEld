@@ -54,11 +54,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="@dimen/margin_10"
                 android:background="?attr/dot_titles_bg"
 
                 >
-
+                <!--android:padding="@dimen/margin_10"-->
 
 
 
@@ -74,12 +73,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/txt_eld_color"
-                        android:textSize="@dimen/text_size_28"
-                        android:text="@string/ELDViewLogUs"
-                        android:textStyle="bold"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="@dimen/margin_10"
+                        android:text="@string/ELDViewLogUs"
+                        android:textColor="?attr/txt_eld_color"
+                        android:textSize="@dimen/text_size_28"
+                        android:textStyle="bold"
+                        android:visibility="gone"
                         />
 
 
@@ -129,7 +129,7 @@
                     android:orientation="vertical"
                     android:layout_marginTop="@dimen/margin_10"
                     android:layout_marginBottom="@dimen/margin_10"
-
+                    android:visibility="gone"
 
                     >
                     <!--                android:background="@drawable/black_without_border"-->
@@ -1119,7 +1119,7 @@
                     android:layout_height="@dimen/view_height_200"
                     android:minWidth="@dimen/view_height_500"
                     android:minHeight="@dimen/view_height_200"
-
+                    android:visibility="gone"
                     >
 
                     <WebView
@@ -1149,6 +1149,7 @@
                     android:layout_marginTop="@dimen/margin_10"
                     android:padding="@dimen/margin_short_8"
                     android:background="?attr/bgColor"
+                    android:visibility="gone"
 
                     >
 
@@ -1305,6 +1306,7 @@
                 android:layout_marginTop="@dimen/margin_10"
                 android:padding="@dimen/margin_short_8"
                 android:background="?attr/bgColor"
+                android:visibility="gone"
 
                 >
 
@@ -1336,6 +1338,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="@dimen/margin_20"
+                    android:visibility="gone"
+
                     >
 
                     <TextView
@@ -1406,10 +1410,17 @@
 
 
 
+        <WebView
+            android:id="@+id/usDotWebView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            />
 
 
 
-</LinearLayout>
+
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/dotProgressBar"

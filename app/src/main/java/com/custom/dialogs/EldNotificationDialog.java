@@ -128,7 +128,7 @@ public class EldNotificationDialog extends Dialog  {
         @Override
         public void onClick(View v) {
             JSONArray notificationData = constants.getEldNotificationReadInput(notiArray, DriverId, DeviceId);
-            saveDriverLogPost.PostDriverLogData(notificationData, APIs.UPDATE_DRIVER_ELD_SETTING_NOTIFICATIONS, constants.SocketTimeout10Sec, false, false, 1, 101);
+            saveDriverLogPost.PostDriverLogData(notificationData, APIs.UPDATE_ELD_SETTING_NOTIFICATIONS, constants.SocketTimeout10Sec, false, false, 1, 101);
 
         }
     }

@@ -41,7 +41,6 @@ import android.widget.TextView;
 
 import com.adapter.logistic.GridAdapter;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.background.service.BackgroundLocationService;
@@ -126,14 +125,13 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     Button changeLocBtn, saveInspectionBtn;
     ImageView signSuprvsrIV, signDriverIV;
     ProgressBar inspectionProgressBar;
-    AlertDialog alertDialog;
     String btnSelectedType = "", SignImageSelected = "", SupervisorSignImage = "", DriverSignImage = "", Odometer = "", OdometerDistanceType = "";
-    String  DRIVER_ID = "", VIN_NUMBER = "", DeviceId = "";
+    String DRIVER_ID = "", VIN_NUMBER = "", VehicleId = "", DeviceId = "";
     String DriverName = "",CompanyId = "", InspectionDateTime = "", Location = "", PreTripInsp = "false", PostTripInsp = "false",
             AboveDefectsCorrected = "false", AboveDefectsNotCorrected = "false", Remarks = "",  //Latitude = "", Longitude = "",
             SupervisorMechanicsName = "", TruckIssueType = "", TraiorIssueType = "", DriverTimeZone = "", date = "", InspectionTypeId="";
     String City = "", State = "", Country = "", CurrentCycleId = "", CurrentJobStatus = "";
-    String DriverId = "", CoDriverId = "", tempTruck = "", tempTrailer = "", CreatedDate = "";
+    String DriverId = "", CoDriverId = "", tempTrailer = "", CreatedDate = "";
     String ByteDriverSign = "", ByteSupervisorSign = "", SelectedDatee = "";
     String TruckNumber = "", TrailerNumber= "", SignCopyDate = "";
     SignDialog signDialog;
@@ -142,8 +140,6 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     List<String> StateArrayList;
     List<DriverLocationModel> StateList;
     StatePrefManager statePrefManager;
-    RequestQueue queue;
-   // DatePickerDialog dateDialog;
     TrailorDialog dialog;
     VehicleDialog vehicleDialog;
     List<VehicleModel>  vehicleList = new ArrayList<VehicleModel>();
@@ -212,7 +208,6 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         }
 
         failedApiTrackMethod = new FailedApiTrackMethod();
-        queue = Volley.newRequestQueue(getActivity());
         pDialog = new ProgressDialog(getActivity());
 
         pDialog.setMessage("Saving ...");
@@ -317,11 +312,13 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             e.printStackTrace();
         }
 
+        DRIVER_ID           = SharedPref.getDriverId( getActivity());
+        DeviceId            = SharedPref.GetSavedSystemToken(getActivity());
+        VIN_NUMBER          = SharedPref.getVINNumber(getActivity());
+        VehicleId           = SharedPref.getVehicleId(getActivity());
+
         // Get Inspection Details
         if (Globally.isConnected(getActivity())) {
-            DRIVER_ID           = SharedPref.getDriverId( getActivity());
-            DeviceId            = SharedPref.GetSavedSystemToken(getActivity());
-            VIN_NUMBER          = SharedPref.getVINNumber(getActivity());
             GetInspectionDetail(DRIVER_ID, DeviceId, Globally.PROJECT_ID, VIN_NUMBER);
         }
 
@@ -373,6 +370,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         DeviceId            = SharedPref.GetSavedSystemToken(getActivity());
         CreatedDate         = Globally.ConvertDateFormatMMddyyyyHHmm(Globally.GetDriverCurrentDateTime(new Globally(), getActivity()));
         IsAOBRD             = SharedPref.IsAOBRD(getActivity());
+        VehicleId           = SharedPref.getVehicleId(getActivity());
 
         DriverName          = slideMenu.usernameTV.getText().toString();
         DriverTimeZone      = SharedPref.getTimeZone(getActivity());
@@ -442,7 +440,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
         ShowHidePtiTrailerView();
 
-        inspection18DaysArray  = inspectionMethod.getSavedInspectionArray(Integer.valueOf(DRIVER_ID), dbHelper);
+        inspection18DaysArray   = inspectionMethod.getSavedInspectionArray(Integer.valueOf(DRIVER_ID), dbHelper);
         inspectionUnPostedArray = inspectionMethod.getOfflineInspectionsArray(Integer.valueOf(DRIVER_ID), dbHelper);
 
         if(Globally.isConnected(getActivity()) && inspectionUnPostedArray.length() > 0 ){
@@ -1331,8 +1329,6 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                 e.printStackTrace();
             }
 
-            tempTruck   = vehicleList.get(position).getEquipmentNumber();
-            VIN_NUMBER = vehicleList.get(position).getVIN();
             SaveVehicleNumber(position, DriverId, CoDriverId, CompanyId, true);
 
         }
@@ -1606,7 +1602,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
         // Add inspection JSON obj in 18 Days Array
 
-        JSONObject inspection18DaysObj = inspectionMethod.AddNewInspectionObj(DRIVER_ID, DeviceId, Globally.PROJECT_ID, DriverName, CompanyId, EldFragment.VehicleId, "", VIN_NUMBER,
+        JSONObject inspection18DaysObj = inspectionMethod.AddNewInspectionObj(DRIVER_ID, DeviceId, Globally.PROJECT_ID, DriverName, CompanyId, VehicleId, "", VIN_NUMBER,
                 TruckNumber, TrailerNumber, CreatedDate, Location, PreTripInsp, PostTripInsp, AboveDefectsCorrected, AboveDefectsNotCorrected,
                 Remarks, Globally.LATITUDE, Globally.LONGITUDE, DriverTimeZone, SupervisorMechanicsName, TruckIssueType, TraiorIssueType, InspectionTypeId,
                 ByteDriverSign, ByteSupervisorSign, Odometer, false, SignCopyDate);
@@ -1624,7 +1620,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         // Add inspection JSON obj in Offline Array
 
         JSONObject inspectionData = inspectionMethod.AddNewInspectionObj(DRIVER_ID, DeviceId, Globally.PROJECT_ID,
-                DriverName, CompanyId, EldFragment.VehicleId, "", VIN_NUMBER, TruckNumber, TrailerNumber,
+                DriverName, CompanyId, VehicleId, "", VIN_NUMBER, TruckNumber, TrailerNumber,
                 CreatedDate, Location, PreTripInsp, PostTripInsp, AboveDefectsCorrected,  AboveDefectsNotCorrected,
                 Remarks, Globally.LATITUDE, Globally.LONGITUDE, DriverTimeZone, SupervisorMechanicsName, TruckIssueType,
                 TraiorIssueType, InspectionTypeId, ByteDriverSign, ByteSupervisorSign, Odometer, IsSignCopy, SignCopyDate);
@@ -1831,16 +1827,49 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                         case UpdateObdVeh:
                             Globally.EldScreenToast(saveInspectionBtn, "Updated successfully.", getResources().getColor(R.color.colorPrimary));
 
-                            TruckNumber = tempTruck;
-                            SharedPref.setVINNumber(VIN_NUMBER, getActivity());
-                            SharedPref.setLastSavedVINNumber(VIN_NUMBER, getActivity());
+                            try {
+                                String oldVinNumber = VIN_NUMBER;
+                                JSONObject vehicleJsonObj = new JSONObject(obj.getString(ConstantsKeys.Data));
+                                IsAOBRD             = vehicleJsonObj.getBoolean(ConstantsKeys.AOBRD);
+                                IsAOBRDAutomatic    = vehicleJsonObj.getBoolean(ConstantsKeys.IsAOBRDAutomatic);
+                                VIN_NUMBER          = vehicleJsonObj.getString(ConstantsKeys.VIN);
 
-                            EldFragment.VehicleId = vehicleList.get(VehListPosition).getVehicleId();
-                            SharedPref.setVehicleId(EldFragment.VehicleId , getActivity());
-                            powerInspectionTV.setText(tempTruck);
+                                TruckNumber = vehicleJsonObj.getString(ConstantsKeys.EquipmentNumber);
+                                VehicleId = vehicleJsonObj.getString(ConstantsKeys.VehicleId);
 
-                            SharedPref.setTruckNumber(tempTruck, getActivity());
-                            SharedPref.setVINNumber(VIN_NUMBER, getActivity());
+                                boolean isOdometerFromOBD = false;
+                                String plateNo = "";
+
+                                if(vehicleJsonObj.has(ConstantsKeys.OdometerFromOBD)){
+                                    isOdometerFromOBD = vehicleJsonObj.getBoolean(ConstantsKeys.OdometerFromOBD);
+                                }
+
+                                if(vehicleJsonObj.has(ConstantsKeys.PlateNumber)){
+                                    plateNo = vehicleJsonObj.getString(ConstantsKeys.PlateNumber);
+                                }
+
+                                SharedPref.SetIsAOBRD(IsAOBRD, getActivity());
+                                SharedPref.SetAOBRDAutomatic(IsAOBRDAutomatic, getActivity());
+                                SharedPref.SetAOBRDAutoDrive(vehicleJsonObj.getBoolean(ConstantsKeys.IsAutoDriving), getActivity());
+                                SharedPref.SetOdometerFromOBD(isOdometerFromOBD, getActivity());
+                                SharedPref.setCurrentTruckPlateNo(plateNo, getActivity());
+                                SharedPref.setVehicleId(VehicleId, getActivity());
+                                SharedPref.setVINNumber(VIN_NUMBER,  getActivity());
+                                SharedPref.setLastSavedVINNumber(VIN_NUMBER, getActivity());
+                                SharedPref.setTruckNumber(TruckNumber, getActivity());
+
+                                powerInspectionTV.setText(TruckNumber);
+                                if(!oldVinNumber.equals(VIN_NUMBER)){
+                                    constants.resetObdValues(getActivity());
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+
+
+
 
 
                             break;
