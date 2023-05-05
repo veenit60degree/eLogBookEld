@@ -642,6 +642,10 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	private void SaveDataToServer(JSONArray DriverLogArray, int DriverType, boolean isCoDriver){
 
+		if(!EldFragment.IsSaveOperationInProgress) {
+			// add this check and confirm
+		}
+
 		if(DriverLogArray.length() > 0) {
 			String SavedLogApi;
 			if(isCoDriver){
@@ -651,9 +655,19 @@ public class Slidingmenufunctions implements OnClickListener {
 			}
 
 
-			int socketTimeout = constants.SocketTimeout10Sec;	//10 seconds
-			if(DriverLogArray.length() > 10 ){
-				socketTimeout = constants.SocketTimeout20Sec;  //20 seconds
+			int socketTimeout;
+			int logArrayCount = DriverLogArray.length();
+
+			if(logArrayCount <= 3 ){
+				socketTimeout = Constants.SocketTimeout10Sec;  //10 seconds
+			}else if(logArrayCount > 3 && logArrayCount <= 10){
+				socketTimeout = Constants.SocketTimeout20Sec;  //20 seconds
+			}else if(logArrayCount > 10 && logArrayCount <= 30){
+				socketTimeout = Constants.SocketTimeout40Sec;  //40 seconds
+			}else if(logArrayCount > 30 && logArrayCount <= 60){
+				socketTimeout = Constants.SocketTimeout70Sec;  //70 seconds
+			}else{
+				socketTimeout = Constants.SocketTimeout120Sec;  //70 seconds
 			}
 			saveDriverLogPost.PostDriverLogData(DriverLogArray, SavedLogApi, socketTimeout, false,
 					false, DriverType, 101);

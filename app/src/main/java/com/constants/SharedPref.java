@@ -2314,6 +2314,28 @@ public class SharedPref {
 
 
 
+
+    // Set Automatic Time setting Alert status with date -------------------
+    public static void setAutomaticTimeAlertWithStatus( String time, boolean isAlertShown, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("AutomaticTimeAlert", time);
+        editor.putBoolean("IsAutomaticTimeAlert", isAlertShown);
+        editor.commit();
+    }
+
+    // Get AutomaticTime setting Alert date -------------------
+    public static String getAutomaticAlertTime( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("AutomaticTimeAlert", "");
+    }
+
+    // Get AutomaticTime setting Alert display status -------------------
+    public static boolean IsAutomaticTimeAlertShown( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("IsAutomaticTimeAlert", false);
+    }
+
     // get Login Missing Event Occurrence -------------------
     public static boolean isLoginMissingEventOcc( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -3651,6 +3673,20 @@ public class SharedPref {
         return preferences.getString(Constants.DATA_USAGE_TIME, "");
     }
 
+
+    // Get Background Service Running Time -------------------
+    public static void setBgServiceRunningTime( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(Constants.ServiceRunningTime, value);
+        editor.commit();
+    }
+
+    // Get Background Service Running Time -------------------
+    public static String getBgServiceRunningTime( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(Constants.ServiceRunningTime, "");
+    }
 
 
     // Set UnAssigned Vehicle Miles Id -------------------

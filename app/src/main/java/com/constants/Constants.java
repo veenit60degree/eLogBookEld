@@ -5,6 +5,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
@@ -300,6 +301,7 @@ public class Constants {
     public static String CONNECTION_TYPE = "connection_type";
     public static String LAST_SAVED_TIME = "last_saved_time";
     public static String DATA_USAGE_TIME = "data_usage_time";
+    public static String ServiceRunningTime = "ServiceRunningTime";
 
 
     public static String ViolationReason30Min = "30 MIN BREAK VIOLATION";
@@ -3598,7 +3600,10 @@ public class Constants {
 
     public static JSONObject getClaimRecordInputsAsJson(String DriverId, String Vin, String DriverStatusId,
                                                         String UnAssignedVehicleMilesId, String AssignedRecordsId,
-                                                        String Remarks, String UserName, String StartOdo, String EndOdo, String StartLoc, String EndLoc, String StartCity, String StartState, String StartCountry, String EndCity, String EndState, String EndCountry, boolean startOdometer, boolean endOdometer, boolean startLocation, boolean endLocation) {
+                                                        String Remarks, String UserName, String StartOdo, String EndOdo,
+                                                        String StartLoc, String EndLoc, String StartCity, String StartState,
+                                                        String StartCountry, String EndCity, String EndState, String EndCountry,
+                                                        boolean startOdometer, boolean endOdometer, boolean startLocation, boolean endLocation) {
 
         JSONObject obj = new JSONObject();
 
@@ -4108,6 +4113,47 @@ public class Constants {
             return Settings.Global.getInt(c.getContentResolver(), Settings.Global.AUTO_TIME, 0) == 1;
         } else {
             return android.provider.Settings.System.getInt(c.getContentResolver(), android.provider.Settings.System.AUTO_TIME, 0) == 1;
+        }
+    }
+
+
+    public boolean isTimeAlertShownForDay(Context c) {
+        String savedTime = SharedPref.getAutomaticAlertTime(c);
+        if(savedTime.length() > 10){
+            String currentDate = Globally.GetDriverCurrentDateTime(new Globally(), c);
+            int dayDiff = getDayDiff(savedTime, currentDate);
+            if(dayDiff != 0){
+                return false;
+            }else{
+                return SharedPref.IsAutomaticTimeAlertShown(c);
+            }
+        }
+
+        return false;
+    }
+
+
+    public void showAutomaticTimeAlert(Context c, Globally globally, AlertDialog timeSettingAlert){
+        if(!isTimeAutomatic(c)) {
+            boolean isTimeAlertShownForDay = isTimeAlertShownForDay(c);
+            if(!isTimeAlertShownForDay){
+                String savedTime = SharedPref.getAutomaticAlertTime(c);
+                if(savedTime.length() > 10){
+                    String currentDate = Globally.GetDriverCurrentDateTime(globally, c);
+                    int minDiff = getMinDiff(savedTime, currentDate);
+                    if(minDiff > 10){
+                        String certifyTitle = "Automatic Time Zone Setting Required !!";
+                        String titleDesc = "Kindly change your device's Date and Time to AUTOMATIC, so that your logbook could function properly.";
+                        Globally.AutomaticTimeSettingAlert(c, certifyTitle, titleDesc, "Ok",
+                                timeSettingAlert, false);
+
+                        SharedPref.setAutomaticTimeAlertWithStatus(Globally.GetDriverCurrentDateTime(globally, c), true, c);
+
+                    }
+                }else{
+                    SharedPref.setAutomaticTimeAlertWithStatus(Globally.GetDriverCurrentDateTime(globally, c), false, c);
+                }
+            }
         }
     }
 

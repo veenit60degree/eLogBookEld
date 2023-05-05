@@ -94,8 +94,10 @@ public class DatePickerDialog extends Dialog {
         setDateJob.setText("Show Details");
 
 
+
         String CoDriverId = "", firstLoginTime = "";
         int DRIVER_ID           = Integer.valueOf(SharedPref.getDriverId(getContext()));
+
         if (!SharedPref.getDriverType(getContext()).equals(DriverConst.SingleDriver)) {
             if(SharedPref.getDriverId(getContext()).equals(DriverConst.GetDriverDetails(DriverConst.DriverID, getContext()))){
                 CoDriverId   = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getContext());
@@ -107,6 +109,7 @@ public class DatePickerDialog extends Dialog {
         }else{
             firstLoginTime = SharedPref.getDriverFirstLoginTime(getContext());
         }
+
 
         JSONObject logPermissionObj    = driverPermissionMethod.getDriverPermissionObj(DRIVER_ID, CoDriverId, dbHelper);
         IsDot                   = SharedPref.IsDOT(getContext());
@@ -151,7 +154,7 @@ public class DatePickerDialog extends Dialog {
             }
 
 
-          //  DriverPermitMaxDays = getDays(firstLoginTime, DriverPermitMaxDays);
+            DriverPermitMaxDays = getDays(DRIVER_ID, DriverPermitMaxDays);
 
             calendar.add(Calendar.DAY_OF_MONTH, -DriverPermitMaxDays);
             Date mindate = calendar.getTime();
@@ -167,7 +170,7 @@ public class DatePickerDialog extends Dialog {
     }
 
 
-    private int getDays(String firstLoginTime, int DriverPermitMaxDays){
+  /*  private int getDays(String firstLoginTime, int DriverPermitMaxDays){
         if(firstLoginTime.length() > 10) {
            int dayDiff =  constants.getDayDiff(firstLoginTime, Globally.GetCurrentUTCTimeFormat());
            if(dayDiff >= 0 && dayDiff < DriverPermitMaxDays){
@@ -176,7 +179,30 @@ public class DatePickerDialog extends Dialog {
         }
 
         return DriverPermitMaxDays;
+    }*/
+
+    private int getDays(int DRIVER_ID, int DriverPermitMaxDays){
+        try{
+            JSONArray driverLogArray = hMethods.getSavedLogArray(DRIVER_ID, dbHelper);
+            if(driverLogArray.length() > 0){
+                JSONObject obj = (JSONObject) driverLogArray.get(0);
+                String StartDateTime = obj.getString(ConstantsKeys.StartDateTime);
+                if(StartDateTime.length() > 10){
+                    int dayDiff =  constants.getDayDiff(StartDateTime, Globally.GetCurrentUTCTimeFormat());
+                    if(dayDiff >= 0 && dayDiff < DriverPermitMaxDays){
+                        DriverPermitMaxDays = dayDiff;
+                    }
+                }
+            }else{
+                DriverPermitMaxDays = 0;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return DriverPermitMaxDays;
     }
+
 
     private class DateJobListener implements View.OnClickListener {
         @Override

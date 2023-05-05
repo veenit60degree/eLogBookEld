@@ -386,7 +386,11 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
         }
 
         @Override
-        public void JobBtnReady(String reason, boolean isClaim, boolean isCompanyAssigned,String startOdo,String endOdo,String startLoc,String endLoc,String StartCity,String StartState,String StartCountry,String EndCity,String EndState,String EndCountry,boolean startOdometer, boolean endOdometer, boolean startLocation, boolean endLocation) {
+        public void JobBtnReady(String reason, boolean isClaim, boolean isCompanyAssigned,
+                                String startOdo,String endOdo,String startLoc,String endLoc,String StartCity,
+                                String StartState,String StartCountry,String EndCity,String EndState,
+                                String EndCountry,boolean startOdometer,
+                                boolean endOdometer, boolean startLocation, boolean endLocation) {
 
             try {
                 if (remarksDialog != null && remarksDialog.isShowing())

@@ -29,6 +29,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.text.Html;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -65,6 +66,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.htstart.htsdk.HTBleSdk;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
+import com.local.db.DriverPermissionMethod;
 import com.local.db.MalfunctionDiagnosticMethod;
 import com.als.logistic.fragment.EldFragment;
 import com.notifications.NotificationManagerSmart;
@@ -766,14 +768,18 @@ public class Globally {
 
 
 	@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-	public boolean isCorrectTime(Context context, boolean IsOnCreateView){
+	public boolean isCorrectTime(Context context, boolean IsOnCreateView, String savedUtcDate){
     	boolean isTimeCorrect = true;
-		String utcDate = SharedPref.getCurrentUTCTime(context);
-		DateTime savedUtcDateTime = getDateTimeObj(utcDate, false);
+		DateTime savedUtcDateTime = getDateTimeObj(savedUtcDate, false);
 		DateTime currentUtcDateTime = GetCurrentUTCDateTime();
+		Constants constants = new Constants();
+		int timeSettingStatus = -1;
 
-		//DateTime savedUtcDateTime = getDateTimeObj("2023-03-14T17:58:45.000Z", false);
-	//	DateTime currentUtcDateTime = getDateTimeObj("2023-03-14T18:00:42.000Z", false);
+		try {
+			timeSettingStatus = Settings.Global.getInt(context.getContentResolver(), Settings.Global.AUTO_TIME);
+		} catch (Settings.SettingNotFoundException e) {
+			e.printStackTrace();
+		}
 
 		if(savedUtcDateTime != null && savedUtcDateTime.toString().length() > 16 && currentUtcDateTime.toString().length() > 16) {
 			int dayDiff = Constants.getDayDiff(savedUtcDateTime.toString(), currentUtcDateTime.toString());
@@ -796,6 +802,10 @@ public class Globally {
 
 		if(!isTimeCorrect && SharedPref.isServiceOnDestoryCalled(context)){
 			isTimeCorrect = true;
+		}else{
+			if(timeSettingStatus == 1 && !isTimeCorrect){		// 1 means time automatic setting is ON.
+				isTimeCorrect = true;
+			}
 		}
 
 		return isTimeCorrect;
@@ -2444,6 +2454,45 @@ public class Globally {
 		}
 	}
 
+
+
+	public static void AutomaticTimeSettingAlert(final Context context, final String title, final String msg,
+													final String okText, AlertDialog alertDialog, boolean isDismiss){
+		try {
+			if(alertDialog != null && alertDialog.isShowing()){
+				alertDialog.dismiss();
+			}
+
+			alertDialog.setTitle(Html.fromHtml(title));
+			alertDialog.setMessage(Html.fromHtml(msg));
+
+			String defaultColor = "#1A3561";
+			if(UILApplication.getInstance().isNightModeEnabled()) {
+				defaultColor = "#ffffff";
+			}
+
+			// Setting OK Button
+			alertDialog.setButton(Html.fromHtml("<font color='"+ defaultColor +"'><b>"+okText+"</b></font>"), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+
+					context.startActivity(new Intent(android.provider.Settings.ACTION_DATE_SETTINGS));
+					dialog.dismiss();
+				}
+			});
+
+			// Showing Alert Message
+			if (context != null) {
+				alertDialog.show();
+				if(UILApplication.getInstance().isNightModeEnabled()) {
+					alertDialog.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+				}
+			}
+
+
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
 
 
 	public static void DriverSwitchAlert(final Context context, final String title, final String msg, final String okText){

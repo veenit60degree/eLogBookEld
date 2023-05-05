@@ -1,7 +1,9 @@
 package com.als.logistic.fragment;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,7 +12,10 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -405,7 +410,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             DOTBtnVisibility(DaysDiff, MaxDays);
 
         //    GetDriverDotDetails(DriverId, LogDate);
-
+            canDotProgressBar.setVisibility(View.VISIBLE);
             canDotWebView.loadUrl(logUrl + LogDate + "&Id=" + DriverId);
 
 
@@ -487,11 +492,50 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
 
     public class WebViewClient extends android.webkit.WebViewClient {
+
+        String defaultMessage = "ConnectionError";
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
-            canDotProgressBar.setVisibility(View.VISIBLE);
+          //  canDotProgressBar.setVisibility(View.VISIBLE);
         }
+
+        @Override
+        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+            switch (error.getPrimaryError()) {
+                case SslError.SSL_UNTRUSTED:
+                    defaultMessage = "The certificate authority is not trusted.";
+                    break;
+                case SslError.SSL_EXPIRED:
+                    defaultMessage = "The certificate has expired.";
+                    break;
+                case SslError.SSL_IDMISMATCH:
+                    defaultMessage = "The certificate Hostname mismatch.";
+                    break;
+                case SslError.SSL_INVALID:
+                    defaultMessage = "SSL connection is invalid.";
+                    break;
+            }
+
+        }
+
+
+        @SuppressLint("NewApi")
+        @Override
+        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+            if (request.isForMainFrame() && error != null) {
+                view.loadUrl(defaultMessage);
+            }
+        }
+
+        @Override
+        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+            if (errorCode != WebViewClient.ERROR_UNSUPPORTED_SCHEME && errorCode != WebViewClient.ERROR_HOST_LOOKUP) {
+                view.loadUrl(defaultMessage);
+            }
+        }
+
+
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             view.loadUrl(url);
@@ -779,6 +823,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 if(LogDate.length() > 1){
                     EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " (" + dayOfTheWeek + " )");
                    // GetDriverDotDetails(DriverId, LogDate);
+                    canDotProgressBar.setVisibility(View.VISIBLE);
                     canDotWebView.loadUrl(logUrl + LogDate + "&Id=" + DriverId);
                 }
             }
@@ -897,6 +942,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
                 DOTBtnVisibility(DaysDiff, MaxDays);
                 //GetDriverDotDetails(DriverId, LogDate);
+                canDotProgressBar.setVisibility(View.VISIBLE);
                 canDotWebView.loadUrl(logUrl + LogDate + "&Id=" + DriverId);
 
             }else{

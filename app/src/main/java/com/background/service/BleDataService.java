@@ -365,7 +365,7 @@ public class BleDataService extends Service {
         HTBleSdk.Companion.getInstance().registerCallBack(new IReceiveListener() {
             @Override
             public void onConnected(@Nullable String s) {
-                Logger.LogError("TAG", "Ble onConnected==" + s);
+                Logger.LogError("TAG", "----onConnected Ble==" + s);
                 //  Logger.LogError("getAddress-onConnected", "getAddress: " +s);
                 EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_CONNECTED, s));
 
@@ -385,7 +385,7 @@ public class BleDataService extends Service {
 
             @Override
             public void onConnectTimeout(@Nullable String s) {
-                Logger.LogError("TAG", "onConnectTimeout==" + s);
+                Logger.LogError("TAG", "----onConnectTimeout==" + s);
                 EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_CONNECT_TIMEOUT, s));
                 //Logger.LogError("getAddress-Timeout", "getAddress: " +s);
 
@@ -400,7 +400,7 @@ public class BleDataService extends Service {
 
             @Override
             public void onConnectionError(@NonNull String s, int i, int i1) {
-                Logger.LogError("TAG", "onConnectionError==" + s);
+                Logger.LogError("TAG", "----onConnectionError==" + s);
                 EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_CONNECT_ERROR, s));
                 sendBroadCast(getString(R.string.ht_connect_error), "");
                 sendEcmBroadcast(false, "onConnectionError");
@@ -417,35 +417,45 @@ public class BleDataService extends Service {
             @Override
             public void onDisconnected(@Nullable String address) {
 
-                Logger.LogError("TAG", "onDisconnected==" + address);
+                Logger.LogError("TAG", "----onDisconnected==" + address);
+
 
                 try {
-                    isConnected = false;
-                    isBleConnected = false;
+                    if(isConnected){
+                        isConnected = false;
+                        isBleConnected = false;
 
-                    HTBleSdk.Companion.getInstance().unRegisterCallBack();
-                    BackgroundLocationService.obdVehicleSpeed = 0;
-                    EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_DISCONNECTED, address));
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Logger.LogError("TAG", "----onDisconnected handler");
+                                constants.saveBleLog("onDisconnected", Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext(), dbHelper,
+                                        driverPermissionMethod, obdUtil);
 
-                    sendBroadCast(getString(R.string.ht_disconnected), "");
-                    sendEcmBroadcast(false, "Disconnected");
-                    Thread.sleep(Constants.SocketTimeout800ms);
+                                HTBleSdk.Companion.getInstance().unRegisterCallBack();
+                                BackgroundLocationService.obdVehicleSpeed = 0;
+                                EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_DISCONNECTED, address));
 
+                                sendBroadCast(getString(R.string.ht_disconnected), "");
+                                sendEcmBroadcast(false, "Disconnected");
 
+                            }
+                        }, 800);
+                       // Thread.sleep(Constants.SocketTimeout800ms);
+
+                    }
 
                 }catch (Exception e){
                     e.printStackTrace();
                 }
 
-                constants.saveBleLog("onDisconnected", Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext(), dbHelper,
-                        driverPermissionMethod, obdUtil);
 
 
             }
 
             @Override
             public void onReceive(@NotNull String address, @NotNull String uuid, @NotNull HTBleData htBleData) {
-                  Logger.LogError("htBleData", "htBleData: " + htBleData);
+                  Logger.LogError("htBleData", "----htBleData: " + htBleData);
 
                 int eventType = htBleData.getEventType();
                 int eventCode = htBleData.getEventCode();

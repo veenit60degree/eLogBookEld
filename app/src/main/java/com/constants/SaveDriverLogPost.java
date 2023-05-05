@@ -90,6 +90,7 @@ public class SaveDriverLogPost
                     try {
                         Logger.LogDebug("api", ">>>certify Data api: " + api);
                         Logger.LogDebug("certify", ">>>certify Data: " + driverLogData.toString());
+
                         return driverLogData.toString().getBytes("utf-8");
                     } catch (UnsupportedEncodingException uee) {
                         VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s",

@@ -1177,7 +1177,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         TruckNo         = SharedPref.getTruckNumber(context);   //DriverConst.GetDriverTripDetails(DriverConst.Truck, context);
         isNorthCanada   =  SharedPref.IsNorthCanada(context);
         CurrentCycleId  = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(context), context);
-        IsValidTime     = Global.isCorrectTime(context, false );
+        IsValidTime     = Global.isCorrectTime(context, false, SharedPref.getCurrentUTCTime(context) );
 
         try {
             if (SharedPref.getDriverType(context).equals(DriverConst.SingleDriver)) {

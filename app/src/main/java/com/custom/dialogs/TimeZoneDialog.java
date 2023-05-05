@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Html;
 import android.view.Gravity;
 import android.view.View;
@@ -57,14 +58,17 @@ public class TimeZoneDialog extends Dialog {
     final int CheckConnection = 2;
     boolean isTimeZoneValid,  isCurrentTimeBigger, isTimeValid, IsOnCreateView;
     Animation timeSettingsDescAnim;
+    String savedDate;
 
 
-    public TimeZoneDialog(Context context, boolean isvalidTimeZone, boolean isTimeValid, boolean isOnCreateView) {
+    public TimeZoneDialog(Context context, boolean isvalidTimeZone, boolean isTimeValid,
+                          boolean isOnCreateView, String savedDate) {
         super(context);
         this.mContext = context;
         isTimeZoneValid = isvalidTimeZone;
         this.isTimeValid = isTimeValid;
         IsOnCreateView = isOnCreateView;
+        this.savedDate = savedDate;
     }
 
 
@@ -123,9 +127,17 @@ public class TimeZoneDialog extends Dialog {
                 logoutTV.setText(Html.fromHtml("<font color='blue'><u>Logout</u></font>"));
             }
             logoutTV.setVisibility(View.GONE);
-            String autoTimeSettingDesc = "<b>Note: </b>" + getContext().getString(R.string.auto_time_setting_desc);
-            autoTimeSettingDescTV.setText(Html.fromHtml(autoTimeSettingDesc));
-            autoTimeSettingDescTV.startAnimation(timeSettingsDescAnim);
+            try {
+                int timeSettingStatus = Settings.Global.getInt(mContext.getContentResolver(), Settings.Global.AUTO_TIME);
+                Logger.LogDebug("timeSettingStatus","timeSettingStatus: " +timeSettingStatus);
+
+                String autoTimeSettingDesc = "<b>Note: </b>" + getContext().getString(R.string.auto_time_setting_desc);
+                autoTimeSettingDescTV.setText(Html.fromHtml(autoTimeSettingDesc));
+                autoTimeSettingDescTV.startAnimation(timeSettingsDescAnim);
+
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+            }
 
             if (isTimeZoneValid) {
                 // if time zone is valid, means time is invalid
@@ -133,7 +145,7 @@ public class TimeZoneDialog extends Dialog {
                 recordTitleTV.setText(mContext.getResources().getString(R.string.timing_mal_alert_desc));   //incorrect_time_desc
                 btnUpdateApp.setText(mContext.getResources().getString(R.string.AdjustTime));
 
-                DateTime savedUtcDateTime = global.getDateTimeObj(SharedPref.getCurrentUTCTime(mContext), false);
+                DateTime savedUtcDateTime = global.getDateTimeObj(savedDate, false);
                 String offset = DriverConst.GetDriverSettings(DriverConst.OffsetHours, mContext);
                 if (offset.length() > 0) {
                     int offSetFromServer = Integer.valueOf(offset);
@@ -289,8 +301,9 @@ public class TimeZoneDialog extends Dialog {
                         case CheckConnection:
 
                             // Save current UTC date time
-                            SharedPref.setCurrentUTCTime( obj.getString("Data") , mContext );
-                            boolean isCorrectTime = global.isCorrectTime(mContext, IsOnCreateView);
+                            String date = obj.getString("Data");
+                            SharedPref.setCurrentUTCTime(date , mContext );
+                            boolean isCorrectTime = global.isCorrectTime(mContext, IsOnCreateView, date);
 
                             if( isCorrectTime && mContext != null){ //&& isTimeZoneValid
                                 dismiss();

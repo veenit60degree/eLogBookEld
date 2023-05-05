@@ -461,7 +461,7 @@ public class ConstantsKeys {
     public static String OdometerInMeters               = "OdometerInMeters";
     public static String LogSignImage                   = "LogSignImage";
     public static String LogSignImageInByte             = "LogSignImageInByte";
-    public static String CertifyOldImage             = "CertifyOldImage";
+    public static String CertifyOldImage                = "CertifyOldImage";
     public static String CoDriverName                   = "CoDriverName";
     public static String CoDriverKey                    = "CoDriverKey";
     public static String IsSkipRecord                   = "IsSkipRecord";   // true used for same status like DRIVING/ONDUTY when violation occurred

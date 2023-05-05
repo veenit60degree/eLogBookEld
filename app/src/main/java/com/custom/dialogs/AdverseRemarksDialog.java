@@ -34,7 +34,11 @@ public class AdverseRemarksDialog extends Dialog {
 
     public interface RemarksListener {
         public void CancelReady();
-        public void JobBtnReady(String Remarks, boolean isClaim, boolean isCompanyAssigned,String StartOdometer,String EndOdometer,String StartLocation,String EndLocation,String StartCity,String StartState,String StartCountry,String EndCity,String EndState,String EndCountry,boolean startOdometer, boolean endOdometer, boolean startLocation, boolean endLocation);
+        public void JobBtnReady(String Remarks, boolean isClaim, boolean isCompanyAssigned,
+                                String StartOdometer,String EndOdometer,String StartLocation,
+                                String EndLocation,String StartCity,String StartState,String StartCountry,
+                                String EndCity,String EndState,String EndCountry,boolean startOdometer,
+                                boolean endOdometer, boolean startLocation, boolean endLocation);
 
     }
 
@@ -316,7 +320,10 @@ public class AdverseRemarksDialog extends Dialog {
                                 }
                                 startOdo = Constants.getBeforeDecimalValues(startOdo);
                                 endOdo = Constants.getBeforeDecimalValues(endOdo);
-                                readyListener.JobBtnReady(remarks, IsClaim, IsCompanyAssign,startOdo,endOdo,startLoc,endLoc,startLocationEditText.getText().toString(),StartSelectedState,StartSelectedCountry,endLocationEditText.getText().toString(),EndSelectedState,EndSelectedCountry,startOdometer,endOdometer,startLocation,endLocation);
+                                readyListener.JobBtnReady(remarks, IsClaim, IsCompanyAssign,startOdo,endOdo,
+                                        startLoc,endLoc,startLocationEditText.getText().toString(),
+                                        StartSelectedState,StartSelectedCountry,endLocationEditText.getText().toString(),
+                                        EndSelectedState,EndSelectedCountry,startOdometer,endOdometer,startLocation,endLocation);
                             } else {
                                 if(isAdverse) {
                                     globally.EldScreenToast(btnLoadingJob, ConstantsEnum.ADVERSE_REASON_ALERT, getContext().getResources().getColor(R.color.red_eld));

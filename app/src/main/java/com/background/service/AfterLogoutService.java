@@ -186,54 +186,58 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         mMessageReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive (Context context, Intent intent){
+
+
                  Logger.LogDebug("received", "received from service");
-               // boolean BleDataService = intent.getBooleanExtra(ConstantsKeys.BleDataService, false);
-                boolean IsConnected = intent.getBooleanExtra(ConstantsKeys.IsConnected, false);
-                String data         = intent.getStringExtra(ConstantsKeys.Data);
-               // Logger.LogDebug("Ble Data", "Data: " + data);
+
+                if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+                    // boolean BleDataService = intent.getBooleanExtra(ConstantsKeys.BleDataService, false);
+                    boolean IsConnected = intent.getBooleanExtra(ConstantsKeys.IsConnected, false);
+                    String data = intent.getStringExtra(ConstantsKeys.Data);
+                    // Logger.LogDebug("Ble Data", "Data: " + data);
 // 0048 @@ 0 @@ 1 @@ 090622 @@ 060443 @@ 090622053820 @@ 090622060443 @@ OnTime @@ 0 @@ 0 @@ 642264000 @@ 0.00 @@ @@ X @@ X @@ 0
-               // if (BleDataService) {
+                    // if (BleDataService) {
 
-                if (!SharedPref.IsDriverLogin(getApplicationContext())) {
+                    if (!SharedPref.IsDriverLogin(getApplicationContext())) {
 
-                    try{
+                        try {
 
-                        if(IsConnected){
-                            String[] decodedDataArray = BleUtil.decodedDataArray(data);
-                            if(decodedDataArray.length > 10){
+                            if (IsConnected) {
+                                String[] decodedDataArray = BleUtil.decodedDataArray(data);
+                                if (decodedDataArray.length > 10) {
 
-                                String savedOnReceiveTime = SharedPref.getBleOnReceiveTime(getApplicationContext());
-                                if (savedOnReceiveTime.length() > 10) {
-                                    int timeInSec = constants.getSecDifference(savedOnReceiveTime, Globally.GetDriverCurrentDateTime(global, getApplicationContext()));
-                                    if (timeInSec > 1) {
-                                        SharedPref.setBleOnReceiveTime(getApplicationContext());
+                                    String savedOnReceiveTime = SharedPref.getBleOnReceiveTime(getApplicationContext());
+                                    if (savedOnReceiveTime.length() > 10) {
+                                        int timeInSec = constants.getSecDifference(savedOnReceiveTime, Globally.GetDriverCurrentDateTime(global, getApplicationContext()));
+                                        if (timeInSec > 1) {
+                                            SharedPref.setBleOnReceiveTime(getApplicationContext());
 
-                                        String savedMacAddress = SharedPref.GetBleOBDMacAddress(getApplicationContext());
-                                        if (savedMacAddress.length() == 0 || savedMacAddress.equals(decodedDataArray[0])) {
-                                            //  Logger.LogError("TAG", "onReceiveTime==" + htBleData);
-                                            SharedPref.SaveBleOBDMacAddress(decodedDataArray[0], getApplicationContext());
+                                            String savedMacAddress = SharedPref.GetBleOBDMacAddress(getApplicationContext());
+                                            if (savedMacAddress.length() == 0 || savedMacAddress.equals(decodedDataArray[0])) {
+                                                //  Logger.LogError("TAG", "onReceiveTime==" + htBleData);
+                                                SharedPref.SaveBleOBDMacAddress(decodedDataArray[0], getApplicationContext());
 
-                                            if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
-                                                bleConnectionCount = 0;
-                                                SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
-                                                        global.GetCurrentUTCTimeFormat(), getApplicationContext());
+                                                if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
+                                                    bleConnectionCount = 0;
+                                                    SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
+                                                            global.GetCurrentUTCTimeFormat(), getApplicationContext());
 
-                                                global.ShowLocalNotification(getApplicationContext(),
-                                                        getString(R.string.BluetoothOBD),
-                                                        getString(R.string.obd_ble), 2081);
+                                                    global.ShowLocalNotification(getApplicationContext(),
+                                                            getString(R.string.BluetoothOBD),
+                                                            getString(R.string.obd_ble), 2081);
 
-                                                sendBroadcast(false, "No");
+                                                    sendBroadcast(false, "No");
 
-                                            }
+                                                }
 
-                                            sendBroadcast(true, "");
-                                            VehicleObdSpeed = Integer.valueOf(decodedDataArray[9]);
-                                            truckRPM = decodedDataArray[10];
-                                            ObdProvidedVin = decodedDataArray[13];
-                                            EngineSeconds = decodedDataArray[12];
-                                            obdOdometer = decodedDataArray[11];
-                                            currentHighPrecisionOdometer = decodedDataArray[11];
-                                            BackgroundLocationService.obdVehicleSpeed = VehicleObdSpeed;
+                                                sendBroadcast(true, "");
+                                                VehicleObdSpeed = Integer.valueOf(decodedDataArray[9]);
+                                                truckRPM = decodedDataArray[10];
+                                                ObdProvidedVin = decodedDataArray[13];
+                                                EngineSeconds = decodedDataArray[12];
+                                                obdOdometer = decodedDataArray[11];
+                                                currentHighPrecisionOdometer = decodedDataArray[11];
+                                                BackgroundLocationService.obdVehicleSpeed = VehicleObdSpeed;
 
                                                /*
 
@@ -250,113 +254,113 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                                                 */
 
-                                            Globally.LATITUDE = decodedDataArray[14];
-                                            Globally.LONGITUDE = decodedDataArray[15];
+                                                Globally.LATITUDE = decodedDataArray[14];
+                                                Globally.LONGITUDE = decodedDataArray[15];
 
-                                            // this check is using to confirm loc update, because in loc disconnection ble OBD is sending last saved location.
-                                            if (Globally.LATITUDE.equals(PreviousLatitude) && Globally.LONGITUDE.equals(PreviousLongitude) &&
-                                                    !currentHighPrecisionOdometer.equals(PreviousOdometer)) {
-                                                Globally.LATITUDE = Globally.GPS_LATITUDE;
-                                                Globally.LONGITUDE = Globally.GPS_LONGITUDE;
-
-                                            }
-
-                                            if (Globally.LATITUDE.length() < 4) {
-                                                SharedPref.SetLocReceivedFromObdStatus(false, getApplicationContext());
-
-                                                if (Globally.GPS_LATITUDE.length() > 3) {
+                                                // this check is using to confirm loc update, because in loc disconnection ble OBD is sending last saved location.
+                                                if (Globally.LATITUDE.equals(PreviousLatitude) && Globally.LONGITUDE.equals(PreviousLongitude) &&
+                                                        !currentHighPrecisionOdometer.equals(PreviousOdometer)) {
                                                     Globally.LATITUDE = Globally.GPS_LATITUDE;
                                                     Globally.LONGITUDE = Globally.GPS_LONGITUDE;
-                                                } else {
-                                                    Globally.LATITUDE = "";
-                                                    Globally.LONGITUDE = "";
+
                                                 }
 
-                                            } else {
-                                                SharedPref.SetLocReceivedFromObdStatus(true, getApplicationContext());
-                                            }
+                                                if (Globally.LATITUDE.length() < 4) {
+                                                    SharedPref.SetLocReceivedFromObdStatus(false, getApplicationContext());
 
-                                            PreviousLatitude = decodedDataArray[14];
-                                            PreviousLongitude = decodedDataArray[15];
-                                            PreviousOdometer = currentHighPrecisionOdometer;
+                                                    if (Globally.GPS_LATITUDE.length() > 3) {
+                                                        Globally.LATITUDE = Globally.GPS_LATITUDE;
+                                                        Globally.LONGITUDE = Globally.GPS_LONGITUDE;
+                                                    } else {
+                                                        Globally.LATITUDE = "";
+                                                        Globally.LONGITUDE = "";
+                                                    }
 
-                                            if (constants.isObdVinValid(ObdProvidedVin)) {
-                                                SharedPref.setVehicleVin(ObdProvidedVin, getApplicationContext());
-                                            } /*else {
+                                                } else {
+                                                    SharedPref.SetLocReceivedFromObdStatus(true, getApplicationContext());
+                                                }
+
+                                                PreviousLatitude = decodedDataArray[14];
+                                                PreviousLongitude = decodedDataArray[15];
+                                                PreviousOdometer = currentHighPrecisionOdometer;
+
+                                                if (constants.isObdVinValid(ObdProvidedVin)) {
+                                                    SharedPref.setVehicleVin(ObdProvidedVin, getApplicationContext());
+                                                } /*else {
                                                 VinNumber = SharedPref.getVINNumber(getApplicationContext());
                                             }*/
 
-                                            constants.saveEcmLocationWithTime(Globally.LATITUDE, Globally.LONGITUDE, currentHighPrecisionOdometer, getApplicationContext());
+                                                constants.saveEcmLocationWithTime(Globally.LATITUDE, Globally.LONGITUDE, currentHighPrecisionOdometer, getApplicationContext());
 
 
-                                            String lastIgnitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
-                                            //Logger.LogDebug("lastIgnitionStatus", "lastIgnitionStatus00: " +lastIgnitionStatus );
-                                            // this check is used when ble obd is disconnected
-                                            if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
-                                                if (!SharedPref.getRPM(getApplicationContext()).equals("0") && lastIgnitionStatus.equals("true")) {
-                                                    truckRPM = SharedPref.getRPM(getApplicationContext());
-                                                    ignitionStatus = "ON";
-                                                }
-
-                                                checkObdDataWithRule(VehicleObdSpeed);
-
-                                            } else {
-
-                                                if (truckRPM.length() > 0) {
-                                                    if (Integer.valueOf(truckRPM) > 0) {
+                                                String lastIgnitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
+                                                //Logger.LogDebug("lastIgnitionStatus", "lastIgnitionStatus00: " +lastIgnitionStatus );
+                                                // this check is used when ble obd is disconnected
+                                                if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
+                                                    if (!SharedPref.getRPM(getApplicationContext()).equals("0") && lastIgnitionStatus.equals("true")) {
+                                                        truckRPM = SharedPref.getRPM(getApplicationContext());
                                                         ignitionStatus = "ON";
-                                                    } else {
-                                                        ignitionStatus = "OFF";
                                                     }
 
                                                     checkObdDataWithRule(VehicleObdSpeed);
 
+                                                } else {
+
+                                                    if (truckRPM.length() > 0) {
+                                                        if (Integer.valueOf(truckRPM) > 0) {
+                                                            ignitionStatus = "ON";
+                                                        } else {
+                                                            ignitionStatus = "OFF";
+                                                        }
+
+                                                        checkObdDataWithRule(VehicleObdSpeed);
+
+                                                    }
                                                 }
+
                                             }
 
+                                        } else {
+                                            if (timeInSec < 0) {
+                                                SharedPref.setBleOnReceiveTime(getApplicationContext());
+                                            }
                                         }
-
-                                    }else{
-                                        if(timeInSec < 0){
-                                            SharedPref.setBleOnReceiveTime(getApplicationContext());
-                                        }
+                                    } else {
+                                        SharedPref.setBleOnReceiveTime(getApplicationContext());
                                     }
-                                } else {
-                                    SharedPref.setBleOnReceiveTime(getApplicationContext());
+
+                                }
+                            } else {
+
+                                sendBroadcast(false, "");
+                                SharedPref.setLoginAllowedStatus(true, getApplicationContext());
+
+                                if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
+
+                                    global.ShowLocalNotification(getApplicationContext(),
+                                            getString(R.string.BluetoothOBD),
+                                            getString(R.string.obd_ble_disconnected), 2081);
+
+                                    sendBroadcast(false, "Yes");
+                                    // check Unidentified event occurrence
+                                    // saveUnidentifiedEventStatusOld(-1, false);
                                 }
 
-                            }
-                        }else{
+                                SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
+                                        global.GetCurrentUTCTimeFormat(), getApplicationContext());
 
-                            sendBroadcast(false, "");
-                            SharedPref.setLoginAllowedStatus(true, getApplicationContext());
-
-                            if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
-
-                                global.ShowLocalNotification(getApplicationContext(),
-                                        getString(R.string.BluetoothOBD),
-                                        getString(R.string.obd_ble_disconnected), 2081);
-
-                                sendBroadcast(false, "Yes");
-                                // check Unidentified event occurrence
-                                // saveUnidentifiedEventStatusOld(-1, false);
                             }
 
-                            SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
-                                    global.GetCurrentUTCTimeFormat(), getApplicationContext());
-
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }else{
-                    Logger.LogDebug("Driver LoggedIn", "Login");
-                    if(!isDataAlreadyPosting){
-                        StopService();
+                    } else {
+                        Logger.LogDebug("Driver LoggedIn", "Login");
+                        if (!isDataAlreadyPosting) {
+                            StopService();
+                        }
                     }
                 }
-
             }
         };
 

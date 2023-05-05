@@ -1,5 +1,6 @@
                                                                                                                                                                     package com.als.logistic.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -181,7 +182,7 @@ public class DownloadRodsFragment extends Fragment implements View.OnClickListen
   void setCanadaView(){
       CurrentCycle = "CAN";
       dotSwitchButton.setText("CAN");
-      dotCanLogArray = hMethods.getSavedDownlodedLogCanadaArray(DriverId,dbHelper);
+      dotCanLogArray = hMethods.getSavedDownlodedLogCanadaArray(DriverId, dbHelper);
       if(dotCanLogArray.length()>0) {
           setDataOnList(dotCanLogArray);
           noDataRODSTV.setVisibility(View.GONE);
@@ -194,7 +195,7 @@ public class DownloadRodsFragment extends Fragment implements View.OnClickListen
     void setUsaView(){
         CurrentCycle = "USA";
         dotSwitchButton.setText("USA");
-        dotUsLogArray = hMethods.getSavedDownlodedLogUsaArray(DriverId,dbHelper);
+        dotUsLogArray = hMethods.getSavedDownlodedLogUsaArray(DriverId, dbHelper);
         if(dotUsLogArray.length()>0) {
             setDataOnList(dotUsLogArray);
             noDataRODSTV.setVisibility(View.GONE);
@@ -227,7 +228,7 @@ public class DownloadRodsFragment extends Fragment implements View.OnClickListen
         dotProgressBar.setVisibility(View.VISIBLE);
 
         params = new HashMap<String, String>();
-        params.put(ConstantsKeys.DriverId, DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()));
+        params.put(ConstantsKeys.DriverId, ""+DriverId);   //DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity())
         params.put(ConstantsKeys.FromDate, fromDate);
         params.put(ConstantsKeys.ToDate, toDate);
         params.put(ConstantsKeys.Country, country);
@@ -273,7 +274,7 @@ public class DownloadRodsFragment extends Fragment implements View.OnClickListen
 
                                 //////////////// Save Canada Log in Db ///////////////
 
-                                hMethods.DownloadedCanadaRecordLogHelper(DriverId,dbHelper,dotCanLogArray);
+                                hMethods.DownloadedCanadaRecordLogHelper(DriverId, dbHelper,dotCanLogArray);
                             }else{
                                 dotUsLogArray = new JSONArray(dataObj.getString("Data"));
                                 setDataOnList(dotUsLogArray);
@@ -283,7 +284,7 @@ public class DownloadRodsFragment extends Fragment implements View.OnClickListen
 
                                 //////////////// Save Usa Log in Db ///////////////
 
-                                hMethods.DownloadedUsaRecordLogHelper(DriverId,dbHelper,dotUsLogArray);
+                                hMethods.DownloadedUsaRecordLogHelper(DriverId, dbHelper,dotUsLogArray);
                             }
 
                         }catch (Exception e){
@@ -406,7 +407,7 @@ public class DownloadRodsFragment extends Fragment implements View.OnClickListen
                 if (cur.moveToFirst()) {
                     int columnIndex = cur.getColumnIndex(DownloadManager.COLUMN_STATUS);
                     if (DownloadManager.STATUS_SUCCESSFUL == cur.getInt(columnIndex)) {
-                        String path = cur.getString(cur.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                        @SuppressLint("Range") String path = cur.getString(cur.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
                         String[] pathArray = path.split("///");
                         if (pathArray.length > 1) {
                             path = pathArray[1];
@@ -417,7 +418,7 @@ public class DownloadRodsFragment extends Fragment implements View.OnClickListen
                         getFileDownloaded.renameTo(new File(pathOriginal + "/" + getFileDownloaded.getName()));
 
                     } else if (DownloadManager.STATUS_FAILED == cur.getInt(columnIndex)) {
-                        String path = cur.getString(cur.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                        @SuppressLint("Range") String path = cur.getString(cur.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
                         String[] pathArray = path.split("///");
                         if (pathArray.length > 1) {
                             path = pathArray[1];

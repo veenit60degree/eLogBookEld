@@ -859,11 +859,12 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             City = cityEditText.getText().toString().trim();
             Location = City + ", " + State + ", " + Country;
             if (City.length() > 0 && State.length() > 0) {
-                if(PreTripInsp.equals("true"))
-                    InspectionTypeId = String.valueOf(Constants.PreInspection);
-                else
-                    InspectionTypeId = String.valueOf(Constants.PostInspection);
-
+                if(!InspectionTypeId.equals(""+Constants.Trailer)) {
+                    if (PreTripInsp.equals("true"))
+                        InspectionTypeId = String.valueOf(Constants.PreInspection);
+                    else
+                        InspectionTypeId = String.valueOf(Constants.PostInspection);
+                }
                 CheckInspectValidationPart2();
 
             } else {
@@ -877,10 +878,12 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             }
         } else {
             getLocation();
-            if(PreTripInsp.equals("true"))
-                InspectionTypeId = String.valueOf(Constants.PreInspection);
-            else
-                InspectionTypeId = String.valueOf(Constants.PostInspection);
+            if(!InspectionTypeId.equals(""+Constants.Trailer)) {
+                if (PreTripInsp.equals("true"))
+                    InspectionTypeId = String.valueOf(Constants.PreInspection);
+                else
+                    InspectionTypeId = String.valueOf(Constants.PostInspection);
+            }
 
             CheckInspectValidationPart2();
 

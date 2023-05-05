@@ -216,7 +216,7 @@ public class HelperMethods {
 
                 }
             }else {
-                if(isAppRestricted && isVehicleMoving){
+                if(isAppRestricted && isVehicleMoving ){ //&& BackgroundLocationService.obdVehicleSpeed > 1
                     isActionAllowed = false;
                 }
             }
@@ -1691,7 +1691,7 @@ public class HelperMethods {
             sameStatusJson.put(ConstantsKeys.IsShortHaulException, false);
             sameStatusJson.put(ConstantsKeys.IsShortHaulUpdate, false );
 
-            sameStatusJson.put(ConstantsKeys.DecesionSource,    "");
+            sameStatusJson.put(ConstantsKeys.DecesionSource,    "FreshDriver");
             sameStatusJson.put(ConstantsKeys.IsAdverseException, false);
             sameStatusJson.put(ConstantsKeys.AdverseExceptionRemarks, "");
             sameStatusJson.put(ConstantsKeys.LocationType, "");
@@ -2667,73 +2667,75 @@ public class HelperMethods {
 
     // -------- check New Driver Day Start Log --------------
     public JSONArray checkNewDriverDayStartLog(JSONArray driverLogJsonArray, JSONArray selectedLogArray,
-                                               String DRIVER_ID, int offsetFromUTC,
+                                               String DRIVER_ID, int offsetFromUTC, String LogDate,
                                                ShipmentHelperMethod shipmentHelper, Context context){
 
-        //String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
-        String  CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(context), context);
+        String currentLogDate = Globally.ConvertDateFormatMMddyyyy(Globally.GetDriverCurrentDateTime(new Globally(), context));
+        if(currentLogDate.equals(LogDate)) {
+            //String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+            String CurrentCycleId = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(context), context);
 
 
-        DateTime currentUTCTime = Globally.getDateTimeObj(Globally.GetCurrentUTCTimeFormat(), true);
-        DateTime currentDateTime = Globally.GetDriverCurrentTime(currentUTCTime.toString(), new Globally(), context);    // Current Date Time
+            DateTime currentUTCTime = Globally.getDateTimeObj(Globally.GetCurrentUTCTimeFormat(), true);
+            DateTime currentDateTime = Globally.GetDriverCurrentTime(currentUTCTime.toString(), new Globally(), context);    // Current Date Time
 
-        if(driverLogJsonArray.length() == 0 && selectedLogArray.length() == 0){
-            JSONObject defaultObjForNewDriver = AddOffDutyStatusForFreshLogin(DRIVER_ID,
-                    currentDateTime, currentUTCTime, offsetFromUTC, CurrentCycleId, "", "", context);
-            selectedLogArray.put(defaultObjForNewDriver);
-        }else {
-            try {
-                if (driverLogJsonArray.length() > 0) {
-                    JSONObject eighteenDaysLogObj = (JSONObject) driverLogJsonArray.get(0);
+            if (driverLogJsonArray.length() == 0 && selectedLogArray.length() == 0) {
+                JSONObject defaultObjForNewDriver = AddOffDutyStatusForFreshLogin(DRIVER_ID,
+                        currentDateTime, currentUTCTime, offsetFromUTC, CurrentCycleId, "", "", context);
+                selectedLogArray.put(defaultObjForNewDriver);
+            } else {
+                try {
+                    if (driverLogJsonArray.length() > 0) {
+                        JSONObject eighteenDaysLogObj = (JSONObject) driverLogJsonArray.get(0);
 
-                    if (selectedLogArray.length() > 0) {
-                        JSONObject selectedLogObj = (JSONObject) selectedLogArray.get(0);
+                        if (selectedLogArray.length() > 0) {
+                            JSONObject selectedLogObj = (JSONObject) selectedLogArray.get(0);
 
-                        String eighteenStart = eighteenDaysLogObj.getString(ConstantsKeys.StartDateTime);
-                        if(eighteenStart.length() > 16 && !eighteenStart.substring(11, 16).equals("00:00")){
-                            String selectedStartUtc = eighteenDaysLogObj.getString(ConstantsKeys.UTCStartDateTime);
-                            DateTime eightnDaysObjStartTime = Globally.getDateTimeObj(eighteenStart, false);
-                            DateTime selObjStartTime = Globally.getDateTimeObj(selectedLogObj.getString(ConstantsKeys.StartDateTime), false);
+                            String eighteenStart = eighteenDaysLogObj.getString(ConstantsKeys.StartDateTime);
+                            if (eighteenStart.length() > 16 && !eighteenStart.substring(11, 16).equals("00:00")) {
+                                String selectedStartUtc = eighteenDaysLogObj.getString(ConstantsKeys.UTCStartDateTime);
+                                DateTime eightnDaysObjStartTime = Globally.getDateTimeObj(eighteenStart, false);
+                                DateTime selObjStartTime = Globally.getDateTimeObj(selectedLogObj.getString(ConstantsKeys.StartDateTime), false);
 
-                            if (eightnDaysObjStartTime.equals(selObjStartTime) ) {
-                                int mainObjLogId = eighteenDaysLogObj.getInt(ConstantsKeys.DriverLogId);
-                                int selObjLogId = selectedLogObj.getInt(ConstantsKeys.DriverLogId);
-                                int mainObjLogStatus = eighteenDaysLogObj.getInt(ConstantsKeys.DriverStatusId);
-                                int selObjLogStatus = selectedLogObj.getInt(ConstantsKeys.DriverStatusId);
+                                if (eightnDaysObjStartTime.equals(selObjStartTime)) {
+                                    int mainObjLogId = eighteenDaysLogObj.getInt(ConstantsKeys.DriverLogId);
+                                    int selObjLogId = selectedLogObj.getInt(ConstantsKeys.DriverLogId);
+                                    int mainObjLogStatus = eighteenDaysLogObj.getInt(ConstantsKeys.DriverStatusId);
+                                    int selObjLogStatus = selectedLogObj.getInt(ConstantsKeys.DriverStatusId);
 
-                                if (mainObjLogId == selObjLogId && mainObjLogStatus == selObjLogStatus) {
-
-
-                                    JSONObject defaultObjForNewDriver = AddOffDutyStatusForFreshLogin(DRIVER_ID,
-                                            currentDateTime, currentUTCTime, offsetFromUTC, CurrentCycleId, eighteenStart, selectedStartUtc, context);
+                                    if (mainObjLogId == selObjLogId && mainObjLogStatus == selObjLogStatus) {
 
 
-                                    // reverse Array to add item at the end
-                                    JSONArray reverseArray = shipmentHelper.ReverseArray(selectedLogArray);
-                                    reverseArray.put(defaultObjForNewDriver);
-
-                                    // again reverse Array to show last item at top
-                                    selectedLogArray = new JSONArray();
-                                    selectedLogArray = shipmentHelper.ReverseArray(reverseArray);
+                                        JSONObject defaultObjForNewDriver = AddOffDutyStatusForFreshLogin(DRIVER_ID,
+                                                currentDateTime, currentUTCTime, offsetFromUTC, CurrentCycleId, eighteenStart, selectedStartUtc, context);
 
 
+                                        // reverse Array to add item at the end
+                                        JSONArray reverseArray = shipmentHelper.ReverseArray(selectedLogArray);
+                                        reverseArray.put(defaultObjForNewDriver);
+
+                                        // again reverse Array to show last item at top
+                                        selectedLogArray = new JSONArray();
+                                        selectedLogArray = shipmentHelper.ReverseArray(reverseArray);
+
+
+                                    }
                                 }
                             }
+
+
                         }
 
 
                     }
 
-
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
         }
-
             return selectedLogArray;
-        }
+    }
 
 
 

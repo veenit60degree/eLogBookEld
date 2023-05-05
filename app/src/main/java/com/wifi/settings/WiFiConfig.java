@@ -138,6 +138,15 @@ public class WiFiConfig {
     }
 
 
+    public boolean isWifiConnected(Context context){
+        ConnectivityManager connManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        return mWifi.isConnected();
+    }
+
+
+
 
     /**
      * Connect to the specified wifi network.
@@ -193,7 +202,7 @@ public class WiFiConfig {
         boolean IsConnected = false;
         try {
             WifiManager wifiMgr = (WifiManager) c.getSystemService(Context.WIFI_SERVICE);
-            ssidName = wifiMgr.getConnectionInfo().getSSID().toString();
+            ssidName = wifiMgr.getConnectionInfo().getSSID();
             if (!ssidName.equals("null")) {
                 ssidName = ssidName.replaceAll("\"", "");
             } else {

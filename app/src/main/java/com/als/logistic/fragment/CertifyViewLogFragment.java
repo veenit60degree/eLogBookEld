@@ -1083,12 +1083,16 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             int socketTimeout;
             int logArrayCount = DriverJsonArray.length();
             if(logArrayCount > 0) {
-                if (logArrayCount < 3) {
+                if(logArrayCount <= 3 ){
                     socketTimeout = Constants.SocketTimeout10Sec;  //10 seconds
-                } else if (logArrayCount < 10) {
+                }else if(logArrayCount > 3 && logArrayCount <= 10){
                     socketTimeout = Constants.SocketTimeout20Sec;  //20 seconds
-                } else {
+                }else if(logArrayCount > 10 && logArrayCount <= 30){
                     socketTimeout = Constants.SocketTimeout40Sec;  //40 seconds
+                }else if(logArrayCount > 30 && logArrayCount <= 60){
+                    socketTimeout = Constants.SocketTimeout70Sec;  //70 seconds
+                }else{
+                    socketTimeout = Constants.SocketTimeout120Sec;  //70 seconds
                 }
 
                 String SavedLogApi = Constants.getSaveStatusOrEditedApi(getActivity());
@@ -1212,7 +1216,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             TrailerNo = recapViewMethod.getTrailerNumberFromArray(recap18DaysArray, LogDate);
 
             selectedArray = hMethods.checkNewDriverDayStartLog( driverLogArray, selectedArray, DRIVER_ID,
-                                offsetFromUTC, shipmentHelper, getActivity());
+                                offsetFromUTC, LogDate, shipmentHelper, getActivity());
 
 
         }catch (Exception e){
@@ -1801,32 +1805,40 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     void getCoDriverName(JSONArray selectedArray, boolean isSingleDriver){
 
         ArrayList<String> coDriverList = new ArrayList<>();
+        ArrayList<String> coDriverIdList = new ArrayList<>();
+
         if(!isSingleDriver && LogDate.equals(CurrentDate)) {
-            String coDriverName = "";
+            String coDriverName = "", CoDriverId = "";
             if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
                 coDriverName   = DriverConst.GetCoDriverDetails( DriverConst.CoDriverName, getActivity());
+                CoDriverId   = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
             } else {
                 coDriverName   = DriverConst.GetDriverDetails( DriverConst.DriverName, getActivity());
+                CoDriverId   = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
             }
+
             coDriverList.add(coDriverName);
+            coDriverIdList.add(CoDriverId);
         }
 
         for(int i = selectedArray.length()-1 ; i >= 0 ; i--){
             try {
                 JSONObject itemObj = (JSONObject)selectedArray.get(i);
-                String selectedCoDriver = itemObj.getString(ConstantsKeys.CoDriverName);
+                String selectedCoDriver = itemObj.getString(ConstantsKeys.CoDriverName).trim();
+                String selectedCoDriverId = itemObj.getString(ConstantsKeys.CoDriverId).trim();
                 selectedCoDriver = selectedCoDriver.replaceAll("  ", " ");
-                if(selectedCoDriver.length() > 0 && !selectedCoDriver.equals("null")) {
+                if(selectedCoDriverId.length() > 0 && !selectedCoDriverId.equals("null") && !selectedCoDriverId.equals("0")) {
                     boolean isExistTruck = false;
-                    for (int tt = 0; tt < coDriverList.size(); tt++) {
-                        if (coDriverList.get(tt).equalsIgnoreCase(selectedCoDriver)) {
+                    for (int tt = 0; tt < coDriverIdList.size(); tt++) {
+                        if (coDriverIdList.get(tt).equalsIgnoreCase(selectedCoDriverId)) {
                             isExistTruck = true;
                             break;
                         }
                     }
 
-                    if (selectedCoDriver.length() > 0 && !isExistTruck) {
+                    if (selectedCoDriverId.length() > 0 && !isExistTruck) {
                         coDriverList.add(selectedCoDriver);
+                        coDriverIdList.add(selectedCoDriverId);
                     }
                 }
 
@@ -1982,9 +1994,9 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                     int graphWebHeight = graphWebView.getMeasuredHeight();
                     int heightCheck;
                     if (global.isTablet(getActivity())) {
-                        heightCheck = constants.intToPixel(getActivity(), 170 );
+                        heightCheck = constants.intToPixel(getActivity(), 200 );
                     }else{
-                        heightCheck = constants.intToPixel(getActivity(), 150 );
+                        heightCheck = constants.intToPixel(getActivity(), 160 );
                     }
 
                     if(graphLayoutHeight < 200 || graphWebHeight < 200) {
@@ -3636,12 +3648,21 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
                                             selectedArray = new JSONArray(logModel);
                                             selectedArray = hMethods.checkNewDriverDayStartLog( driverLogArray, selectedArray, DRIVER_ID,
-                                                    offsetFromUTC, shipmentHelper, getActivity());
+                                                    offsetFromUTC, LogDate, shipmentHelper, getActivity());
 
                                             ParseLogData(dataObj, false);     // Parse Log Data
 
                                             checkAndUpdateLogId(selectedArray);
 
+                                        }else{
+
+                                            selectedArray = new JSONArray();
+                                            if(driverLogArray.length() > 0) {
+                                                selectedArray = hMethods.GetSingleDateArray(driverLogArray, selectedDateTime, currentDateTime, selectedUtcTime, IsCurrentDate,
+                                                        offsetFromUTC, getActivity());
+                                            }
+                                            ParseLogData(dataObj, false);     // Parse Log Data
+                                            checkAndUpdateLogId(selectedArray);
                                         }
 
                                         if(isLocationMissing){
@@ -3775,7 +3796,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                                                 IsCurrentDate, offsetFromUTC, getActivity());
 
                                         selectedArray = hMethods.checkNewDriverDayStartLog( driverLogArray, selectedArray, DRIVER_ID,
-                                                offsetFromUTC, shipmentHelper, getActivity());
+                                                offsetFromUTC, LogDate, shipmentHelper, getActivity());
 
                                     }
                                 } catch (JSONException e) {
@@ -3998,7 +4019,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 selectedUtcTime, IsCurrentDate, offsetFromUTC, getActivity());
 
         selectedArray = hMethods.checkNewDriverDayStartLog( driverLogArray, selectedArray, DRIVER_ID,
-                offsetFromUTC, shipmentHelper, getActivity());
+                offsetFromUTC, LogDate, shipmentHelper, getActivity());
 
         JSONObject obj = new JSONObject();
         ParseLogData(obj, true);

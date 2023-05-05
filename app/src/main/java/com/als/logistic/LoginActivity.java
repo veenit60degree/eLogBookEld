@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.view.KeyEvent;
@@ -332,6 +333,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 		userName = SharedPref.getUserName( LoginActivity.this);
 		password = SharedPref.getPassword( LoginActivity.this);
+
+		Logger.LogDebug("", "-----username: " +userName + ", pass: " +password);
 
 		CheckUserCredientials();
 
@@ -932,7 +935,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 		@Override
 		public void getError(VolleyError error, int flag) {
-			// Logger.LogDebug("onDuty error", "onDuty error: " + error.toString());
+			 Logger.LogDebug("onDuty error", "onDuty error: " + error.toString());
 
 			try {
 				if(SharedPref.getCurrentUTCTime(getApplicationContext()).length() == 0){
@@ -1075,6 +1078,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			//SharedPref.setApiCallStatus("[]", getApplicationContext());
 			SharedPref.updateApiCallStatus( 0, false, global, getApplicationContext());
 			SharedPref.setUnIdenLastDutyStatus("", getApplicationContext());
+			SharedPref.setAutomaticTimeAlertWithStatus("", false, getApplicationContext());
 
 			// clear array in table
 			if(CompanyId.length() > 0) {
@@ -1354,11 +1358,10 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			progressDialog.setCancelable(false);
 			progressDialog.show();
 
-			VolleyRequestWithoutRetry GetServerTimeRequest = new VolleyRequestWithoutRetry(getApplicationContext());
+			VolleyRequest GetServerTimeRequest = new VolleyRequest(getApplicationContext());
 			Map<String, String> params = new HashMap<String, String>();
 			GetServerTimeRequest.executeRequest(Request.Method.GET, APIs.CONNECTION_UTC_DATE, params, 1001,
-					Constants.SocketTimeout4Sec, ResponseCallBack, ErrorCallBack);
-
+					Constants.SocketTimeout5Sec, ResponseCallBack, ErrorCallBack);
 
 		}
 
@@ -1627,11 +1630,28 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 			case R.id.loginBleStatusBtn:
 
-			/*	DateTime selectedDateTime = Globally.getDateTimeObj("2023-02-12T06:59:42", false);
-				DateTime currentTime = Globally.getDateTimeObj("2023-02-13T05:59:42", false);
+
+				String LeftOnDuty = Globally.FinalValue(119);
+				Logger.LogDebug("LeftOnDuty","LeftOnDuty: " +LeftOnDuty);
+
+				try {
+					int timeSettingStatus = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME);
+					Logger.LogDebug("timeSettingStatus","timeSettingStatus: " +timeSettingStatus);
+				} catch (Settings.SettingNotFoundException e) {
+					e.printStackTrace();
+				}
+
+			/*	DateTime selectedDateTime = Globally.getDateTimeObj("2023-04-20T16:57:42", false);
+				DateTime currentTime = Globally.getDateTimeObj("2023-04-20T17:00:00", false);
 				long hourDiff = Constants.getDateTimeDuration(selectedDateTime, currentTime).getStandardHours();
 				long minDiff = Constants.getDateTimeDuration(selectedDateTime, currentTime).getStandardMinutes();
 				int minDiffNew = Constants.getTimeDiffInMin(selectedDateTime.toString(), currentTime);
+
+				if (Math.max(-10, minDiff) == Math.min(minDiff, 10)) {	//minDiff >= -5
+					Logger.LogDebug("isTimeCorrect","Time Correct: " );
+				}else{
+					Logger.LogDebug("isTimeCorrect","TimeInCorrect: " );
+				}
 
 				Logger.LogDebug("hourDiff","hourDiff: " +hourDiff );
 				Logger.LogDebug("minDiff","minDiff: " +minDiff );
@@ -1645,8 +1665,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				Logger.LogDebug("hourDiffNew","hourDiffNew: " +hourDiff );
 				Logger.LogDebug("minDiffNew","minDiffNew: " +minDiff );
 				Logger.LogDebug("minDiffNewNew","minDiffNew: " +minDiffNew );
-
 */
+
 
 				if(ObdPreference == Constants.OBD_PREF_BLE) {
 					if(!IsBleConnected) {

@@ -360,7 +360,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     ProgressDialog progressD;
     GPSRequest gpsRequest;
     DriverPermissionMethod driverPermissionMethod;
-    AlertDialog statusAlertDialog;
+    AlertDialog statusAlertDialog, timeSettingAlert;
     AlertDialog saveJobAlertDialog, certifyLogAlert;
     private Vector<AlertDialog> vectorDialogs = new Vector<>();
     SwitchCompat dotSwitchButton;
@@ -472,6 +472,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         statusEndConfDialog  = new AlertDialogEld(getActivity());
         statusAlertDialog =  new AlertDialog.Builder(getActivity()).create();
+        timeSettingAlert  =  new AlertDialog.Builder(getActivity()).create();
 
         updateReceiver = new ServiceBroadcastReceiver();
         //  SaveLogRequest      = Volley.newRequestQueue(getActivity());
@@ -921,6 +922,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         }catch (Exception e){
             e.printStackTrace();
         }
+
+        defaultStateCount = 0;
+        checkViewOOStatus(true);
+
     }
 
 
@@ -940,7 +945,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
     void checkDriverTimeZone(boolean isConnected, boolean isPageStart){
-        IsValidTime = Global.isCorrectTime(getActivity(), false );
+        IsValidTime = Global.isCorrectTime(getActivity(), false, SharedPref.getCurrentUTCTime(getActivity()));
 
         /*boolean isSavedTimeZoneCorrect = false;
         if(DeviceTimeZone.equalsIgnoreCase(DriverTimeZone) || offsetFromUTC == offSetFromServer){
@@ -1203,8 +1208,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         if (timeZoneDialog != null && timeZoneDialog.isShowing()) {
                             timeZoneDialog.dismiss();
                         }
-
-                        timeZoneDialog = new TimeZoneDialog(getActivity(), true, isTimeValid, IsOnCreateView);
+                        String savedDate = SharedPref.getHighPrecesionSavedTime(getActivity());
+                        timeZoneDialog = new TimeZoneDialog(getActivity(), true, isTimeValid, IsOnCreateView, savedDate);
                         timeZoneDialog.show();
 
                     } catch (final IllegalArgumentException e) {
@@ -1221,6 +1226,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             e.printStackTrace();
         }
     }
+
 
     boolean isUnidentifiedAllowed(){
         boolean isUnidentifiedAllowed = false;
@@ -1495,7 +1501,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 strCurrentDate = Global.GetDriverCurrentDateTime(Global, getActivity());    //getCurrentDate();
                 currentDateTime = Global.getDateTimeObj(strCurrentDate, false);
                 SelectedDate = Globally.GetCurrentDeviceDate(currentDateTime, Global, getActivity());
-                IsValidTime = Global.isCorrectTime(getActivity(), false);
+                IsValidTime = Global.isCorrectTime(getActivity(), false, SharedPref.getCurrentUTCTime(getActivity()));
             /*if(Global.isCorrectTime(getActivity(), IsOnCreateView)){
                 if (timeZoneDialog != null && timeZoneDialog.isShowing()) {
                     timeZoneDialog.dismiss();
@@ -1551,15 +1557,33 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                             confirmDeferralRuleDays();
 
+                            // check automatic time settings status with alert
+                            constants.showAutomaticTimeAlert(getActivity(), Global, timeSettingAlert);
                         }
                     });
                 } catch (Exception e) {
                 }
+
+                checkServiceRunningTimeDiff();
+
             }
 
         }
     }
 
+
+    private void checkServiceRunningTimeDiff(){
+        String serviceCalledTime = SharedPref.getBgServiceRunningTime(getActivity());
+        if(serviceCalledTime.length() > 10){
+            long minDiff = constants.getTimeDiffInMin(serviceCalledTime, Global.GetCurrentUTCDateTime());
+            if(minDiff > 2){
+                SharedPref.setBgServiceRunningTime(Globally.GetCurrentUTCTimeFormat(), getActivity());
+                startService();
+            }
+        }else{
+            SharedPref.setBgServiceRunningTime(Globally.GetCurrentUTCTimeFormat(), getActivity());
+        }
+    }
 
     private void ServiceReceiverUpdate(){
         IntentFilter intentFilter = new IntentFilter();
@@ -1875,12 +1899,16 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     void SAVE_DRIVER_STATUS() {
         int socketTimeout ;
         int logArrayCount = DriverJsonArray.length();
-        if(logArrayCount < 3 ){
+        if(logArrayCount <= 3 ){
             socketTimeout = Constants.SocketTimeout10Sec;  //10 seconds
-        }else if(logArrayCount < 10){
+        }else if(logArrayCount > 3 && logArrayCount <= 10){
             socketTimeout = Constants.SocketTimeout20Sec;  //20 seconds
-        }else{
+        }else if(logArrayCount > 10 && logArrayCount <= 30){
             socketTimeout = Constants.SocketTimeout40Sec;  //40 seconds
+        }else if(logArrayCount > 30 && logArrayCount <= 60){
+            socketTimeout = Constants.SocketTimeout70Sec;  //70 seconds
+        }else{
+            socketTimeout = Constants.SocketTimeout120Sec;  //120 seconds
         }
 
         SaveRequestCount++;
@@ -5539,6 +5567,35 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    // confirm driver log status
+    void checkViewOOStatus(boolean isOnResume){
+        String drivingTime = drivingTimeTxtVw.getText().toString();
+        String onDutyTime = onDutyTimeTxtVw.getText().toString();
+        String usedViewTime = jobTimeTxtVw.getText().toString().trim();
+        Logger.LogDebug("-----CheckRule-Driving", "-----Driving: " +drivingTime);
+
+        if( (onDutyTime.equals(getString(R.string.time_default)) && drivingTime.equals(getString(R.string.time_default))) ||
+                usedViewTime.length() == 0){
+            Logger.LogDebug("CheckLogStatusTime", "Driving: " +drivingTime + "\nOnDuty: " + onDutyTime + "\nUsedView: " +usedViewTime);
+
+            if(defaultStateCount == 0){
+                defaultStateCount++;
+                CalculateTimeInOffLine(false, false);
+            }else{
+                if(!isOnResume) {
+                    if (!IsLogApiACalled && defaultStateCount < 3) {
+                        GetDriverLog18Days(DRIVER_ID, ConstantsEnum.GetDriverLog18Days);
+                        defaultStateCount++;
+                    }
+                }
+            }
+
+        }else{
+            defaultStateCount = 0;
+        }
+    }
+
+
     void CalculateTimeInOffLine(boolean IsCheckOffSleeperTime, boolean onResume) {
 
         Logger.LogDebug("-----CheckRule", "----CalculateTimeInOffLine" );
@@ -5749,29 +5806,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
             }
 
-            // confirm driver log status
-            String drivingTime = drivingTimeTxtVw.getText().toString();
-            String onDutyTime = onDutyTimeTxtVw.getText().toString();
-            String usedViewTime = jobTimeTxtVw.getText().toString().trim();
-            Logger.LogDebug("-----CheckRule-Driving", "-----Driving: " +drivingTime);
-
-            if( (onDutyTime.equals(getString(R.string.time_default)) && drivingTime.equals(getString(R.string.time_default))) ||
-                    usedViewTime.length() == 0){
-                Logger.LogDebug("CheckLogStatusTime", "Driving: " +drivingTime + "\nOnDuty: " + onDutyTime + "\nUsedView: " +usedViewTime);
-
-                if(defaultStateCount == 0){
-                    defaultStateCount++;
-                    CalculateTimeInOffLine(false, false);
-                }else{
-                    if (!IsLogApiACalled && defaultStateCount < 3) {
-                        GetDriverLog18Days(DRIVER_ID, ConstantsEnum.GetDriverLog18Days);
-                        defaultStateCount++;
-                    }
-                }
-
-            }else{
-                defaultStateCount = 0;
-            }
+            checkViewOOStatus(false);
         }
 
         DateTime currentUTCTime2 = Globally.getDateTimeObj(Globally.GetCurrentUTCTimeFormat(), true);
@@ -6202,12 +6237,16 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     SecondDriverType = 1;   // Co Driver
                     LogArray = constants.GetDriverOffLineSavedLog(getActivity(), SecondDriverType, MainDriverPref, CoDriverPref);
                     logArrayCount = LogArray.length();
-                    if(logArrayCount < 3 ){
+                    if(logArrayCount <= 3 ){
                         socketTimeout = Constants.SocketTimeout10Sec;  //10 seconds
-                    }else if(logArrayCount < 10){
+                    }else if(logArrayCount > 3 && logArrayCount <= 10){
                         socketTimeout = Constants.SocketTimeout20Sec;  //20 seconds
-                    }else{
+                    }else if(logArrayCount > 10 && logArrayCount <= 30){
                         socketTimeout = Constants.SocketTimeout40Sec;  //40 seconds
+                    }else if(logArrayCount > 30 && logArrayCount <= 60){
+                        socketTimeout = Constants.SocketTimeout70Sec;  //70 seconds
+                    }else{
+                        socketTimeout = Constants.SocketTimeout120Sec;  //70 seconds
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -6682,7 +6721,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 case MainDriverLog:
 
                     Logger.LogDebug("Response ", "---Response Save: " + response);
-                    IsSaveOperationInProgress = false;
                     progressD.dismiss();
                     EnableJobViews();
                     JSONObject obj;
@@ -6829,13 +6867,14 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         e.printStackTrace();
                         ClearLog();
                     }
+
+                    IsSaveOperationInProgress = false;
                     isFirst = false;
 
 
                     break;
 
                 case CoDriverLog:
-                    IsSaveOperationInProgress = false;
 
                     try {
                         EnableJobViews();
@@ -6872,6 +6911,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    IsSaveOperationInProgress = false;
 
 
                     break;
@@ -6879,6 +6919,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             }
 
         }
+
 
         @Override
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {

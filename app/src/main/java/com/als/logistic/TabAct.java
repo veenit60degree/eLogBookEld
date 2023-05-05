@@ -424,10 +424,13 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                     if (timeZoneDialog != null && timeZoneDialog.isShowing()) {
                         timeZoneDialog.dismiss();
                     }
-
-                    timeZoneDialog = new TimeZoneDialog(TabAct.this, true, false, false);
-                    timeZoneDialog.show();
-
+                    String savedTime = SharedPref.getCurrentUTCTime(getApplicationContext());
+                    boolean IsValidTime = global.isCorrectTime(getApplicationContext(), false, savedTime);
+                    if(!IsValidTime) {
+                        timeZoneDialog = new TimeZoneDialog(TabAct.this, true, false,
+                                false, savedTime);
+                        timeZoneDialog.show();
+                    }
                 }
             });
 
@@ -702,6 +705,25 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         Offset = SharedPref.getDriverTimeZoneOffSet(TabAct.this);
         UILApplication.activityResumed();
         ActiveScreen();
+
+         if(!constants.isTimeAutomatic(this) && !constants.isTimeAlertShownForDay(this)) {
+             // get time diff
+             String savedTime = SharedPref.getAutomaticAlertTime(getApplicationContext());
+             if(savedTime.length() > 10) {
+                 String currentDate = Globally.GetDriverCurrentDateTime(global, getApplicationContext());
+                 int minDiff = constants.getMinDiff(savedTime, currentDate);
+
+                 if(minDiff > 0 && minDiff < 10){
+                     // ignore to update time
+                 }else{
+                     SharedPref.setAutomaticTimeAlertWithStatus(Globally.GetDriverCurrentDateTime(global, this), false, getApplicationContext());
+                 }
+
+             }else{
+                 SharedPref.setAutomaticTimeAlertWithStatus(Globally.GetDriverCurrentDateTime(global, this), false, getApplicationContext());
+             }
+
+         }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(ConstantsKeys.SuggestedEdit));
 
