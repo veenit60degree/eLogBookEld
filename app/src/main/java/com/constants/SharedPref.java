@@ -42,7 +42,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("current_status", status);
-        editor.commit();
+        editor.apply();
 
     }
 
@@ -64,7 +64,7 @@ public class SharedPref {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("TotalPUOdometerForDay", odometer);
         editor.putString("PUOdometerDate", time);
-        editor.commit();
+        editor.apply();
 
     }
 
@@ -100,7 +100,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("VehilceMovingStatus", status);
-        editor.commit();
+        editor.apply();
 
     }
 
@@ -108,7 +108,8 @@ public class SharedPref {
     // Get Current Status -------------------
     public static boolean isVehicleMoving( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean("VehilceMovingStatus", false);
+        boolean VehilceMovingStatus = preferences.getBoolean("VehilceMovingStatus", false);
+        return VehilceMovingStatus;
     }
 
     // Save VIN Number
@@ -117,7 +118,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("VIN", VIN);
-        editor.commit();
+        editor.apply();
 
     }
 
@@ -135,7 +136,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("LastSavedVin", VIN);
-        editor.commit();
+        editor.apply();
 
     }
 
@@ -152,7 +153,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get UTC Time Zone -------------------
@@ -167,7 +168,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("TrailorNumber", value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Trailor Number -------------------
@@ -181,7 +182,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("TruckNumber", value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Truck Number -------------------
@@ -196,7 +197,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(CURRENT_DATE, value);
-        editor.commit();
+        editor.apply();
     }
     // Get Current Saved Time -------------------
     public static String getSystemSavedDate(Context context) {
@@ -210,7 +211,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PU_EXCEED_CHECK_DATE, value);
-        editor.commit();
+        editor.apply();
     }
     // Get Current Saved Time -------------------
     public static String getPuExceedCheckDate(Context context) {
@@ -223,7 +224,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(CURRENT_UTC_DATE, value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Current Saved Time -------------------
@@ -238,7 +239,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("auto_drive", isAutoDrive);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -254,7 +255,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("IsOBDPingAllowed", isAutoDrive);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -270,7 +271,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("OdoCalculationAllowed", isAutoDrive);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -288,7 +289,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("IsBlePing", status);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -304,7 +305,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("bleScanCount", count);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -313,7 +314,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("BleOBDMacAddress", date);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -336,7 +337,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("isOBDScreen", date);
-        editor.commit();
+        editor.apply();
     }*/
 
     // Get auto drive status -------------------
@@ -351,7 +352,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("obd_restart_date", date);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -370,7 +371,7 @@ public class SharedPref {
         editor.putInt("ObdStatus", value);
         editor.putString("ObdStatusTime", time);
         editor.putString("ObdStatusUtcTime", utcTime);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -404,7 +405,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("CoDriverSwitchTime", date);
-        editor.commit();
+        editor.apply();
     }
 
     // Get last Wired Obd CallTime -------------------
@@ -420,7 +421,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("WiredObdCallTime", date);
-        editor.commit();
+        editor.apply();
     }
 
     // Get last Wired Obd CallTime -------------------
@@ -436,7 +437,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("WiredObdServerCallTime", date);
-        editor.commit();
+        editor.apply();
     }
 
     // Get last Wired Obd Server CallTime -------------------
@@ -452,7 +453,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("IgnitionOffCallTime", date);
-        editor.commit();
+        editor.apply();
     }
 
     // Get  last Wired Obd Call Time after ignition off -------------------
@@ -468,7 +469,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("BleOnReceiveTime", Globally.GetDriverCurrentDateTime(new Globally(), context));   //Globally.GetCurrentDateTime()
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -484,7 +485,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("WrongVinAlertStatus", status);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Wrong Vin Alert View status -------------------
@@ -498,7 +499,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("UnidentifiedFromOBD", status);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Unidentified status From OBD to create -------------------
@@ -561,7 +562,7 @@ public class SharedPref {
         editor.putBoolean("ignitionStatus", ignitionStatus);
         editor.putString("ignitionTime", time);
         editor.putInt("obdCurrentSpeed_", speed);
-        editor.commit();
+        editor.apply();
     }
 */
 
@@ -577,7 +578,7 @@ public class SharedPref {
         editor.putBoolean(ConstantsKeys.IsClearMalfunction, IsClearMalfunction);
         editor.putBoolean(ConstantsKeys.IsClearDiagnostic, IsClearDiagnostic);
 
-        editor.commit();
+        editor.apply();
     }
 
     // Get Malfunction Status -------------------
@@ -617,7 +618,7 @@ public class SharedPref {
         editor.putBoolean(ConstantsKeys.IsClearMalfunctionCo, IsClearMalfunction);
         editor.putBoolean(ConstantsKeys.IsClearDiagnosticCo, IsClearDiagnostic);
 
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -656,7 +657,7 @@ public class SharedPref {
         editor.putBoolean(ConstantsKeys.IsGpsEnabled, IsGpsEnabled);
         editor.putInt(ConstantsKeys.LocationStatus, LocationStatus);
 
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -690,7 +691,7 @@ public class SharedPref {
         editor.putBoolean(ConstantsKeys.IsShowUnidentifiedRecords, IsUnidentifiedRecords);
         editor.putBoolean(ConstantsKeys.IsPersonal, IsPersonal);
         editor.putBoolean(ConstantsKeys.IsYardMove, IsYardMove);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -718,7 +719,7 @@ public class SharedPref {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean(ConstantsKeys.UnIdentifiedAlertStatus, isAlert);
-            editor.commit();
+            editor.apply();
 
         }catch (Exception e){
             e.printStackTrace();
@@ -749,7 +750,7 @@ public class SharedPref {
         editor.putBoolean(ConstantsKeys.IsShowUnidentifiedRecordsCo, IsUnidentifiedRecords);
         editor.putBoolean(ConstantsKeys.IsPersonalCo, IsPersonal);
         editor.putBoolean(ConstantsKeys.IsYardMoveCo, IsYardMove);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -779,7 +780,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.IsNorthCanada, IsNorthCanada);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -801,7 +802,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.LocReceivedFromObd, IsNorthCanada);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -824,7 +825,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(ConstantsKeys.ObdPreference, ObdPreference);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -845,7 +846,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(ConstantsKeys.HighPrecisionUnit, ObdPreference);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -864,7 +865,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.IsExemptDriver, ExemptDriver);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -887,7 +888,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.IsExemptDriverCo, CCMTACertified);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -911,7 +912,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.IsCycleRequest, isCycleRequest);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -935,7 +936,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.IsCycleRequestMain, isCycleRequest);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -957,7 +958,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.IsCycleRequestCo, isCycleRequest);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -980,7 +981,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.IsELDNotificationShown, isNotification);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1003,7 +1004,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.IsELDNotificationAlert, IsELDNotificationAlert);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1025,7 +1026,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.IsCCMTACertified, CCMTACertified);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1049,7 +1050,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.IsAppRestricted, IsAppRestricted);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1086,7 +1087,7 @@ public class SharedPref {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean(ConstantsKeys.UnIdentifiedAlertStatusCo, isAlert);
-            editor.commit();
+            editor.apply();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -1116,7 +1117,7 @@ public class SharedPref {
         editor.putString("current_obd", odometer);
         editor.putString("obd_saved_time", savedTime);
         editor.putString("raw_data", rawData);
-        editor.commit();
+        editor.apply();
     }
 
     // Get WIFI Current Obd Odometer -------------------
@@ -1144,7 +1145,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("IsTimestampEnabled", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1160,7 +1161,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("dot_status", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1176,7 +1177,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("FirstTimeLoginMain", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1192,7 +1193,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("FirstTimeLoginCo", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1207,7 +1208,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("FirstLoginTime", time);
-        editor.commit();
+        editor.apply();
     }
 
     // Get driver First Login Time -------------------
@@ -1223,7 +1224,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("CheckUnassignedReqTime", time);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Unassigned Required api call Time -------------------
@@ -1240,7 +1241,7 @@ public class SharedPref {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(ConstantsKeys.TruckIssues, truckValue);
         editor.putString(ConstantsKeys.TrailerIssues, traileValue);
-        editor.commit();
+        editor.apply();
     }
     // Get Inspection Issues -------------------
     public static String getInspectionIssues(String key, Context context) {
@@ -1255,7 +1256,7 @@ public class SharedPref {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(ConstantsKeys.TruckCtPatIssues, truckValue);
         editor.putString(ConstantsKeys.TrailerCtPatIssues, traileValue);
-        editor.commit();
+        editor.apply();
     }
     // Get CT-PAT Inspection Issues -------------------
     public static String getCtPatInspectionIssues(String key, Context context) {
@@ -1276,7 +1277,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("username", value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get  USerName -------------------
@@ -1291,7 +1292,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("password", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1308,7 +1309,7 @@ public class SharedPref {
         editor.putString("mainDriverLoginName", mainDriverLoginName);
         editor.putString("coDriverLoginName", coDriverLoginName);
 
-        editor.commit();
+        editor.apply();
     }
 
     // Get last login main driver detail -------------------
@@ -1328,7 +1329,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(DRIVER_TYPE, value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get  Driver Type -------------------
@@ -1347,7 +1348,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(CURRENT_DRIVER_TYPE, value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1363,7 +1364,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong("driver_time_ZONE", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1381,7 +1382,7 @@ public class SharedPref {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString("ReCertifyData", value);
-                editor.commit();
+                editor.apply();
             }
         }catch(Exception e){}
     }
@@ -1411,7 +1412,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("odo", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1421,7 +1422,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("is_read_vln", value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Is Read Violation Status -------------------
@@ -1437,7 +1438,7 @@ public class SharedPref {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("violation", value);
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -1457,7 +1458,7 @@ public class SharedPref {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("PermissionInfoView", value);
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -1476,7 +1477,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("notification_deleted", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1494,7 +1495,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("is_aobrd", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1510,7 +1511,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("IsAOBRDAutomatic", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1526,7 +1527,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("IsDrivingShippingAllowed", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1542,7 +1543,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("IsAOBRDAutoDrive", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1559,7 +1560,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("CertifyMandatory", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1576,7 +1577,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("IsOdometerFromOBD", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1600,7 +1601,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("violationReason", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1616,7 +1617,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("plateNo", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1626,7 +1627,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("systemToken", value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get System Token -------------------
@@ -1642,7 +1643,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("imei", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1658,7 +1659,7 @@ public class SharedPref {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString("dateTime", value);
-            editor.commit();
+            editor.apply();
         }catch (Exception e){}
     }
 
@@ -1677,7 +1678,7 @@ public class SharedPref {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString("CertifyAlertViewTime", value);
-            editor.commit();
+            editor.apply();
         }catch (Exception e){}
     }
 
@@ -1697,7 +1698,7 @@ public class SharedPref {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString("jobType", value);
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -1725,7 +1726,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(key, value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1741,7 +1742,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("AsyncTaskStatus", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1757,7 +1758,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("IsLoginAllowed", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1777,7 +1778,7 @@ public class SharedPref {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(keyCA, valueCA);
         editor.putString(keyUS, valueUS);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Country Cycle -------------------
@@ -1797,7 +1798,7 @@ public class SharedPref {
         editor.putString(ConstantsKeys.StartLat, lat);
         editor.putString(ConstantsKeys.StartLon, lon);
         editor.putString(ConstantsKeys.StartDate, date);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Start Locations -------------------
@@ -1815,7 +1816,7 @@ public class SharedPref {
         editor.putString(ConstantsKeys.EndLat, lat);
         editor.putString(ConstantsKeys.EndLon, lon);
         editor.putString(ConstantsKeys.EndDate, date);
-        editor.commit();
+        editor.apply();
     }
 
     // Get End Locations -------------------
@@ -1830,7 +1831,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("user_type", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1850,7 +1851,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("update_popup_time", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1866,7 +1867,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("after_login_conf", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1881,7 +1882,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("new_truck_start_login", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1896,7 +1897,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("rulesVersion", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1913,7 +1914,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("ConnectionType", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1932,7 +1933,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("VehicleId", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1948,7 +1949,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("odo_status", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1970,7 +1971,7 @@ public class SharedPref {
         editor.putString(Constants.EngineHourMalDia, EngineHour);
         editor.putString(Constants.OdometerMalDia, Odometer);
 
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -1988,7 +1989,7 @@ public class SharedPref {
         editor.putString(Constants.IgnitionSource, ignitionSource);
         editor.putString(Constants.LastIgnitionTime, lastIgnitionTime);
 
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -2005,7 +2006,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("is_edited", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -2021,7 +2022,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("is_edited_co", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -2038,7 +2039,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("isIgnitionOffCalled", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -2054,7 +2055,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("DRIVER_ID", value);
-        editor.commit();
+        editor.apply();
     }
     // Get Driver Id -------------------
     public static String getDriverId( Context context) {
@@ -2068,7 +2069,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("time_zone", value);
-        editor.commit();
+        editor.apply();
     }
     // Get Time Zone -------------------
     public static String getTimeZone( Context context) {
@@ -2086,7 +2087,7 @@ public class SharedPref {
             editor.putString("deferral_start_date", startDate);
             editor.putString("deferral_day", eventDay);
 
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -2129,7 +2130,7 @@ public class SharedPref {
             editor.putBoolean("deferral_co", value);
             editor.putString("deferral_co_start_date", startDate);
             editor.putString("deferral_co_day", eventDay);
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -2172,7 +2173,7 @@ public class SharedPref {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("haul_exception", value);
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -2194,7 +2195,7 @@ public class SharedPref {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("haul_exception_co", value);
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -2216,7 +2217,7 @@ public class SharedPref {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("adverse_exception", value);
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -2239,7 +2240,7 @@ public class SharedPref {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("adverse_exception_co", value);
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -2260,7 +2261,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("utc_current_time", value);
-        editor.commit();
+        editor.apply();
     }
     // Get Current UTC Time -------------------
     public static String getCurrentUTCTime( Context context) {
@@ -2273,7 +2274,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("DriverFirstLoginTime", value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Driver First Login Time -------------------
@@ -2287,7 +2288,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("CoDriverFirstLoginTime", value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get CoDriver First Login Time -------------------
@@ -2303,7 +2304,7 @@ public class SharedPref {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("login_time_utc", value);
         editor.putBoolean("is_login_event_occ", isLoginEvent);
-        editor.commit();
+        editor.apply();
     }
 
     // Get login time (UTC)  -------------------
@@ -2321,7 +2322,7 @@ public class SharedPref {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("AutomaticTimeAlert", time);
         editor.putBoolean("IsAutomaticTimeAlert", isAlertShown);
-        editor.commit();
+        editor.apply();
     }
 
     // Get AutomaticTime setting Alert date -------------------
@@ -2353,7 +2354,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("service_on_destroy", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -2368,7 +2369,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.PersonalUse75Km, value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -2385,7 +2386,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.PersonalUseSelected, value);
-        editor.commit();
+        editor.apply();
     }
 */
 
@@ -2407,7 +2408,7 @@ public class SharedPref {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.DrivingAllowedStatus, value);
         editor.putString(ConstantsKeys.DrivingAllowedStatusTime, time);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -2418,7 +2419,7 @@ public class SharedPref {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean(ConstantsKeys.CoDriverSwitching, IsEngSyncDia);
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -2439,7 +2440,7 @@ public class SharedPref {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.EngSyncDiagnstc, IsEngSyncDia);
 
-        editor.commit();
+        editor.apply();
     }
 
     // Get Engine sync diagnostic status -------------------
@@ -2459,7 +2460,7 @@ public class SharedPref {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.EngSyncDiagnstcCo, IsEngSyncDia);
 
-        editor.commit();
+        editor.apply();
     }
 
     // Getco driver Engine sync diagnostic status -------------------
@@ -2493,7 +2494,7 @@ public class SharedPref {
         editor.putBoolean(ConstantsKeys.TimingCompMal, TimingCompMal);
 
 
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -2522,7 +2523,7 @@ public class SharedPref {
         editor.putBoolean(ConstantsKeys.PowerDataDiag, PowerDataDiag);
         editor.putBoolean(ConstantsKeys.EnginSyncDiag, EnginSyncDiag);
 
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -2545,7 +2546,7 @@ public class SharedPref {
         editor.putBoolean(ConstantsKeys.TimingComplianceMal, TimingComplianceMal);
         editor.putString(ConstantsKeys.TimingComplianceMalTime, time);
 
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -2577,7 +2578,7 @@ public class SharedPref {
 
         editor.putString(ConstantsKeys.TimingMalWarningTime, time);
 
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -2598,7 +2599,7 @@ public class SharedPref {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.UnidentifiedDataDiag, isUnidentifiedDia);
         editor.putString(ConstantsKeys.UnidentifiedOccTime, time);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Unidentified event status -------------------
@@ -2631,7 +2632,7 @@ public class SharedPref {
         editor.putBoolean(ConstantsKeys.PowerDiagnstc, isEngSynDia);
         editor.putString(ConstantsKeys.PowerMalfunctionTimeOcc, time);
 
-        editor.commit();
+        editor.apply();
     }
 
     // Get power Malfunction status -------------------
@@ -2673,7 +2674,7 @@ public class SharedPref {
         editor.putBoolean(ConstantsKeys.EngSyncDiagnosticAlso, IsEngSyncDia);
         editor.putString(ConstantsKeys.EngSyncDiagnosticTimeAlso, savedTime);
 
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -2712,7 +2713,7 @@ public class SharedPref {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.EngSyncMalfunction, IsEngSyncDia);
 
-        editor.commit();
+        editor.apply();
     }
 
     // Get Engine sync Malfunction status -------------------
@@ -2734,7 +2735,7 @@ public class SharedPref {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.MissingDiagnostic, IsLocMalfunction);
 
-        editor.commit();
+        editor.apply();
     }
 
     // Get issing Diagnostic occured status -------------------
@@ -2758,7 +2759,7 @@ public class SharedPref {
         editor.putString(ConstantsKeys.LocMalfunctionOccurTime, time);
         editor.putString(ConstantsKeys.LocMalfunctionOccurUtcTime, utcTime);
 
-        editor.commit();
+        editor.apply();
     }
 
     // Get location Malfunction occured status -------------------
@@ -2800,7 +2801,7 @@ public class SharedPref {
         editor.putBoolean(ConstantsKeys.IsLocDiagnostic, IsLocDiagnostic);
         editor.putString(ConstantsKeys.LocDiaOccurTime, time);
         editor.putString(ConstantsKeys.LocDiaOccurUtcTime, utcTime);
-        editor.commit();
+        editor.apply();
     }
 
     // Get location Diagnostic occurred status -------------------
@@ -2820,7 +2821,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.IsStorageMalfunction, CCMTACertified);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -2872,7 +2873,7 @@ public class SharedPref {
         editor.putBoolean(ConstantsKeys.IsDiagnostic, IsDiagnostic);
         editor.putBoolean(ConstantsKeys.SuggestedEdit, SuggestedEdit);
 
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -2934,7 +2935,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("suggested_log_recall", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -2948,7 +2949,7 @@ public class SharedPref {
         editor.putBoolean(ConstantsKeys.IsDiagnosticCo, IsDiagnostic);
         editor.putBoolean(ConstantsKeys.SuggestedEditCo, SuggestedEdit);
 
-        editor.commit();
+        editor.apply();
     }
 
     // Get Unidentified occure status for co driver -------------------
@@ -3007,7 +3008,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("suggested_log_recallCo", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -3024,7 +3025,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("status_online", value);
-        editor.commit();
+        editor.apply();
     }
 
     public static List<String> getStatesInList(Context context) {
@@ -3058,7 +3059,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("obd_speed", value);
-        editor.commit();
+        editor.apply();
     }
     // Get Obd Speed -------------------
     public static String getObdSpeed( Context context) {
@@ -3071,7 +3072,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("data_refresh_time", dateTime);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Refresh Data Time -------------------
@@ -3086,7 +3087,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("loc_change_time", dateTime);
-        editor.commit();
+        editor.apply();
     }
 
     // Get location change Time -------------------
@@ -3120,7 +3121,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("EngineHours", VIN);
-        editor.commit();
+        editor.apply();
 
     }
 
@@ -3138,7 +3139,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("ignition", value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Ignition Status -------------------
@@ -3155,7 +3156,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("TripDistance", value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Trip Distance -------------------
@@ -3171,7 +3172,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("rpm", value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get RPM value -------------------
@@ -3188,7 +3189,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("vss", value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get VSS value -------------------
@@ -3205,7 +3206,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("VehicleVin", value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get VSS value -------------------
@@ -3221,7 +3222,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("TimeStamp", value);
-        editor.commit();
+        editor.apply();
     }
 
     // Set obd data Time Stamp -------------------
@@ -3237,7 +3238,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("wired_obd_odometer", value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get wired Obd Odometer -------------------
@@ -3259,7 +3260,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("wired_obd_odometer_miles", value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get wired Obd Odometer in miles-------------------
@@ -3282,7 +3283,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("obd_engine_hours", value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get obd_engine_hours -------------------
@@ -3301,7 +3302,7 @@ public class SharedPref {
         editor.putString("dayStartOdometerKm", odometerKM);
         editor.putString("dayStartOdometerMiles", odometerMiles);
         editor.putString("dayStartSavedTime", savedTime);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -3338,7 +3339,7 @@ public class SharedPref {
         editor.putString("highPrecisionOdometer", odometer);
         editor.putString("HighPrecesionSavedTime", savedTime);
         Logger.LogDebug("HighPrecesionSavedTime", "HighPrecesionSavedTime: " +savedTime);
-        editor.commit();
+        editor.apply();
     }
 
     // Get High Precision Odometer value -------------------
@@ -3360,7 +3361,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("PcYmAlertCallTime", savedTime);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Pc Ym Alert Call time -------------------
@@ -3375,7 +3376,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("ClearEventCalledTime", savedTime);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Clear Event last Called Time -------------------
@@ -3390,7 +3391,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("PowerClearEventCalledTime", savedTime);
-        editor.commit();
+        editor.apply();
     }
 
     // Get power Clear Event last Called Time -------------------
@@ -3405,7 +3406,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("EngClearEventCalledTime", savedTime);
-        editor.commit();
+        editor.apply();
     }
 
     // Get power Clear Event last Called Time -------------------
@@ -3421,7 +3422,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("EngSyncMalEventCallTime", savedTime);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Engine Sync malfunction Event last Called Time -------------------
@@ -3435,7 +3436,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("ClearMalCalledTime", savedTime);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Clear malfunction event last Called Time -------------------
@@ -3450,7 +3451,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("EngSyncClearEventCalledTime", savedTime);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Eng Sync Clear Event last Called Time -------------------
@@ -3467,7 +3468,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("MalfunctionCalledTime", savedTime);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Malfunction last Called Time -------------------
@@ -3482,7 +3483,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(ConstantsKeys.MalCalledLastTime, savedTime);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Malfunction last Called Time for Engine Sync -------------------
@@ -3498,7 +3499,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("ObdWriteCallTime", savedTime);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Obd Write Called Time  -------------------
@@ -3520,7 +3521,7 @@ public class SharedPref {
         editor.putString(ConstantsKeys.MalCalledLastSpeed, MalCalledLastSpeed);
         editor.putString(ConstantsKeys.MalCalledLastEngIgntn, MalCalledLastEngIgntn);
 
-        editor.commit();
+        editor.apply();
     }
 
     // Get Malfunction last Called Time for Engine Sync -------------------
@@ -3536,7 +3537,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("NotiShowTime", count);
-        editor.commit();
+        editor.apply();
 
     }
 
@@ -3559,7 +3560,7 @@ public class SharedPref {
         editor.putString("ecmObdTime", time);
         editor.putString("ecmObdUtcTime", utcTime);
 
-        editor.commit();
+        editor.apply();
     }
 
     // Get Ecm Obd Latitude of last saved location -------------------
@@ -3600,7 +3601,7 @@ public class SharedPref {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("ecmMalfunctionType", type);
 
-        editor.commit();
+        editor.apply();
     }
 
     // Get Location Malfunction Type -------------------
@@ -3616,7 +3617,7 @@ public class SharedPref {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("ecmManualLocStatus", type);
 
-        editor.commit();
+        editor.apply();
     }
 
     // Get Malfunction status for Manual Location input -------------------
@@ -3632,7 +3633,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("cycleDetails", value);
-        editor.commit();
+        editor.apply();
     }
 
     // =========================== Get Offline Data Status ===========================
@@ -3649,7 +3650,7 @@ public class SharedPref {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(Constants.CONNECTION_TYPE, type);
         editor.putString(Constants.LAST_SAVED_TIME, time);
-        editor.commit();
+        editor.apply();
     }
 
     // =========================== Get OBD saved time with Type===========================
@@ -3664,7 +3665,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(Constants.DATA_USAGE_TIME, value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Last Usage Data Saved Time -------------------
@@ -3679,7 +3680,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(Constants.ServiceRunningTime, value);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Background Service Running Time -------------------
@@ -3694,7 +3695,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("UnAssignedVehicleMilesId", value);
-        editor.commit();
+        editor.apply();
     }
     // GetUnAssigned Vehicle Miles Id  -------------------
     public static String getUnAssignedVehicleMilesId( Context context) {
@@ -3711,7 +3712,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("IntermediateLogId", value);
-        editor.commit();
+        editor.apply();
     }
     // Get  IntermediateLog Id -------------------
     public static String getIntermediateLogId( Context context) {
@@ -3731,7 +3732,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("UnIdentifiedLastDutyStatus", value);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -3751,7 +3752,7 @@ public class SharedPref {
         editor.putString(ConstantsKeys.UnidenStartLatitude, startLatitude);
         editor.putString(ConstantsKeys.UnidenStartLongitude, startLongitude);
         editor.putString(ConstantsKeys.UnidenStartEngineSeconds, startEngineSecond);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -3768,7 +3769,7 @@ public class SharedPref {
         editor.putString(ConstantsKeys.AgricultureLatitude, agricultureLatitude);
         editor.putString(ConstantsKeys.AgricultureLongitude, agricultureLongitude);
         editor.putString(ConstantsKeys.AgricultureAddress, agricultureAddress);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -3784,7 +3785,7 @@ public class SharedPref {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("agriculture_Exception", value);
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -3805,7 +3806,7 @@ public class SharedPref {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("AutoSyncStatus", value);
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -3826,7 +3827,7 @@ public class SharedPref {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("day_night_mode", value);
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -3847,7 +3848,7 @@ public class SharedPref {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("day_night_action", value);
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -3867,7 +3868,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.ConnectedAfterLogin, isUnidentifiedDia);
-        editor.commit();
+        editor.apply();
     }
 
     // Get Obd Status After Login -------------------
@@ -4011,7 +4012,7 @@ public class SharedPref {
                 // clear list is api is empty, only called in login response -----------
                 editor.putString(ConstantsKeys.ApiCallStatus, "[]");
             }
-            editor.commit();
+            editor.apply();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -4024,7 +4025,7 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(ConstantsKeys.OnDutyRemarks, remarks);
-        editor.commit();
+        editor.apply();
 
     }
 

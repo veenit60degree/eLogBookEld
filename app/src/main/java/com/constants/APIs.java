@@ -121,6 +121,7 @@ public class APIs {
     public static String DRIVER_VIOLATION_PERMISSION 	  	= DOMAIN_URL_ELD + "DriverViolationTestPermission";
     public static String GET_OFFLINE_INSPECTION_LIST  	    = DOMAIN_URL_ELD + "GetOfflineInspectionList";
     public static String SAVE_NOTIFICATION  	            = DOMAIN_URL_ELD + "SaveNotification";
+    public static String SAVE_NOTIFICATION_NEW_LOG          = DOMAIN_URL_ELD + "SaveNotificationNewLog";
     public static String CLEAR_NOTIFICATION_LOG	            = DOMAIN_URL_ELD + "ClearNotificationLog";
 
     public static String SAVE_17_INSPECTION_OFFLINE			= DOMAIN_URL_ELD + "SaveSeventeenPointInspectionOffline";
@@ -142,6 +143,7 @@ public class APIs {
     public static String CHECK_IS_UNASSIGNED_REQUIRED       = DOMAIN_URL_ELD + "CheckIsUnassignedRequired";
 
     public static String ADD_DEVICE_GPS_SETTINGS            = ELD_SETTING_DOMAIN_PRODUCTION + "AddDeviceGpsSettings";
+    // save ble connection logs
     public static String ADD_DEVICE_BLE_SETTINGS            = ELD_SETTING_DOMAIN_PRODUCTION + "AddDeviceBluetoothSettings";
     public static String FAILED_API_TRACK                   = ELD_FAILED_TRACK_DOMAIN_PRODUCTION + "AddFailedAPIRecords";
 

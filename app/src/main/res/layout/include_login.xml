@@ -57,7 +57,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColorHint="?attr/text_hint_color"
-
+                app:prefixTextColor="?attr/text_hint_color"
+                app:suffixText="?attr/text_hint_color"
                 >
 
             <com.constants.CustomEditText

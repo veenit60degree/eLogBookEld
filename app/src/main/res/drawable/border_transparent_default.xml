@@ -10,10 +10,10 @@
         android:topLeftRadius="@dimen/margin_short_7"
         android:topRightRadius="@dimen/margin_short_7"/>
 
-    <padding android:left="@dimen/margin_short_1"
-        android:top="@dimen/margin_short_1"
-        android:right="@dimen/margin_short_1"
-        android:bottom="@dimen/margin_short_1"
+    <padding android:left="@dimen/margin_short_7"
+        android:top="@dimen/margin_short_7"
+        android:right="@dimen/margin_short_7"
+        android:bottom="@dimen/margin_short_7"
         />
 
 </shape>

@@ -18,16 +18,18 @@
             android:padding="@dimen/margin_short_8"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/margin_short_5"
-            android:src="@drawable/ble_ic" />
+            android:src="@drawable/ble_ic"
+            android:tint="?attr/permission_blue"
 
+            />
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:orientation="vertical"
             android:layout_toRightOf="@+id/permissionImgView"
+            android:orientation="vertical"
 
             >
 
@@ -49,11 +51,11 @@
                 android:id="@+id/permissionStatusDescTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/permissionNameTV"
+                android:layout_marginTop="@dimen/margin_short_1"
                 android:text="@string/app_permission"
                 android:textColor="?attr/gray_text"
                 android:textSize="@dimen/text_size_17"
-                android:layout_marginTop="@dimen/margin_short_1"
-                android:layout_below="@+id/permissionNameTV"
 
                 />
 
@@ -62,6 +64,19 @@
 
 
 
+        <ImageView
+            android:id="@+id/bleLocStatusImgView"
+            android:layout_width="@dimen/margin_28"
+            android:layout_height="@dimen/margin_28"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/margin_15"
+            android:layout_toLeftOf="@+id/permissionStatusBtn"
+            android:src="@drawable/gps_status"
+            android:tint="?attr/permission_blue"
+            android:visibility="gone"
+
+            />
+
 
         <TextView
             android:id="@+id/permissionStatusBtn"
@@ -69,18 +84,33 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:text="Allow"
-            android:paddingRight="@dimen/margin_12"
-            android:paddingLeft="@dimen/margin_12"
-            android:paddingBottom="@dimen/margin_short_8"
-            android:paddingTop="@dimen/margin_short_8"
-            android:textSize="@dimen/text_size_18"
-            android:textAllCaps="true"
             android:background="@drawable/green_default"
+            android:paddingLeft="@dimen/margin_12"
+            android:paddingTop="@dimen/margin_short_8"
+            android:paddingRight="@dimen/margin_12"
+            android:paddingBottom="@dimen/margin_short_8"
+            android:text="Allow"
+            android:textAllCaps="true"
+            android:textSize="@dimen/text_size_18"
 
 
             />
 
+
+
+
+        <ImageView
+            android:id="@+id/permissionGrantedImgView"
+            android:layout_width="@dimen/view_height_42"
+            android:layout_height="@dimen/view_height_42"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/margin_12"
+            android:src="@drawable/per_granted_round"
+            android:tint="?attr/permission_blue"
+            android:visibility="gone"
+
+            />
 
 
 

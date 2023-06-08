@@ -62,7 +62,7 @@ public class CoDriverEldPref {
 
 
     /*Add values in pref list*/
-    public void AddDriverLoc(Context context, EldDataModelNew LocationModelList) {
+    public void AddCoDriverStatus(Context context, EldDataModelNew LocationModelList) {
         List<EldDataModelNew> favorites = LoadSavedLoc(context);
         if (favorites == null)
             favorites = new ArrayList<EldDataModelNew>();
@@ -72,7 +72,7 @@ public class CoDriverEldPref {
 
 
     /*   Clear saved data from list  */
-    public ArrayList<EldDataModelNew> ClearLocFromList(Context context) {
+    public ArrayList<EldDataModelNew> ClearCoDrLogFromList(Context context) {
         SharedPreferences settings;
         List<EldDataModelNew> favorites;
 

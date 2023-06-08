@@ -1,6 +1,7 @@
 package com.local.db;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -34,7 +35,7 @@ public class BleGpsAppLaunchMethod {
         try {
             if (rs != null && rs.getCount() > 0) {
                 rs.moveToFirst();
-                String logList = rs.getString(rs.getColumnIndex(DBHelper.BLE_GPS_APPLAUNCH_LOG_LIST));
+                @SuppressLint("Range") String logList = rs.getString(rs.getColumnIndex(DBHelper.BLE_GPS_APPLAUNCH_LOG_LIST));
                 try {
                     logArray = new JSONArray(logList);
                 } catch (JSONException e) {
@@ -180,13 +181,14 @@ public class BleGpsAppLaunchMethod {
 
 
     //  Get final log as Json for Ble, Gps, App Lunch logs to post on Server
-    public JSONObject GetFinalBleGpsLogInJson(String DriverId, String DeviceId, JSONArray EventLogArray ) {
+    public JSONObject GetFinalBleGpsLogInJson(String DriverId, String CoDriverId, String DeviceId, JSONArray EventLogArray ) {
 
         JSONObject jsonObj = new JSONObject();
 
         try {
 
             jsonObj.put(ConstantsKeys.DriverId,     DriverId);
+            jsonObj.put(ConstantsKeys.CoDriverId,   CoDriverId);
             jsonObj.put(ConstantsKeys.DeviceId,     DeviceId);
             jsonObj.put(ConstantsKeys.ModeTime,     EventLogArray);
 

@@ -41,7 +41,6 @@ import com.constants.UrlResponce;
 import com.custom.dialogs.AppUpdateDialog;
 import com.custom.dialogs.BleAvailableDevicesDialog;
 import com.custom.dialogs.ContinueStatusDialog;
-import com.custom.dialogs.EldNotificationDialog;
 import com.custom.dialogs.TimeZoneDialog;
 import com.driver.details.DriverConst;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -96,7 +95,6 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     private BroadcastReceiver mMessageReceiver = null;
     Animation fadeInAnim, fadeOutAnim;
     AppUpdateDialog appUpdateDialog;
-    EldNotificationDialog eldNotificationDialog;
 
    // Utils util;
     String existingAppVersionStr = "";
@@ -236,10 +234,10 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
                                     Constants.IS_HOS_AUTO_CALLED = true;
                                     if(TabAct.host.getCurrentTab() == 0) {
-                                        EldFragment.calendarBtn.performClick();
+                                        EldFragment.autoMoveHosBtn.performClick();
                                     }else{
                                         TabAct.host.setCurrentTab(0);
-                                        EldFragment.calendarBtn.performClick();
+                                        EldFragment.autoMoveHosBtn.performClick();
 
                                     }
 

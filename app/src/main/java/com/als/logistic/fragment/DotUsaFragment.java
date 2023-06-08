@@ -320,6 +320,10 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                 case SslError.SSL_INVALID:
                     defaultMessage = "SSL connection is invalid.";
                     break;
+
+                default:
+                    defaultMessage = "Connection timeout.";
+                    break;
             }
 
         }
@@ -789,7 +793,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     void DownloadPdfLog(String country,String logtype,String fromDate,String toDate) {
 
         params = new HashMap<String, String>();
-        params.put(ConstantsKeys.DriverId, DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()));
+        params.put(ConstantsKeys.DriverId, DRIVER_ID);   //DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity())
         params.put(ConstantsKeys.FromDate, fromDate);
         params.put(ConstantsKeys.ToDate, toDate);
         params.put(ConstantsKeys.Country, country);
@@ -890,6 +894,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
 
     }
+
 
 
     void ParseGraphData(JSONArray driverLogJsonArray) {

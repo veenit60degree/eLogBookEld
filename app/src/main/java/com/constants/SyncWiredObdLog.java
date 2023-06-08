@@ -53,7 +53,7 @@ public class SyncWiredObdLog extends AsyncTask<String, String, String> {
 
             if (syncingFile != null && syncingFile.exists()) {
                 builderNew.addFormDataPart("File", "file",
-                        RequestBody.create(MediaType.parse("application/txt"), new File(syncingFile.toString())));
+                        RequestBody.create(MediaType.parse("application/txt"), syncingFile));
             }
 
 

@@ -16,20 +16,21 @@
             android:id="@+id/permissionImgView"
             android:layout_width="@dimen/view_height_40"
             android:layout_height="@dimen/view_height_40"
-            android:padding="@dimen/margin_short_5"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/margin_short_5"
+            android:padding="@dimen/margin_short_5"
             android:src="@drawable/ble_ic"
-            android:tint="?attr/permission_blue" />
+            android:tint="?attr/permission_blue"
 
+            />
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:orientation="vertical"
             android:layout_toRightOf="@+id/permissionImgView"
+            android:orientation="vertical"
 
             >
 
@@ -52,16 +53,30 @@
                 android:id="@+id/permissionStatusDescTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/permissionNameTV"
+                android:layout_marginTop="@dimen/margin_short_1"
                 android:text="@string/app_permission"
                 android:textColor="?attr/gray_text"
                 android:textSize="@dimen/text_size_15"
-                android:layout_marginTop="@dimen/margin_short_1"
-                android:layout_below="@+id/permissionNameTV"
 
                 />
 
 
         </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/bleLocStatusImgView"
+            android:layout_width="@dimen/margin_20"
+            android:layout_height="@dimen/margin_20"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/margin_short_8"
+            android:layout_toLeftOf="@+id/permissionStatusBtn"
+            android:src="@drawable/gps_status"
+            android:tint="?attr/permission_blue"
+            android:visibility="gone"
+
+            />
 
 
         <TextView
@@ -83,6 +98,18 @@
             />
 
 
+        <ImageView
+            android:id="@+id/permissionGrantedImgView"
+            android:layout_width="@dimen/view_height_30"
+            android:layout_height="@dimen/view_height_30"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/margin_short_8"
+            android:src="@drawable/per_granted_round"
+            android:tint="?attr/permission_blue"
+            android:visibility="gone"
+
+            />
 
 
     </RelativeLayout>

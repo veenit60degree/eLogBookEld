@@ -17,8 +17,6 @@ import com.als.logistic.fragment.EldFragment;
 import com.models.DriverLogModel;
 import com.models.EldDataModelNew;
 import com.shared.pref.CoDriverEldPref;
-import com.shared.pref.EldCoDriverLogPref;
-import com.shared.pref.EldSingleDriverLogPref;
 import com.shared.pref.MainDriverEldPref;
 
 import org.joda.time.DateTime;
@@ -84,6 +82,7 @@ public class HelperMethods {
         try {
             if (rs != null & rs.getCount() > 0) {
                 rs.moveToFirst();
+
                 dbHelper.UpdateDriverLog(driverId, driverLogArray);        // UPDATE RECAP LOG
             } else {
                 dbHelper.InsertDriverLog(driverId, driverLogArray);      // INSERT DRIVER LOG
@@ -743,17 +742,21 @@ public class HelperMethods {
         try {
             JSONArray driverLogArray = getSavedLogArray(DriverId, dbHelper);
             JSONObject lastItemJson = GetLastJsonFromArray(driverLogArray);
-
-           /* Logger.LogDebug("@@@lastItemJson", "lastItemJson-11: " + lastItemJson);
-            Logger.LogDebug("@@@DriverId", "DRIVER_ID-11: " + DriverId);
-            Logger.LogDebug("@@@LastStatus", "LastStatus-11: " + lastItemJson.getInt(ConstantsKeys.DriverStatusId));
-*/
             return lastItemJson.getInt(ConstantsKeys.DriverStatusId);
         }catch (Exception e){
             return -1;
         }
     }
 
+
+    public int getLastStatusFromPassedArray(JSONArray driverLogArray){
+        try {
+            JSONObject lastItemJson = GetLastJsonFromArray(driverLogArray);
+            return lastItemJson.getInt(ConstantsKeys.DriverStatusId);
+        }catch (Exception e){
+            return -1;
+        }
+    }
 
     public JSONObject updateLastItemFromArray(JSONObject lastObj, int offsetFromUTC){
 
@@ -1048,6 +1051,8 @@ public class HelperMethods {
                 JSONObject logObj = (JSONObject) logArray.get(logArray.length()-1);
                 logObj.put(key, value);
                 logArray.put(logArray.length()-1, logObj);
+
+                // Logger.LogDebug("DriverLogHelper-00", "DriverLogHelper-00");
 
                 // ------------ Update log array in local DB ---------
                 DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, logArray);
@@ -2111,6 +2116,7 @@ public class HelperMethods {
                         RulesObj, false, 0);
                 array.put(sameStatusJson);
 
+                // Logger.LogDebug("DriverLogHelper-1", "DriverLogHelper-1");
                 DriverLogHelper(Integer.valueOf(DriverId), dbHelper, array);
 
             }
@@ -4075,7 +4081,6 @@ public class HelperMethods {
                                String decesionSource, String LocationType, String malAddInfo, boolean isShortHaulUpdate,
                                boolean IsNorthCanada, int DriverType, Constants constants,
                                MainDriverEldPref MainDriverPref, CoDriverEldPref CoDriverPref,
-                               EldSingleDriverLogPref eldSharedPref, EldCoDriverLogPref coEldSharedPref,
                                SyncingMethod syncingMethod, Globally Global, HelperMethods hMethods,
                                DBHelper dbHelper, Context context, boolean IsCycleChanged, String CoDriverId,
                                String CoDriverName, boolean IsSkipRecord, String DriverVehicleTypeId) {
@@ -4259,23 +4264,9 @@ public class HelperMethods {
 
             // Save Model in offline Array
             if (DriverType == Constants.MAIN_DRIVER_TYPE) {
-                MainDriverPref.AddDriverLoc(context, locationModel);
-
-                /* ==== Add data in list to show in offline mode ============ */
-                EldDriverLogModel logModel = new EldDriverLogModel(DRIVER_JOB_STATUS, "0","startDateTime", "endDateTime", "totalHours",
-                        "currentCycleId", false, currentUtcTimeDiffFormat, currentUtcTimeDiffFormat,
-                        "", "", "","", Boolean.parseBoolean(isPersonal),
-                        isAdverseExcptn, isHaulExcptn, Globally.LATITUDE, Globally.LONGITUDE, CoDriverId, CoDriverName );
-                eldSharedPref.AddDriverLoc(context, logModel);
+                MainDriverPref.AddMainDriverLog(context, locationModel);
             } else {
-                CoDriverPref.AddDriverLoc(context, locationModel);
-
-                /* ==== Add data in list to show in offline mode ============ */
-                EldDriverLogModel logModel = new EldDriverLogModel(DRIVER_JOB_STATUS, "0","startDateTime", "endDateTime", "totalHours",
-                        "currentCycleId", false, currentUtcTimeDiffFormat, currentUtcTimeDiffFormat,
-                        "", "", "","", Boolean.parseBoolean(isPersonal),
-                        isAdverseExcptn, isHaulExcptn, Globally.LATITUDE, Globally.LONGITUDE, CoDriverId, CoDriverName);
-                coEldSharedPref.AddDriverLoc(context, logModel);
+                CoDriverPref.AddCoDriverStatus(context, locationModel);
             }
 
             // get unsaved posted data if available
@@ -4288,10 +4279,6 @@ public class HelperMethods {
             savedSyncedArray.put(newObj);
             syncingMethod.SyncingLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, savedSyncedArray);
 
-            /*JSONArray savedV2SyncedArray = syncingMethod.getVersion2SyncingArray(Integer.valueOf(DRIVER_ID), dbHelper);
-            savedV2SyncedArray.put(newObj);
-            syncingMethod.SyncingLogVersion2Helper(Integer.valueOf(DRIVER_ID), dbHelper, savedV2SyncedArray);
-*/
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -4318,7 +4305,7 @@ public class HelperMethods {
             DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, driverLogArray);
             BackgroundLocationService.IsAutoChange = false;
             SharedPref.setPuExceedCheckDate(Globally.GetCurrentUTCTimeFormat(), context);
-
+            // Logger.LogDebug("DriverLogHelper-2", "DriverLogHelper-2");
         } catch (Exception e) {
             e.printStackTrace();
         }

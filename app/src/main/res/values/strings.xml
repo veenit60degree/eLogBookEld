@@ -286,6 +286,7 @@
 
     <string name="data_rec_mal_title">Data Recording Compliance Malfunction Event</string>
     <string name="data_rec_mal_def">Data recording compliance malfunctions occur when device storage left less then 200mb.</string>
+
     <string name="data_rec_mal_def_noti">Data recording compliance malfunctions occurred due to low storage space.</string>
     <string name="data_rec_mal_cleared_def">Data recording compliance malfunctions has been cleared</string>
     <string name="missing_event_cleared_def">Missing required data elements data diagnostic event has been cleared</string>
@@ -579,6 +580,7 @@
     <string name="change_op_zone_to">Change Operating Zone to </string>
     <string name="storage_per_revoked">Storage permission is revoked</string>
     <string name="loc_per_revoked">Location permission is revoked</string>
+    <string name="storage_per_revoked_change">Storage permission is revoked. Allow it from Settings - Apps - Permissions</string>
     <string name="phone_per_revoked">Phone permission is revoked</string>
     <string name="loc_per_denied">Location permission denied</string>
     <string name="ble_per_revoked">Bluetooth near by scan permission is revoked</string>
@@ -642,6 +644,8 @@
     <string name="other_suggested_log">You have suggested review log for other date also.</string>
     <string name="view_other_suggested_log">View other logs</string>
     <string name="app_permission">App Permissions</string>
+    <string name="device_loc">Device Location</string>
+    <string name="device_ble">Device Bluetooth</string>
 
     <string name="hos_per_shift">PER SHIFT</string>
     <string name="hos_driving_shift">Driving</string>
@@ -1158,6 +1162,9 @@
     <string name="ViewInspections">View Inspections</string>
     <string name="sign_record">Certification Records</string>
 
+
+    <string name="ble_off_status">Device bluetooth is off.</string>
+    <string name="loc_off_status">Device location is off.</string>
 
     <string name="turn_on_bluetooth">Please turn ON your device\'s bluetooth first</string>
     <string name="open_gps_location">Please turn on your GPS location for better solution.</string>

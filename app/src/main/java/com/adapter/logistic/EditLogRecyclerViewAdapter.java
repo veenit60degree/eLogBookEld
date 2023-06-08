@@ -96,9 +96,9 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
 
 
         if(SharedPref.IsCCMTACertified(context) ) {
-            IsOffDutyPermission = true;
+            /*IsOffDutyPermission = true;
             IsSleeperPermission = true;
-            IsOnDutyPermission  = true;
+            IsOnDutyPermission  = true;*/
             IsDrivingPermission = false;
         }
 
@@ -151,7 +151,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
                     bgResId = R.drawable.edited_log_drawable;   //edit_log_bg_default
                     DrawableUtils.clearState(viewHolder.editLogItemLay.getForeground());
                 }else {
-                    bgResId = R.drawable.white_border;
+                    bgResId = R.color.hos_card_dark;
                 }
             } else {
 
@@ -576,6 +576,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
             if(UILApplication.getInstance().isNightModeEnabled()){
                 editLogItemLay.setBackgroundColor(mContext.getResources().getColor(R.color.layout_color_dot));
                 editLogStatusSpinner.setPopupBackgroundDrawable(mContext.getDrawable(R.drawable.edited_log_drawable));
+             //   editLogStatusSpinner.setBackgroundColor(mContext.getResources().getColor(R.color.spinner_blue));
             } else {
                 editLogItemLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
             }

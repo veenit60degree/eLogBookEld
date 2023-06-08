@@ -50,21 +50,25 @@ public class SyncDataUpload extends AsyncTask<String, String, String>{
             MultipartBuilder builderNew = new MultipartBuilder().type(MultipartBuilder.FORM)
                     .addFormDataPart(ConstantsKeys.DriverId, DriverId ) ;
 
+          /*  File file= context.getFilesDir();
+            File file2 = new File(getFilesDir() + "/" + name);
+            File mediaStorageDir = new File(context.getExternalFilesDir(null), folderName);
+            */
             if (syncingFile != null && syncingFile.exists()) {
                 builderNew.addFormDataPart("File", "file",
-                        RequestBody.create(MediaType.parse("application/txt"), new File(syncingFile.toString())));
+                        RequestBody.create(MediaType.parse("application/txt"), syncingFile));
             }
 
             if(IsLogPermission) {
                 if (violatedLogFile != null && violatedLogFile.exists()) {
                     builderNew.addFormDataPart("File22", ConstantsKeys.ViolationTest,
-                            RequestBody.create(MediaType.parse("application/txt"), new File(violatedLogFile.toString())));
+                            RequestBody.create(MediaType.parse("application/txt"), violatedLogFile));
                 }
 
 
                 if(cycleRecordFile != null && cycleRecordFile.isFile() ) {
                     builderNew.addFormDataPart("File3", ConstantsKeys.ELDCycleFile,
-                            RequestBody.create(MediaType.parse("application/txt"), new File(cycleRecordFile.toString())));
+                            RequestBody.create(MediaType.parse("application/txt"), cycleRecordFile));
                 }
             }
 

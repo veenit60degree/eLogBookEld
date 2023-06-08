@@ -246,12 +246,18 @@ public class VehicleDialogLoginOld extends Dialog {
 
     //*================== Logout User request ===================*//*
     void LogoutUser(final String DriverId){
-        progressD.show();
-        params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
 
-        LogoutRequest.executeRequest(Request.Method.POST, APIs.DRIVER_LOGOUT , params, 1,
-                Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
+        if(DriverId.length() > 0 && !DriverId.equals("0")) {
+            progressD.show();
+            params = new HashMap<String, String>();
+            params.put("DriverId", DriverId);
+
+            LogoutRequest.executeRequest(Request.Method.POST, APIs.DRIVER_LOGOUT, params, 1,
+                    Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
+        }else{
+            Globally global = new Globally();
+            global.EldScreenToast(logoutTruckPopupTV, "Driver info is invalid", getContext().getResources().getColor(R.color.colorSleeper));
+        }
 
     }
 

@@ -311,6 +311,7 @@ public class ConstantsKeys {
     public static String IsAutoOnDutyDriveEnabled       = "IsAutoOnDutyDriveEnabled";
     public static String IsOBDPingAllowed               = "IsOBDPingAllowed";
     public static String IsAutoSync                     = "IsAutoSync";
+    public static String IsShippingUpdate               = "IsShippingUpdate";
 
 
     public static String IsStorageMalfunction           = "IsStorageMalfunction";
@@ -333,6 +334,9 @@ public class ConstantsKeys {
     public static String IsConnected                    = "IsConnected";
     public static String IsAnimation                    = "IsAnimation";
     public static String AnimationType                  = "AnimationType";
+
+    public static String BluetoothObserver              = "BluetoothObserver";
+    public static String BluetoothStatus                = "BluetoothStatus";
 
     public static String IsLocDiagnostic                = "IsLocDiagnostic";
     public static String LocDiaOccurTime                = "LocDiaOccurTime";
@@ -520,6 +524,10 @@ public class ConstantsKeys {
     public static String NotificationLogId              = "NotificationLogId";
     public static String NotificationTypeId             = "NotificationTypeId";
     public static String NotificationTypeName           = "NotificationTypeName";
+
+    public static String NotificationType               = "NotificationType";
+    public static String NotificationCategory           = "NotificationCategory";
+
     public static String Title                          = "Title";
     public static String Desc                           = "Desc";
     public static String Message                        = "Message";

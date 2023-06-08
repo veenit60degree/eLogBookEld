@@ -1,12 +1,15 @@
 package com.custom.dialogs;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Html;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.View;
@@ -23,6 +26,7 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.als.logistic.UILApplication;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
 import com.constants.Logger;
@@ -40,6 +44,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Vector;
 
 
 public class TrailorDialog extends Dialog {
@@ -49,7 +54,7 @@ public class TrailorDialog extends Dialog {
 
         public void CancelReady();
         public void JobBtnReady(String TrailorNo, String Reason, String type, boolean isUpdatedTrailer, int ItemPosition,
-                                EditText TrailorNoEditText, EditText ReasonEditText);
+                                EditText TrailorNoEditText, EditText ReasonEditText, boolean isPartialUnload);
 
     }
 
@@ -71,6 +76,8 @@ public class TrailorDialog extends Dialog {
     HelperMethods hMethods;
     Constants constants;
     Globally Global;
+    AlertDialog saveJobAlertDialog;
+    private Vector<AlertDialog> vectorDialogs = new Vector<>();
 
     public TrailorDialog(Context context, String type, boolean isYardmove, String trailor, int position, boolean IsEdit,  List<String> remarkList,
                          int jobStatuss, DBHelper dbHelper, TrailorListener readyListener) {
@@ -424,7 +431,7 @@ public class TrailorDialog extends Dialog {
                                     isUpdatedTrailer,
                                     ItemPosition,
                                     TrailorNoEditText,
-                                    ReasonEditText);
+                                    ReasonEditText, false);
 
                         } else {
                             if (updatedReason.length() < 60) {
@@ -489,7 +496,7 @@ public class TrailorDialog extends Dialog {
                                                         isUpdatedTrailer,
                                                         ItemPosition,
                                                         TrailorNoEditText,
-                                                        ReasonEditText);
+                                                        ReasonEditText, false);
                                             }
                                         } catch (Exception e) {
                                             e.printStackTrace();
@@ -503,7 +510,7 @@ public class TrailorDialog extends Dialog {
                                                 isUpdatedTrailer,
                                                 ItemPosition,
                                                 TrailorNoEditText,
-                                                ReasonEditText);
+                                                ReasonEditText, false);
                                     }
 
                                 }
@@ -518,14 +525,18 @@ public class TrailorDialog extends Dialog {
                                                 && (Trailer.equals("No Trailer") || Trailer.length() == 0 ) )  ) {
                                     Global.EldScreenToast(btnLoadingJob, "Enter trailer number", getContext().getResources().getColor(R.color.colorVoilation));
                                 } else {
-                                    readyListener.JobBtnReady(
-                                            Trailer,
-                                            updatedReason,
-                                            type,
-                                            isUpdatedTrailer,
-                                            ItemPosition,
-                                            TrailorNoEditText,
-                                            ReasonEditText);
+                                    if(type.equals("on_duty") && updatedReason.equals("Unloading")){
+                                        PartialUnloadingAlert(Trailer, updatedReason);
+                                    }else {
+                                        readyListener.JobBtnReady(
+                                                Trailer,
+                                                updatedReason,
+                                                type,
+                                                isUpdatedTrailer,
+                                                ItemPosition,
+                                                TrailorNoEditText,
+                                                ReasonEditText, false);
+                                    }
                                 }
                             }
                         }
@@ -586,7 +597,7 @@ public class TrailorDialog extends Dialog {
                                 isUpdatedTrailer,
                                 ItemPosition,
                                 TrailorNoEditText,
-                                ReasonEditText);
+                                ReasonEditText, false);
                     } else {
                         Global.EldScreenToast(btnLoadingJob, ConstantsEnum.YARD_MOVE_DESC, getContext().getResources().getColor(R.color.red_eld));
                     }
@@ -600,5 +611,75 @@ public class TrailorDialog extends Dialog {
             Global.EldToastWithDuration4Sec(TrailorNoEditText, getContext().getResources().getString(R.string.connect_with_obd_first), getContext().getResources().getColor(R.color.colorVoilation));
         }
     }
+
+
+
+    public void PartialUnloadingAlert(String Trailer, String updatedReason) {
+
+        try {
+            closeDialogs();
+            String title = "Do you want to do partial unloading?";
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext(),R.style.AlertDialogStyle);
+            alertDialogBuilder.setTitle(Html.fromHtml(title));
+            alertDialogBuilder.setMessage("");
+            alertDialogBuilder.setCancelable(false);
+            alertDialogBuilder.setPositiveButton("Yes",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int arg1) {
+                            dialog.dismiss();
+                            readyListener.JobBtnReady(
+                                    Trailer,
+                                    updatedReason,
+                                    type,
+                                    isUpdatedTrailer,
+                                    ItemPosition,
+                                    TrailorNoEditText,
+                                    ReasonEditText, true);
+
+                        }
+                    });
+
+            alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+
+                    readyListener.JobBtnReady(
+                            Trailer,
+                            updatedReason,
+                            type,
+                            isUpdatedTrailer,
+                            ItemPosition,
+                            TrailorNoEditText,
+                            ReasonEditText, false);
+
+
+                }
+            });
+
+            if(getContext() != null) {
+                saveJobAlertDialog = alertDialogBuilder.create();
+                vectorDialogs.add(saveJobAlertDialog);
+                saveJobAlertDialog.show();
+                if(UILApplication.getInstance().isNightModeEnabled()) {
+                    saveJobAlertDialog.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+                    saveJobAlertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getContext().getResources().getColor(R.color.white));
+                    saveJobAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getContext().getResources().getColor(R.color.white));
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public void closeDialogs() {
+        for (AlertDialog dialog : vectorDialogs)
+            if (dialog.isShowing()) dialog.dismiss();
+    }
+
 
 }

@@ -19,7 +19,6 @@
         />
 
     <ScrollView
-        android:id="@+id/ctPatScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
@@ -368,8 +367,8 @@
                                     CircleProgressView:cpv_innerContourSize="0dp"
                                     CircleProgressView:cpv_maxValue="100"
                                     CircleProgressView:cpv_outerContourSize="0dp"
-                                    CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
 
+                                    CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
                                     CircleProgressView:cpv_rimWidth="@dimen/margin_short_6"
                                     CircleProgressView:cpv_seekMode="true"
                                     CircleProgressView:cpv_showUnit="true"

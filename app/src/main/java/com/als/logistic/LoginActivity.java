@@ -2,6 +2,7 @@ package com.als.logistic;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -121,7 +122,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	BleAvailableDevicesDialog bleAvailableDevicesDialog;
 	List<String> availableDevicesList = new ArrayList<>();
 	boolean isBleNearByScanCalled = false;
-
+	AlertDialog statusAlertDialog;
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -185,6 +186,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		loginCoDriverLayout 	= (RelativeLayout) findViewById(R.id.loginCoDriverLayout);
 		//mTelephonyManager 	= (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 		malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
+		statusAlertDialog =  new AlertDialog.Builder(getApplicationContext()).create();
 
 		backImgView.setVisibility(View.GONE);
 
@@ -221,10 +223,12 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		File apkStorageDir = new File(LoginActivity.this.getExternalFilesDir(null), "Logistic");
 		global.DeleteDirectory(apkStorageDir.toString());
 		try {
-			MainDriverEldPref MainDriverPref = new MainDriverEldPref();
-			CoDriverEldPref CoDriverPref = new CoDriverEldPref();
-			MainDriverPref.ClearLocFromList(this);
-			CoDriverPref.ClearLocFromList(this);
+			if(SharedPref.getUserName( this).length() == 0) {
+				MainDriverEldPref MainDriverPref = new MainDriverEldPref();
+				CoDriverEldPref CoDriverPref = new CoDriverEldPref();
+				MainDriverPref.ClearLogFromList(this);
+				CoDriverPref.ClearCoDrLogFromList(this);
+			}
 		} catch (Exception e) {
 		}
 
@@ -1112,14 +1116,14 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				clearUnIdentifiedRecordBeforeLogin();
 
 				loginBtn.setEnabled(false);
-				try {
+				/*try {
 					MainDriverEldPref MainDriverPref = new MainDriverEldPref();
 					CoDriverEldPref CoDriverPref = new CoDriverEldPref();
-					MainDriverPref.ClearLocFromList(LoginActivity.this);
-					CoDriverPref.ClearLocFromList(LoginActivity.this);
+					MainDriverPref.ClearLogFromList(LoginActivity.this);
+					CoDriverPref.ClearCoDrLogFromList(LoginActivity.this);
 
 				} catch (Exception e) {
-				}
+				}*/
 
 				try {
 					if (obdUtil == null) {
@@ -1217,6 +1221,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 										String errorStr = constants.getErrorMsg(message);
 										global.EldScreenToast(mainLoginLayout, errorStr, getResources().getColor(R.color.colorVoilation));
 
+										global.DriverSwitchAlertWithDismiss(LoginActivity.this, "App Update !!", errorStr,
+												"Ok", statusAlertDialog, false);
 									}
 								} catch (Exception e) {
 									e.printStackTrace();
@@ -1363,6 +1369,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			GetServerTimeRequest.executeRequest(Request.Method.GET, APIs.CONNECTION_UTC_DATE, params, 1001,
 					Constants.SocketTimeout5Sec, ResponseCallBack, ErrorCallBack);
 
+		}else{
+			global.EldScreenToast(mainLoginLayout, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
+					getString(R.string.login_speed_alert), getResources().getColor(R.color.colorVoilation));
 		}
 
 
@@ -1502,7 +1511,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		if (loginBtn.getText().toString().equals("Next")) {
 			if (loginCoDriverLayout.getVisibility() == View.VISIBLE) {
 				CleanCoDriverFields();
-				backImgView.setVisibility(View.VISIBLE);
+				backImgView.setVisibility(View.GONE);
 				OutToRightAnim(loginCoDriverLayout);
 				InFromLeftAnim(loginLayout);
 			} else if (loginLayout.getVisibility() == View.VISIBLE) {

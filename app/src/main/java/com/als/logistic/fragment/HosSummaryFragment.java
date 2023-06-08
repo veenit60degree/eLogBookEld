@@ -923,6 +923,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
     private void resetProgressBarUI(){
 
+        DRIVER_JOB_STATUS = Integer.parseInt(SharedPref.getDriverStatusId(getActivity()));
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {

@@ -2,11 +2,18 @@ package com.als.logistic;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.text.Html;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -14,14 +21,21 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.adapter.logistic.PermissionAdapter;
+import com.background.LocationProviderChangedReceiver;
+import com.background.service.BleDataService;
 import com.constants.Constants;
 import com.constants.Logger;
+import com.constants.SharedPref;
+import com.local.db.ConstantsKeys;
 import com.models.PermissionModel;
 
 import java.util.ArrayList;
@@ -32,7 +46,7 @@ public class AppPermissionActivity extends FragmentActivity implements View.OnCl
     final int LOCATION_REQUEST          = 101;
     final int STORAGE_REQUEST           = 102;
     final int NEARBY_DEVICES_REQUEST    = 103;
-
+    int LocationRequestCount            = 0;
     boolean PermissionDenied        = false;
     boolean PermissionGranted       = true;
 
@@ -55,7 +69,8 @@ public class AppPermissionActivity extends FragmentActivity implements View.OnCl
     TextView EldTitleTV;
     PermissionAdapter permissionAdapter;
     boolean isBleNearByScanCalled = false;
-
+    Globally globally;
+    Constants constants;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,6 +84,9 @@ public class AppPermissionActivity extends FragmentActivity implements View.OnCl
         }
 
         setContentView(R.layout.activity_permission);
+
+        globally = new Globally();
+        constants = new Constants();
 
         permissionListView  = findViewById(R.id.permissionListView);
 
@@ -94,8 +112,13 @@ public class AppPermissionActivity extends FragmentActivity implements View.OnCl
                                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
                                 LOCATION_REQUEST);
                     }else if(PermissionType.equals(StorageP)){
-                        ActivityCompat.requestPermissions(AppPermissionActivity.this,
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_REQUEST);
+                        if(LocationRequestCount < 3) {
+                            ActivityCompat.requestPermissions(AppPermissionActivity.this,
+                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_REQUEST);
+                        }else{
+                            Globally.EldScreenToast(eldMenuBtn, getString(R.string.storage_per_revoked_change), getResources().getColor(R.color.colorVoilation));
+                        }
+                        LocationRequestCount++;
                     }else if(PermissionType.equals(BluetoothP)){
                         if(!isBleNearByScanCalled) {
                             ActivityCompat.requestPermissions(AppPermissionActivity.this, new String[]{Manifest.permission.BLUETOOTH_SCAN,
@@ -106,6 +129,20 @@ public class AppPermissionActivity extends FragmentActivity implements View.OnCl
                         isBleNearByScanCalled = true;
                     }
                 }
+
+                if (PermissionType.equals(LocationP) || PermissionType.equals(LocationPreciseP)) {
+                    if(!constants.CheckGpsStatus(getApplicationContext())) {
+                        Toast.makeText(getApplicationContext(), getString(R.string.loc_off_status), Toast.LENGTH_LONG).show();
+                    }
+                    permissionAdapter.notifyDataSetChanged();
+                }else if(PermissionType.equals(BluetoothP)){
+                    if(!globally.isBleEnabled(getApplicationContext())) {
+                        Toast.makeText(getApplicationContext(), getString(R.string.ble_off_status), Toast.LENGTH_LONG).show();
+                    }
+
+                    permissionAdapter.notifyDataSetChanged();
+                }
+
 
             }
         });
@@ -119,9 +156,53 @@ public class AppPermissionActivity extends FragmentActivity implements View.OnCl
     protected void onResume() {
         super.onResume();
 
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver( bluetoothStatusReceiver, new IntentFilter(ConstantsKeys.BluetoothObserver));
+        registerReceiver(gpsReceiver, makeFilter());
+
         checkPermissions();
 
     }
+
+    private IntentFilter makeFilter() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(LocationManager.PROVIDERS_CHANGED_ACTION);
+        return filter;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(bluetoothStatusReceiver);
+        unregisterReceiver(gpsReceiver);
+
+    }
+
+    private BroadcastReceiver bluetoothStatusReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+         // boolean isDeviceBleOn = intent.getBooleanExtra(ConstantsKeys.BluetoothStatus, false);
+          checkPermissions();
+
+        }
+    };
+
+
+    private BroadcastReceiver gpsReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            // boolean isDeviceBleOn = intent.getBooleanExtra(ConstantsKeys.BluetoothStatus, false);
+
+            if (intent != null && intent.getAction().matches(LocationManager.PROVIDERS_CHANGED_ACTION)) {
+                //Do your stuff on GPS status change
+                Logger.LogDebug("Location", "Location status update " );
+                checkPermissions();
+            }
+
+        }
+    };
+
 
     @Override
     public void onClick(View view) {
@@ -264,7 +345,6 @@ public class AppPermissionActivity extends FragmentActivity implements View.OnCl
 
 
     }
-
 
 
 

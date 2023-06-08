@@ -245,9 +245,9 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                 IsDrivingPermission = true;
             }else{
                 if(SharedPref.IsCCMTACertified(getActivity()) ) {
-                    IsOffDutyPermission = true;
+                   /* IsOffDutyPermission = true;
                     IsSleeperPermission = true;
-                    IsOnDutyPermission  = true;
+                    IsOnDutyPermission  = true;*/
                     IsDrivingPermission = false;
                 }
             }
@@ -1381,9 +1381,9 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                                 IsDrivingPermission = true;
                             }else{
                                 if(SharedPref.IsCCMTACertified(getActivity()) ) {
-                                    IsOffDutyPermission = true;
+                                   /* IsOffDutyPermission = true;
                                     IsSleeperPermission = true;
-                                    IsOnDutyPermission  = true;
+                                    IsOnDutyPermission  = true;*/
                                     IsDrivingPermission = false;
                                 }
                             }
@@ -1465,7 +1465,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
     void SaveDataLocally(){
         if(IsSingleDriver){
             // clear data before adding
-            MainDriverPref.ClearLocFromList(getActivity());
+            MainDriverPref.ClearLogFromList(getActivity());
 
             // Save data for Main Driver
             List<EldDataModelNew> editLogList = constants.getLogInList(finalEditedLogArray);
@@ -1475,7 +1475,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
 
             if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) { // If Current driver is Main Driver
                 // clear data before adding
-                MainDriverPref.ClearLocFromList(getActivity());
+                MainDriverPref.ClearLogFromList(getActivity());
 
                 // Save data for Main Driver
                 List<EldDataModelNew> editLogList = constants.getLogInList(finalEditedLogArray);
@@ -1483,7 +1483,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
             }else{
 
                 // clear data before adding
-                CoDriverPref.ClearLocFromList(getActivity());
+                CoDriverPref.ClearCoDrLogFromList(getActivity());
 
                 // Save data for Co Driver
                 List<EldDataModelNew> editLogList = constants.getLogInList(finalEditedLogArray);

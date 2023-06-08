@@ -3,7 +3,7 @@
     <solid android:color="@color/transparent" />
 
     <stroke android:width="@dimen/margin_short_1"
-        android:color="?attr/black_semi"/>
+        android:color="?attr/certify_list_color"/>
 
     <corners
         android:radius="@dimen/margin_short_3"

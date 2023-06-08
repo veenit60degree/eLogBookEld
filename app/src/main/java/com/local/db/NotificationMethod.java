@@ -1,5 +1,6 @@
 package com.local.db;
 
+import android.annotation.SuppressLint;
 import android.database.Cursor;
 
 import com.constants.Constants;
@@ -28,7 +29,7 @@ public class NotificationMethod {
 
         if(rs != null && rs.getCount() > 0) {
             rs.moveToFirst();
-            String logList = rs.getString(rs.getColumnIndex(DBHelper.NOTIFICATION_HISTORY_LIST));
+            @SuppressLint("Range") String logList = rs.getString(rs.getColumnIndex(DBHelper.NOTIFICATION_HISTORY_LIST));
             try {
                 logArray = new JSONArray(logList);
             } catch (JSONException e) {
@@ -71,7 +72,7 @@ public class NotificationMethod {
 
         if(rs != null && rs.getCount() > 0) {
             rs.moveToFirst();
-            String logList = rs.getString(rs.getColumnIndex(DBHelper.NOTIFICATION_TO_SAVE_LIST));
+            @SuppressLint("Range") String logList = rs.getString(rs.getColumnIndex(DBHelper.NOTIFICATION_TO_SAVE_LIST));
             try {
                 logArray = new JSONArray(logList);
             } catch (JSONException e) {
@@ -111,11 +112,13 @@ public class NotificationMethod {
                                     String DriverName, int NotificationTypeId,
                                     String NotificationTypeName, String Title,
                                     String Message, String ImagePath,
-                                    String SendDate, String CompanyId   ){
+                                    String SendDate, String CompanyId,
+                                    String NotificationType, String NotificationCategory){
 
         JSONObject shipmentJson = new JSONObject();
 
         try {
+
 
             shipmentJson.put(ConstantsKeys.NotificationLogId,       NotificationLogId);
             shipmentJson.put(ConstantsKeys.DriverId,                DriverId );
@@ -123,7 +126,6 @@ public class NotificationMethod {
 
             shipmentJson.put(ConstantsKeys.DriverName,              DriverName);
             shipmentJson.put(ConstantsKeys.NotificationTypeId,      NotificationTypeId);
-
             shipmentJson.put(ConstantsKeys.NotificationTypeName,    NotificationTypeName );
             shipmentJson.put(ConstantsKeys.Title,                   Title);
             shipmentJson.put(ConstantsKeys.Message,                 Message);
@@ -131,6 +133,9 @@ public class NotificationMethod {
             shipmentJson.put(ConstantsKeys.SendDate,                SendDate);
 
             shipmentJson.put(ConstantsKeys.CompanyId,               CompanyId);
+
+            shipmentJson.put(ConstantsKeys.NotificationType,        NotificationType);
+            shipmentJson.put(ConstantsKeys.NotificationCategory,    NotificationCategory );
 
 
         }catch (Exception e){
@@ -160,7 +165,8 @@ public class NotificationMethod {
 
 
     public void saveNotificationHistory(int DriverId, String DeviceId, String DriverName,  String title, String reason,
-                                          DateTime currentDateTime, String DriverCompanyId, DBHelper dbHelper){
+                                          DateTime currentDateTime, String DriverCompanyId, String notiType,
+                                        String notiCategory, DBHelper dbHelper){
 
         // Create JSON object for Notification History
         JSONObject dataJson = AddJobInNotificationArray(
@@ -174,7 +180,9 @@ public class NotificationMethod {
                 reason,
                 "",
                 currentDateTime.toString(),
-                DriverCompanyId
+                DriverCompanyId,
+                notiType,
+                notiCategory
         );
 
 

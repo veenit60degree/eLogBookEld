@@ -209,32 +209,6 @@ public class DriverConst {
 
 
 
-    public void UpdateDriverDetails(String Drivername, String DriverId, String LoadId,
-                                    String companyName, String companyId, String carrier,
-                                    String carrierAddress, String homeTerminal, Context context){
-
-        DriverConst.SetDriverDetails(Drivername, DriverId, companyName, companyId, carrier,
-                carrierAddress, homeTerminal, context);
-    }
-
-
-
-    public static void UpdateDriverCarrierName( String carrierName, Context context){
-
-        String Drivername   = GetDriverDetails(DriverName, context);
-        String DriverId     = GetDriverDetails(DriverID, context);
-        String LoadId       = GetDriverDetails(LoadID, context);
-        String company_name = GetDriverDetails(CompanyName, context);
-        String companyID    = GetDriverDetails(CompanyId, context);
-        String CarrierAdd   = GetDriverDetails(CarrierAddress, context);
-        String HomeTermnl   = GetDriverDetails(HomeTerminal, context);
-
-        DriverConst.SetDriverDetails(Drivername, DriverId, company_name, companyID, carrierName,
-                CarrierAdd, HomeTermnl, context);
-
-    }
-
-
 
     //------------ Set User Configured Time -------------------
     public static void setDriverConfiguredTime(int valueDrivingSpeed, int valueDrivingMinute,

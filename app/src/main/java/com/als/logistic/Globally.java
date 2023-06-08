@@ -2934,8 +2934,8 @@ public class Globally {
 			try {
 				MainDriverEldPref MainDriverPref = new MainDriverEldPref();
 				CoDriverEldPref CoDriverPref = new CoDriverEldPref();
-				MainDriverPref.ClearLocFromList(c);
-				CoDriverPref.ClearLocFromList(c);
+				MainDriverPref.ClearLogFromList(c);
+				CoDriverPref.ClearCoDrLogFromList(c);
 
 				NotificationPref notificationPref = new NotificationPref();
 				CoNotificationPref coNotificationPref = new CoNotificationPref();

@@ -54,7 +54,7 @@ public class SplashActivity extends Activity implements
     Handler handler;
     PermissionInfoDialog permissionInfoDialog;
     boolean isBleNearByScanCalled = false;
-
+    int locationRequestCount = 0;
     protected static final String TAG = "SplashActivity";
 
     /**
@@ -229,7 +229,14 @@ public class SplashActivity extends Activity implements
                 return true;
             } else {
                 Logger.LogVerbose("TAG","Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_REQUEST);
+
+                if(locationRequestCount < 4) {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_REQUEST);
+                }else{
+                    isNearByDevicesGranted();
+                    Globally.EldScreenToast(appVersionSplash, getString(R.string.storage_per_revoked_change), getResources().getColor(R.color.colorVoilation));
+                }
+                locationRequestCount++;
                 return false;
             }
         }

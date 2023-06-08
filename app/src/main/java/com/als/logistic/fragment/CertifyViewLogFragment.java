@@ -1100,6 +1100,9 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
                 saveCertifyLogPost.PostDriverLogData(DriverJsonArray, SavedLogApi, socketTimeout, false, false,
                         DriverType, SaveEditedLog);
+
+                constants.saveBleLog("Certify-SaveApi", Globally.GetCurrentUTCTimeFormat(),
+                        getActivity(), dbHelper, driverPermissionMethod, obdUtil);
             }else{
                 // set edited log status false
                 if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
@@ -3483,9 +3486,9 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
                         // Clear edited Log locally in offline table After Success
                         if (DriverType == Constants.MAIN_DRIVER_TYPE) // Single Driver Type and Position is 0
-                            MainDriverPref.ClearLocFromList(getActivity());
+                            MainDriverPref.ClearLogFromList(getActivity());
                         else
-                            CoDriverPref.ClearLocFromList(getActivity());
+                            CoDriverPref.ClearCoDrLogFromList(getActivity());
 
                         // set edited log status false
                         if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {

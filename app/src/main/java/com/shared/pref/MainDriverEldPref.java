@@ -20,7 +20,7 @@ public class MainDriverEldPref {
 
 
     public static final String PREFS_NAME = "main_eld";
-    public static final String UPDATE_LOCATION = "main_driver_location";
+    public static final String UPDATE_LOG = "main_driver_location";
 
 
 
@@ -40,7 +40,7 @@ public class MainDriverEldPref {
         Gson gson = new Gson();
         String jsonFavorites = gson.toJson(favorites);
 
-        editor.putString(UPDATE_LOCATION, jsonFavorites);
+        editor.putString(UPDATE_LOG, jsonFavorites);
 
         editor.commit();
     }
@@ -54,8 +54,8 @@ public class MainDriverEldPref {
         ArrayList<EldDataModelNew> emptyList = new ArrayList<EldDataModelNew>();
 
         settings = context.getSharedPreferences(PREFS_NAME,Context.MODE_PRIVATE);
-        if (settings.contains(UPDATE_LOCATION)) {
-            String jsonFavorites = settings.getString(UPDATE_LOCATION, null);
+        if (settings.contains(UPDATE_LOG)) {
+            String jsonFavorites = settings.getString(UPDATE_LOG, null);
             Gson gson = new Gson();
             EldDataModelNew[] favoriteItems = gson.fromJson(jsonFavorites,EldDataModelNew[].class);
             favorites = Arrays.asList(favoriteItems);
@@ -69,7 +69,7 @@ public class MainDriverEldPref {
 
 
     /*Add values in pref list*/
-    public void AddDriverLoc(Context context, EldDataModelNew LocationModelList) {
+    public void AddMainDriverLog(Context context, EldDataModelNew LocationModelList) {
         List<EldDataModelNew> favorites = LoadSavedLoc(context);
         if (favorites == null)
             favorites = new ArrayList<EldDataModelNew>();
@@ -79,13 +79,13 @@ public class MainDriverEldPref {
 
 
     /*   Clear saved data from list  */
-    public ArrayList<EldDataModelNew> ClearLocFromList(Context context) {
+    public ArrayList<EldDataModelNew> ClearLogFromList(Context context) {
         SharedPreferences settings;
         List<EldDataModelNew> favorites;
 
         settings = context.getSharedPreferences(PREFS_NAME,Context.MODE_PRIVATE);
-        if (settings.contains(UPDATE_LOCATION)) {
-            String jsonFavorites = settings.getString(UPDATE_LOCATION, null);
+        if (settings.contains(UPDATE_LOG)) {
+            String jsonFavorites = settings.getString(UPDATE_LOG, null);
             Gson gson = new Gson();
             EldDataModelNew[] favoriteItems = gson.fromJson(jsonFavorites,EldDataModelNew[].class);
             favorites = Arrays.asList(favoriteItems);

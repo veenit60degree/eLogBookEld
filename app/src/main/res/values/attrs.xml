@@ -96,6 +96,8 @@
     <attr name="camera_transparent_dark" format="color"/>
     <attr name="transparent" format="color"/>
     <attr name="transparent_sidemenu" format="color"/>
+    <attr name="transparent_spinner" format="color"/>
+
     <attr name="txt_eld_color" format="color"/>
     <attr name="slide_menu_icon" format="color"/>
     <attr name="blue_button_hover" format="color"/>

@@ -18,7 +18,10 @@
             android:padding="@dimen/margin_short_9"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/margin_short_5"
-            android:src="@drawable/ble_ic" />
+            android:src="@drawable/ble_ic"
+            android:tint="?attr/permission_blue"
+
+            />
 
 
 
@@ -61,23 +64,50 @@
         </LinearLayout>
 
 
-
-
         <TextView
             android:id="@+id/permissionStatusBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:text="Allow"
-            android:paddingRight="@dimen/margin_12"
-            android:paddingLeft="@dimen/margin_12"
-            android:paddingBottom="@dimen/margin_short_8"
-            android:paddingTop="@dimen/margin_short_8"
-            android:textSize="@dimen/text_size_20"
-            android:textAllCaps="true"
             android:background="@drawable/green_default"
+            android:paddingLeft="@dimen/margin_12"
+            android:paddingTop="@dimen/margin_short_8"
+            android:paddingRight="@dimen/margin_12"
+            android:paddingBottom="@dimen/margin_short_8"
+            android:text="Allow"
+            android:textAllCaps="true"
+            android:textSize="@dimen/text_size_20"
 
+
+            />
+
+
+        <ImageView
+            android:id="@+id/bleLocStatusImgView"
+            android:layout_width="@dimen/view_height_35"
+            android:layout_height="@dimen/view_height_35"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/margin_18"
+            android:layout_toLeftOf="@+id/permissionStatusBtn"
+            android:src="@drawable/gps_status"
+            android:tint="?attr/permission_blue"
+            android:visibility="gone"
+
+            />
+
+
+
+        <ImageView
+            android:id="@+id/permissionGrantedImgView"
+            android:layout_width="@dimen/view_height_50"
+            android:layout_height="@dimen/view_height_50"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/margin_12"
+            android:src="@drawable/per_granted_round"
+            android:tint="?attr/permission_blue"
+            android:visibility="gone"
 
             />
 

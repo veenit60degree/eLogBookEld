@@ -75,6 +75,8 @@ import com.als.logistic.UILApplication;
 import com.models.DriverLocationModel;
 import com.models.PrePostModel;
 import com.models.VehicleModel;
+import com.shared.pref.CoDriverEldPref;
+import com.shared.pref.MainDriverEldPref;
 import com.shared.pref.StatePrefManager;
 import com.simplify.ink.InkView;
 import com.wifi.settings.WiFiConfig;
@@ -162,7 +164,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     Utils obdUtil;
     DriverPermissionMethod driverPermissionMethod;
     PtiSignDialog ptiSignDialog;
-
+    Globally global;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -199,6 +201,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         SaveOBDVehRequest = new VolleyRequest(getActivity());
         GetAddFromLatLngRequest = new VolleyRequest(getActivity());
         saveInspectionPost = new SaveDriverLogPost(getActivity(), saveInspectionResponse);
+
+        global = new Globally();
 
         try{
             obdUtil         = new Utils(getActivity());
@@ -281,7 +285,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         dateActionBarTV.setTextColor(getResources().getColor(R.color.whiteee));
 
         locInspectionTV.setThreshold(3);
-        SelectedDatee = Globally.GetCurrentDeviceDate(null, new Globally(), getActivity());
+        SelectedDatee = Globally.GetCurrentDeviceDate(null, global, getActivity());
 
         AddStatesInList();
         // Spinner click listener
@@ -368,14 +372,14 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         VIN_NUMBER          = SharedPref.getVINNumber(getActivity());
         IsAOBRDAutomatic    = SharedPref.IsAOBRDAutomatic(getActivity());
         DeviceId            = SharedPref.GetSavedSystemToken(getActivity());
-        CreatedDate         = Globally.ConvertDateFormatMMddyyyyHHmm(Globally.GetDriverCurrentDateTime(new Globally(), getActivity()));
+        CreatedDate         = Globally.ConvertDateFormatMMddyyyyHHmm(Globally.GetDriverCurrentDateTime(global, getActivity()));
         IsAOBRD             = SharedPref.IsAOBRD(getActivity());
         VehicleId           = SharedPref.getVehicleId(getActivity());
 
         DriverName          = slideMenu.usernameTV.getText().toString();
         DriverTimeZone      = SharedPref.getTimeZone(getActivity());
         InspectionDateTime  = CreatedDate;
-        date                    = Globally.ConvertDateTimeFormat(Globally.GetDriverCurrentDateTime(new Globally(), getActivity()));
+        date                    = Globally.ConvertDateTimeFormat(Globally.GetDriverCurrentDateTime(global, getActivity()));
 
         TruckNumber         = SharedPref.getTruckNumber(getActivity());
         TrailerNumber       = SharedPref.getTrailorNumber(getActivity());
@@ -588,7 +592,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
                  //   HelperMethods helperMethods = new HelperMethods();
                    // DBHelper dbHelper = new DBHelper(getActivity());
-                    if(hMethods.isActionAllowedWhileMoving(getActivity(), new Globally(), DriverId, dbHelper)){
+                    if(hMethods.isActionAllowedWhileMoving(getActivity(), global, DriverId, dbHelper)){
                         if (Globally.isConnected(getActivity())) {
                             List<String> onDutyRemarkList = SharedPref.getOnDutyRemarks(new JSONArray(), getActivity());
                             dialog = new TrailorDialog(getActivity(), "trailor", false, TrailerNumber,
@@ -615,7 +619,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                     Globally.EldScreenToast(saveInspectionBtn, ConstantsEnum.TRUCK_CHANGE, getResources().getColor(R.color.colorVoilation));
                 }else {
                    // if(constants.isActionAllowed(getContext())) {
-                    if(hMethods.isActionAllowedWhileMoving(getActivity(), new Globally(), DriverId, dbHelper)){
+                    if(hMethods.isActionAllowedWhileMoving(getActivity(), global, DriverId, dbHelper)){
                         if (Globally.isConnected(getActivity())) {
                             inspectionTruckLay.setEnabled(false);
                             inspectionProgressBar.setVisibility(View.VISIBLE);
@@ -774,7 +778,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                 }
 
                 if (CurrentJobStatus.equals(Globally.ON_DUTY ) || isCurrentStatusMismatch) {
-                    if(hMethods.isActionAllowedWhileMoving(getActivity(), new Globally(), DriverId, dbHelper)){
+                    if(hMethods.isActionAllowedWhileMoving(getActivity(), global, DriverId, dbHelper)){
                         if(TrailerNumber.length() > 0 || TruckNumber.length() > 0) {
                             CheckInspectionValidation();
                         }else{
@@ -996,7 +1000,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         }
 
         @Override
-        public void JobBtnReady(String TrailorNo, String reason, String type, boolean isTrailerUpdate, int ItemPosition, EditText TrailorNoEditText, EditText ReasonEditText) {
+        public void JobBtnReady(String TrailorNo, String reason, String type, boolean isTrailerUpdate, int ItemPosition,
+                                EditText TrailorNoEditText, EditText ReasonEditText, boolean isPartialUnload) {
 
             Globally.hideKeyboardView(getActivity(), TrailorNoEditText);
             tempTrailer = TrailorNo;
@@ -1346,7 +1351,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         public void SignOkBtn(InkView inkView, boolean IsSigned) {
 
             if(IsSigned) {
-                SignCopyDate = Globally.GetDriverCurrentDateTime(new Globally(), getActivity());
+                SignCopyDate = Globally.GetDriverCurrentDateTime(global, getActivity());
                 if( SignImageSelected.equals("driver") ){
                     signDriverIV.setImageResource(R.drawable.transparent);
                     new Handler().postDelayed(new Runnable() {
@@ -1563,7 +1568,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         // disable temperory button click to avoid multiple clicks on button at the same time
         saveInspectionBtn.setEnabled(false);
        // CreatedDate         = Globally.ConvertDateFormatMMddyyyyHHmm(Globally.GetCurrentUTCTimeFormat());
-        CreatedDate         = Globally.ConvertDateFormatMMddyyyyHHmm(Globally.GetDriverCurrentDateTime(new Globally(), getActivity()));
+        CreatedDate         = Globally.ConvertDateFormatMMddyyyyHHmm(Globally.GetDriverCurrentDateTime(global, getActivity()));
        // Globally.GetCurrentUTCTimeFormat()
         pDialog.show();
 
@@ -1635,7 +1640,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         Constants.IS_TRAILER_INSPECT = false;
         if(Globally.isConnected(getActivity()) ){
             // reset api call count
-            failedApiTrackMethod.isAllowToCallOrReset(dbHelper, APIs.SAVE_INSPECTION_OFFLINE, true, new Globally(), getActivity());
+            failedApiTrackMethod.isAllowToCallOrReset(dbHelper, APIs.SAVE_INSPECTION_OFFLINE, true, global, getActivity());
 
             saveInspectionPost.PostDriverLogData(unPostedArray, APIs.SAVE_INSPECTION_OFFLINE, Constants.SocketTimeout20Sec, true, false, 1, 101);
         }else{
@@ -1919,7 +1924,11 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                     inspectionTruckLay.setEnabled(true);
                     if(!obj.isNull("Message")){
                         try {
-                            if(obj.getString("Message").equals("Device Logout") && EldFragment.DriverJsonArray.length() == 0){
+                            MainDriverEldPref MainDriverPref = new MainDriverEldPref();
+                            CoDriverEldPref CoDriverPref = new CoDriverEldPref();
+                            int offlineDataLength = constants.OfflineData(getActivity(), MainDriverPref,
+                                    CoDriverPref, global.isSingleDriver(getActivity()));
+                            if(obj.getString("Message").equals("Device Logout") && offlineDataLength == 0){
                                 Globally.ClearAllFields(getActivity());
                                 Globally.StopService(getActivity());
                                 Intent i = new Intent(getActivity(), LoginActivity.class);

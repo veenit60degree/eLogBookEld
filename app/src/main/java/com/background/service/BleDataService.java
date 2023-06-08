@@ -58,7 +58,7 @@ public class BleDataService extends Service {
     private BluetoothAdapter mBTAdapter;
     private ArrayList<HTBleDevice> mHTBleDevices = new ArrayList<>();
 
-    public static boolean isConnected = false;
+    public static boolean isConnectedWithBle = false;
 
     private Handler bleHandler = new Handler();
     Constants constants;
@@ -117,7 +117,7 @@ public class BleDataService extends Service {
 
                 if (mHTBleDevices.size() > 0 && sameDevicePairingAttempts < 4){
                     sameDevicePairingAttempts ++;
-                    //Logger.LogError(TAG_OBD, "ble reBleConnect");
+                    Logger.LogError(TAG_OBD, "----ble reBleConnect");
                     mIsScanning = false;
                     HTBleSdk.Companion.getInstance().reBleConnect();
 
@@ -189,6 +189,8 @@ public class BleDataService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        Logger.LogInfo(TAG_OBD, "---------onStartCommand Ble Service");
+
         try {
             if (TabAct.IsAppRestart) {
                 Globally.BLE_NAME =  "";
@@ -203,7 +205,7 @@ public class BleDataService extends Service {
             } else if(TabAct.SelectDevice){
 
                 TabAct.SelectDevice = false;
-                boolean isHtBleConnected = isConnected && HTBleSdk.Companion.getInstance().isConnected();
+                boolean isHtBleConnected = isConnectedWithBle && HTBleSdk.Companion.getInstance().isConnected();
                 if(!isHtBleConnected) {
                     boolean isDeviceFound = false;
                     for (int i = 0; i < mHTBleDevices.size(); i++) {
@@ -221,7 +223,7 @@ public class BleDataService extends Service {
                     }
                 }
             }else {
-                boolean isHtBleConnected = isConnected && HTBleSdk.Companion.getInstance().isConnected();
+                boolean isHtBleConnected = isConnectedWithBle && HTBleSdk.Companion.getInstance().isConnected();
                 if (!isHtBleConnected) {
                    String macAddress = HTBleSdk.Companion.getInstance().getAddress();
                     if (IsScanClick && macAddress != null && macAddress.length() > 7) {
@@ -371,7 +373,7 @@ public class BleDataService extends Service {
 
                 sameDevicePairingAttempts = 0;
 
-                isConnected = true;
+                isConnectedWithBle = true;
                 if(IsScanClick) {
                     IsScanClick = false;
                     sendBroadCast(getString(R.string.ht_connecting), "");
@@ -390,11 +392,17 @@ public class BleDataService extends Service {
                 //Logger.LogError("getAddress-Timeout", "getAddress: " +s);
 
                 sendEcmBroadcast(false, "onConnectTimeout");
-                isConnected = false;
+
+                if(isConnectedWithBle) {
+                    constants.saveBleLog("onConnectTimeout", Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext(), dbHelper,
+                            driverPermissionMethod, obdUtil);
+                    sendEcmBroadcast(false, "Connection Timeout");
+                }
+
+                isConnectedWithBle = false;
                 isBleConnected = false;
 
-                constants.saveBleLog("onConnectTimeout", Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext(), dbHelper,
-                        driverPermissionMethod, obdUtil);
+
 
             }
 
@@ -404,12 +412,18 @@ public class BleDataService extends Service {
                 EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_CONNECT_ERROR, s));
                 sendBroadCast(getString(R.string.ht_connect_error), "");
                 sendEcmBroadcast(false, "onConnectionError");
-                isConnected = false;
+
+                if(isConnectedWithBle) {
+                    constants.saveBleLog("onConnectionError", Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext(), dbHelper,
+                            driverPermissionMethod, obdUtil);
+                    sendEcmBroadcast(false, "Connection Error");
+                }
+
+                isConnectedWithBle = false;
                 isBleConnected = false;
                 BackgroundLocationService.obdVehicleSpeed = 0;
 
-              /*  constants.saveBleLog("onConnectionError", Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext(), dbHelper,
-                        driverPermissionMethod, obdUtil);
+              /*
 */
 
             }
@@ -421,8 +435,8 @@ public class BleDataService extends Service {
 
 
                 try {
-                    if(isConnected){
-                        isConnected = false;
+                    if(isConnectedWithBle){
+                        isConnectedWithBle = false;
                         isBleConnected = false;
 
                         new Handler().postDelayed(new Runnable() {
@@ -468,7 +482,7 @@ public class BleDataService extends Service {
                 }
 
                 if (htBleData.getEventData().equals("OnTime")) {
-                    isConnected = true;
+                    isConnectedWithBle = true;
                     isBleConnected = true;
                     sendEcmBroadcast(true, BleUtil.decodedData(htBleData, address));
                     sendBroadCastDecodedData(BleUtil.decodeDataChange(htBleData, address), "");
@@ -642,6 +656,18 @@ public class BleDataService extends Service {
                             constants.saveBleLog("HTBleScanListener - onScanStop - Scan Complete, " + deviceInfo,
                                     Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext(), dbHelper,
                                     driverPermissionMethod, obdUtil);
+                        }else{
+                            if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+                                int ObdStatus = SharedPref.getObdStatus(getApplicationContext());
+                                if (ObdStatus == Constants.BLE_CONNECTED) {
+                                    SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
+                                            global.GetCurrentUTCTimeFormat(), getApplicationContext());
+                                    isConnectedWithBle = false;
+                                    isBleConnected = false;
+                                    EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_DISCONNECTED, ""));
+                                    BackgroundLocationService.obdVehicleSpeed = 0;
+                                }
+                            }
                         }
 
 
@@ -712,6 +738,16 @@ public class BleDataService extends Service {
     }
 
 
+    private void sendBluetoothStatus(boolean onOffStatus){
+        try{
+            Intent intent = new Intent(ConstantsKeys.BluetoothObserver);
+            intent.putExtra(ConstantsKeys.BluetoothStatus, onOffStatus);
+            LocalBroadcastManager.getInstance(BleDataService.this).sendBroadcast(intent);
+
+        }catch (Exception e){}
+    }
+
+
     private void sendDeviceCastAtLogin(String BleDevices){
         try{
             Intent intent = new Intent(ConstantsKeys.IsEventUpdate);
@@ -776,6 +812,9 @@ public class BleDataService extends Service {
 
                                         constants.writeBleOnOffStatus(true, global, bleGpsAppLaunchMethod,
                                                 dbHelper, getApplicationContext());
+
+                                        sendBluetoothStatus(true);
+
                                         break;
 
                                     case BluetoothAdapter.STATE_ON://bluetooth is on
@@ -784,18 +823,20 @@ public class BleDataService extends Service {
                                             Logger.LogError("TAG", "Ble switch on");
                                             //Logger.LogError(TAG_OBD, "Ble initBleListener 22" );
                                             initBleListener("Ble STATE_ON");
+                                            sendBluetoothStatus(true);
+
                                         }
                                         break;
-                                    case BluetoothAdapter.STATE_TURNING_OFF://bluetooth is turning off
+                                    case BluetoothAdapter.STATE_TURNING_OFF: //bluetooth is turning off
 
                                        /* constants.saveBleLog("Ble STATE_TURNING_OFF",
                                                 Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext(), dbHelper,
                                                 driverPermissionMethod, obdUtil);
 */
-                                        sendDeviceCast(null);
-
                                         constants.writeBleOnOffStatus(false, global, bleGpsAppLaunchMethod,
                                                 dbHelper, getApplicationContext());
+                                        sendDeviceCast(null);
+                                        sendBluetoothStatus(false);
 
                                         break;
 

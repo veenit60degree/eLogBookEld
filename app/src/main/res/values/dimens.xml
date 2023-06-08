@@ -112,6 +112,7 @@
     <dimen name="view_height_490">490dp</dimen>
 
     <dimen name="view_height_500">500dp</dimen>
+    <dimen name="view_height_510">510dp</dimen>
     <dimen name="view_height_520">520dp</dimen>
     <dimen name="view_height_530">530dp</dimen>
     <dimen name="view_height_550">550dp</dimen>

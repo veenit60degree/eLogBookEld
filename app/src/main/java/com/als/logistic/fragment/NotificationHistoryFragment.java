@@ -50,7 +50,9 @@ import com.als.logistic.R;
 import com.als.logistic.TabAct;
 import com.als.logistic.UILApplication;
 import com.models.Notification18DaysModel;
+import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.CoNotificationPref;
+import com.shared.pref.MainDriverEldPref;
 import com.shared.pref.NotificationPref;
 
 import org.json.JSONArray;
@@ -233,7 +235,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
             }
 
             if(saveToNotificationArray.length() > 0){
-                saveNotificationHistoryReq.PostDriverLogData(saveToNotificationArray, APIs.SAVE_NOTIFICATION, constants.SocketTimeout20Sec, false, false, DriverType, MainDriverLog);
+                saveNotificationHistoryReq.PostDriverLogData(saveToNotificationArray, APIs.SAVE_NOTIFICATION_NEW_LOG, constants.SocketTimeout20Sec, false, false, DriverType, MainDriverLog);
             }
 
            /* if(isCycleRequest) {
@@ -279,7 +281,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
                                 JSONArray saveToCoDriverSaveToArray = notificationMethod.getSaveToNotificationArray(Integer.valueOf(CoDriverId), dbHelper);
 
                                 if(saveToCoDriverSaveToArray.length() > 0){
-                                    saveNotificationHistoryReq.PostDriverLogData(saveToCoDriverSaveToArray, APIs.SAVE_NOTIFICATION, constants.SocketTimeout20Sec, false, false, DriverType, CoDriverLog);
+                                    saveNotificationHistoryReq.PostDriverLogData(saveToCoDriverSaveToArray, APIs.SAVE_NOTIFICATION_NEW_LOG, constants.SocketTimeout20Sec, false, false, DriverType, CoDriverLog);
                                 }
                             }
 
@@ -921,7 +923,12 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
                 }
             }else{
                 try {
-                    if(Message.equals("Device Logout") && EldFragment.DriverJsonArray.length() == 0){
+                    MainDriverEldPref MainDriverPref = new MainDriverEldPref();
+                    CoDriverEldPref CoDriverPref = new CoDriverEldPref();
+                    int offlineDataLength = constants.OfflineData(getActivity(), MainDriverPref,
+                            CoDriverPref, global.isSingleDriver(getActivity()));
+
+                    if(Message.equals("Device Logout") && offlineDataLength == 0){
                         global.ClearAllFields(getActivity());
                         global.StopService(getActivity());
                         Intent i = new Intent(getActivity(), LoginActivity.class);

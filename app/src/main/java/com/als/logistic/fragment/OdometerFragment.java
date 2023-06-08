@@ -39,6 +39,8 @@ import com.als.logistic.LoginActivity;
 import com.als.logistic.R;
 import com.als.logistic.TabAct;
 import com.als.logistic.UILApplication;
+import com.shared.pref.CoDriverEldPref;
+import com.shared.pref.MainDriverEldPref;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -788,7 +790,12 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
                 Globally.EldScreenToast(saveReadingBtn, message , getResources().getColor(R.color.colorVoilation));
                 if(!obj.isNull("Message")){
                     try {
-                        if(obj.getString("Message").equals("Device Logout") && EldFragment.DriverJsonArray.length() == 0){
+                        MainDriverEldPref MainDriverPref = new MainDriverEldPref();
+                        CoDriverEldPref CoDriverPref = new CoDriverEldPref();
+                        int offlineDataLength = constant.OfflineData(getActivity(), MainDriverPref,
+                                CoDriverPref, Global.isSingleDriver(getActivity()));
+
+                        if(obj.getString("Message").equals("Device Logout") && offlineDataLength == 0){
                             LogoutUser();
                         }else {
                             MoveToHomePage();

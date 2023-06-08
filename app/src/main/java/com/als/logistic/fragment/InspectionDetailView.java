@@ -180,7 +180,6 @@ public class InspectionDetailView  extends Fragment {
 
         DriverId            = SharedPref.getDriverId( getActivity());
         DeviceId            = SharedPref.GetSavedSystemToken(getActivity());
-        //InspectionId, InspectionDateTime
 
         if(inspectionType.contains("dot")){
             changeLocBtn.setVisibility(View.GONE);

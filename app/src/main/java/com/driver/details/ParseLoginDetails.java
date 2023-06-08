@@ -5,7 +5,6 @@ import android.content.Context;
 import com.constants.SharedPref;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
-import com.local.db.DriverPermissionMethod;
 import com.local.db.SupportMethod;
 import com.als.logistic.Globally;
 import com.models.CycleModel;
@@ -16,8 +15,6 @@ import com.shared.pref.CaCyclePrefManager;
 import com.shared.pref.CoCAPref;
 import com.shared.pref.CoTimeZonePref;
 import com.shared.pref.CoUSPref;
-import com.shared.pref.EldCoDriverLogPref;
-import com.shared.pref.EldSingleDriverLogPref;
 import com.shared.pref.StatePrefManager;
 import com.shared.pref.TimeZonePrefManager;
 import com.shared.pref.USCyclePrefManager;
@@ -32,8 +29,6 @@ public class ParseLoginDetails {
     StatePrefManager statePrefManager ;
     TimeZonePrefManager timeZonePrefManager;
     CoTimeZonePref coTimePrefManager;
-    EldSingleDriverLogPref eldSharedPref;
-    EldCoDriverLogPref coEldSharedPref;
     CaCyclePrefManager caPrefManager;
     USCyclePrefManager usPrefmanager;
     CoCAPref coCAPrefManager;
@@ -477,59 +472,6 @@ public class ParseLoginDetails {
 
 
 
-    public void ParseDriverLogArray(JSONArray driverLogArray, int position, Context context){
-
-        if(eldSharedPref == null || coEldSharedPref == null){
-            eldSharedPref = new EldSingleDriverLogPref();
-            coEldSharedPref = new EldCoDriverLogPref();
-        }
-        try{
-            for(int logCount = 0 ; logCount < driverLogArray.length() ; logCount ++){
-                JSONObject logObj       = (JSONObject)driverLogArray.get(logCount);
-                int driverStatusId      = logObj.getInt("DriverStatusId");
-                String startDateTime    = logObj.getString("StartDateTime");
-                String endDateTime      = logObj.getString("EndDateTime");
-                String totalHours       = logObj.getString("TotalHours");
-                String currentCycleId   = logObj.getString("CurrentCycleId");
-                String UTCStartDateTime = logObj.getString("UTCStartDateTime");
-                String UTCEndDateTime   = logObj.getString("UTCEndDateTime");
-                boolean isViolation     = logObj.getBoolean("IsViolation");
-
-                String Duration         = logObj.getString("Duration");
-                String Location         = logObj.getString("Location");
-                String remarks          = logObj.getString("Remarks");
-
-                boolean isPersonal      = false;
-                boolean IsShortHaulException = false;
-                boolean IsAdverseException = false;
-
-                if(!logObj.isNull("Personal"))
-                      isPersonal      = logObj.getBoolean("Personal");
-
-
-                if(!logObj.isNull(ConstantsKeys.IsAdverseException))
-                    IsAdverseException = logObj.getBoolean(ConstantsKeys.IsAdverseException);
-
-                if(!logObj.isNull(ConstantsKeys.IsShortHaulException))
-                    IsShortHaulException = logObj.getBoolean(ConstantsKeys.IsShortHaulException);
-
-
-
-                EldDriverLogModel driverLogModel = new EldDriverLogModel(driverStatusId, "0", startDateTime, endDateTime, totalHours, currentCycleId,
-                        isViolation, UTCStartDateTime, UTCEndDateTime, Duration , Location , "", remarks, isPersonal,
-                        IsAdverseException, IsShortHaulException, logObj.getString("StartLatitude"), logObj.getString("StartLongitude"),"","");
-
-                if(position == 0)
-                    eldSharedPref.AddDriverLoc(context, driverLogModel);
-                else
-                    coEldSharedPref.AddDriverLoc(context, driverLogModel);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-
     public void ClearList(Context context) throws Exception{
 
         if(caPrefManager == null || usPrefmanager == null || timeZonePrefManager == null) {
@@ -550,14 +492,6 @@ public class ParseLoginDetails {
         coUSPrefmanager.RemoveCycleFromList(context);
         coTimePrefManager.RemoveTimeZoneFromList(context);
 
-
-        if(eldSharedPref == null || coEldSharedPref == null) {
-            eldSharedPref = new EldSingleDriverLogPref();
-            coEldSharedPref = new EldCoDriverLogPref();
-
-        }
-        eldSharedPref.ClearLogFromList(context);
-        coEldSharedPref.ClearCoLogFromList(context);
 
     }
 

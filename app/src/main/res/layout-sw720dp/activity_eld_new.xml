@@ -564,6 +564,18 @@
                                 android:layout_marginLeft="@dimen/margin_10"
                                 android:layout_marginTop="@dimen/margin_short_8"
                                 />
+
+
+                            <ImageView
+                                android:id="@+id/shippingStatusIV"
+                                android:layout_width="@dimen/margin_25"
+                                android:layout_height="@dimen/margin_25"
+                                android:layout_marginTop="@dimen/margin_short_5"
+                                android:layout_marginLeft="@dimen/margin_short_4"
+                                android:src="@drawable/shipping_empty"
+                                />
+
+
                         </LinearLayout>
 
 

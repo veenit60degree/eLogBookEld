@@ -5,6 +5,7 @@
     android:id="@+id/mainLoginLayout"
     android:background="?attr/bgColor"
 
+
     >
 
     <View
@@ -174,6 +175,7 @@
         android:padding="@dimen/margin_short_9"
         android:layout_marginRight="@dimen/view_height_50"
         android:layout_marginTop="@dimen/margin_10"
+        android:tint="?attr/txt_eld_color"
         android:visibility="gone"
         />
 

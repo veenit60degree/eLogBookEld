@@ -183,6 +183,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         saveDriverLogPost       = new SaveDriverLogPost(getApplicationContext(), saveLogRequestResponse);
         SavedVin               = getVin(SavedVin);
 
+        startLocationService();
+
         mMessageReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive (Context context, Intent intent){
@@ -400,8 +402,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         }
 
 
-        startLocationService();
-
         SharedPref.setContinueSpeedZeroTime(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
         SharedPref.saveBleScanCount(0, getApplicationContext());
         mTimer.schedule(timerTask, TIME_INTERVAL_WIFI, TIME_INTERVAL_WIFI);
@@ -542,6 +542,9 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                             // if unidentified events from OBD settings was false in web permissions then it will worked on app side other wise on backend side.
                             if(!SharedPref.IsUnidentifiedFromOBD(getApplicationContext())) {
                                 if (TruckID.length() > 0 && isValidCompanyIdVin()) {
+                                    Logger.LogDebug("unidentified", "===IsUnassignedRequired: " +IsUnassignedRequired + "\nisTempTimeValidate: "+isTempTimeValidate);
+                                    Logger.LogDebug("unidentified", "===UnassignedSavedDate: " +savedDate);
+                                    Logger.LogDebug("unidentified", "===isValidCompanyIdVin: " +isValidCompanyIdVin());
 
                                     if(IsUnassignedRequired) {
                                         if (isTempTimeValidate) {
@@ -1088,7 +1091,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
         @Override
         public void run() {
-            // Logger.LogError(TAG, "-----Running Logout timerTask");
+             Logger.LogError(TAG, "-----Running Logout timerTask");
 
             try {
                 if (SharedPref.IsDriverLogin(getApplicationContext())) {
@@ -1101,7 +1104,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     TruckID             = SharedPref.getTruckNumber(getApplicationContext());   //DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext());
                     CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
                     SavedVin            = getVin(SavedVin);
-                    Logger.LogDebug("-----------TruckID222: ",TruckID);
+                 //   Logger.LogDebug("-----------TruckID222: ",TruckID);
 
                     // communicate with wired OBD server app with Message
                     if (ObdPreference == Constants.OBD_PREF_BLE) {
@@ -1112,6 +1115,10 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                                 if (SpeedCounter == 0 || SpeedCounter == 30) {
                                     startBleService();
+
+                                    if(Globally.GPS_LATITUDE.length() < 4){
+                                        startLocationService();
+                                    }
                                 }
 
                                 if (!BleDataService.isBleConnected) {
@@ -1272,19 +1279,20 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
     void CheckUnassignedRequired(){
 
-        JSONObject eventData = new JSONObject();
-        try {
-            eventData.put(ConstantsKeys.TruckNumber, TruckID);
-            eventData.put(ConstantsKeys.CompanyId, CompanyId);
-            eventData.put(ConstantsKeys.VIN, SavedVin);
+        if (!SharedPref.IsDriverLogin(getApplicationContext())) {
+            JSONObject eventData = new JSONObject();
+            try {
+                eventData.put(ConstantsKeys.TruckNumber, TruckID);
+                eventData.put(ConstantsKeys.CompanyId, CompanyId);
+                eventData.put(ConstantsKeys.VIN, SavedVin);
 
-            UnassignedRequiredRequest.SaveLogJsonObj(eventData, APIs.CHECK_IS_UNASSIGNED_REQUIRED,
-                    Constants.SocketTimeout10Sec,false, false, 1, 1001);
+                UnassignedRequiredRequest.SaveLogJsonObj(eventData, APIs.CHECK_IS_UNASSIGNED_REQUIRED,
+                        Constants.SocketTimeout10Sec, false, false, 1, 1001);
 
-        }catch (Exception e){
-            e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-
 
     }
 
@@ -1356,42 +1364,44 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
     private void StartStopServer(final String value){
 
-        SharedPref.SetWiredObdServerCallTime(Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
+        if (!SharedPref.IsDriverLogin(getApplicationContext())) {
+            SharedPref.SetWiredObdServerCallTime(Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
 
-        if(isBound){
+            if (isBound) {
 
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    //Setup the message for invocation
-                    try{
-                        Logger.LogDebug(TAG_OBD, "Invocation Failed!!");
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Setup the message for invocation
+                        try {
+                            Logger.LogDebug(TAG_OBD, "Invocation Failed!!");
 
-                        //Set the ReplyTo Messenger for processing the invocation response
-                        Message msg1 = new Handler().obtainMessage();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("key",  value );
-                        msg1.setData(bundle);
-                        msg1.replyTo = replyTo;
+                            //Set the ReplyTo Messenger for processing the invocation response
+                            Message msg1 = new Handler().obtainMessage();
+                            Bundle bundle = new Bundle();
+                            bundle.putString("key", value);
+                            msg1.setData(bundle);
+                            msg1.replyTo = replyTo;
 
-                        //Make the invocation
-                        messenger.send(msg1);
+                            //Make the invocation
+                            messenger.send(msg1);
 
-                    }catch(Exception rme){
-                        //Show an Error Message
-                        rme.printStackTrace();
-                        Logger.LogDebug(TAG_OBD, "Invocation Failed!!");
+                        } catch (Exception rme) {
+                            //Show an Error Message
+                            rme.printStackTrace();
+                            Logger.LogDebug(TAG_OBD, "Invocation Failed!!");
+                        }
                     }
-                }
-            });
+                });
 
-        }else{
-            try{
-                Logger.LogDebug(TAG_OBD, "Service is Not Bound!!");
-                this.connection = new RemoteServiceConnection();
-                BindConnection();
-            }catch (Exception e){
-                // e.printStackTrace();
+            } else {
+                try {
+                    Logger.LogDebug(TAG_OBD, "Service is Not Bound!!");
+                    this.connection = new RemoteServiceConnection();
+                    BindConnection();
+                } catch (Exception e) {
+                    // e.printStackTrace();
+                }
             }
         }
     }
@@ -1424,110 +1434,112 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             Logger.LogDebug("response", "OBD Response: " +message);
 
             try {
-                String correctData = "";
+                if (!SharedPref.IsDriverLogin(getApplicationContext())) {
+                    String correctData = "";
 
-                SharedPref.setLoginAllowedStatus(true, getApplicationContext());
+                    SharedPref.setLoginAllowedStatus(true, getApplicationContext());
 
-                if (!message.equals(noObd) && message.length() > 10) {
+                    if (!message.equals(noObd) && message.length() > 10) {
 
-                    if (message.contains("CAN")) {
+                        if (message.contains("CAN")) {
 
-                        if (!message.contains("CAN:UNCONNECTED")) {
+                            if (!message.contains("CAN:UNCONNECTED")) {
 
-                            double WheelBasedVehicleSpeed = -1;
-                            try {
-                                String preFix = "*TS01,861107039609723,050743230120,";
-                                String postFix = "#";
+                                double WheelBasedVehicleSpeed = -1;
+                                try {
+                                    String preFix = "*TS01,861107039609723,050743230120,";
+                                    String postFix = "#";
 
-                                if (message.length() > 5) {
-                                    String first = message.substring(0, 5);
-                                    String last = message.substring(message.length() - 1, message.length());
-                                    if (!first.equals("*TS01") && !last.equals("#")) {
-                                        message = preFix + message + postFix;
+                                    if (message.length() > 5) {
+                                        String first = message.substring(0, 5);
+                                        String last = message.substring(message.length() - 1, message.length());
+                                        if (!first.equals("*TS01") && !last.equals("#")) {
+                                            message = preFix + message + postFix;
+                                        }
                                     }
-                                }
 
-                                if (message.length() > 500) {
-                                    correctData = constants.correctOBDWrongData(message);
-                                    message = correctData;
-                                }
+                                    if (message.length() > 500) {
+                                        correctData = constants.correctOBDWrongData(message);
+                                        message = correctData;
+                                    }
 
-                                data = decoder.DecodeTextAndSave(message, new OBDDeviceData());
-                                JSONObject canObj = new JSONObject(data.toString());
-
-
-                                int GPSSpeed = Integer.valueOf(wifiConfig.checkJsonParameter(canObj, "GPSSpeed", "0"));
-                                WheelBasedVehicleSpeed = Integer.valueOf(wifiConfig.checkJsonParameter(canObj, "WheelBasedVehicleSpeed", "0"));
-
-                                if (WheelBasedVehicleSpeed == 0) {
-                                    WheelBasedVehicleSpeed = GPSSpeed;
-                                }
-
-                                truckRPM = wifiConfig.checkJsonParameter(canObj, "RPMEngineSpeed", "0");
-                                ignitionStatus = wifiConfig.checkJsonParameter(canObj, "EngineRunning", "false");
-
-                                Globally.LATITUDE = wifiConfig.checkJsonParameter(canObj, "GPSLatitude", "");
-                                Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(wifiConfig.checkJsonParameter(canObj, "GPSLongitude", ""));
-                                String HighResolutionDistance = wifiConfig.checkJsonParameter(canObj, "HighResolutionTotalVehicleDistanceInKM", "-1");
-                                String obdEngineHours = wifiConfig.checkJsonParameter(canObj, "EngineHours", "0");
-
-                                String vin = wifiConfig.checkJsonParameter(canObj, ConstantsKeys.VIN, "");
-                                if(vin.length() <= 5){
-                                    vin = "";
-                                }
-                                SharedPref.setVehicleVin(vin, getApplicationContext());
-                                SharedPref.SetObdEngineHours(obdEngineHours, getApplicationContext());
-                                SharedPref.SetObdOdometer( Constants.meterToKmWithObd(HighResolutionDistance), getApplicationContext());
-                                SharedPref.SetObdOdometerInMiles(Constants.meterToMilesWith2DecPlaces(currentHighPrecisionOdometer), getApplicationContext());
+                                    data = decoder.DecodeTextAndSave(message, new OBDDeviceData());
+                                    JSONObject canObj = new JSONObject(data.toString());
 
 
-                                if(Globally.LATITUDE.length() < 5){
-                                    SharedPref.SetLocReceivedFromObdStatus(false, getApplicationContext());
-                                }else{
-                                    SharedPref.SetLocReceivedFromObdStatus(true, getApplicationContext());
-                                }
+                                    int GPSSpeed = Integer.valueOf(wifiConfig.checkJsonParameter(canObj, "GPSSpeed", "0"));
+                                    WheelBasedVehicleSpeed = Integer.valueOf(wifiConfig.checkJsonParameter(canObj, "WheelBasedVehicleSpeed", "0"));
 
-                                if (ignitionStatus.equals("true")) {
-                                    SharedPref.SaveObdStatus(Constants.WIFI_CONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
-                                            global.GetCurrentUTCTimeFormat(), getApplicationContext());
+                                    if (WheelBasedVehicleSpeed == 0) {
+                                        WheelBasedVehicleSpeed = GPSSpeed;
+                                    }
+
+                                    truckRPM = wifiConfig.checkJsonParameter(canObj, "RPMEngineSpeed", "0");
+                                    ignitionStatus = wifiConfig.checkJsonParameter(canObj, "EngineRunning", "false");
+
+                                    Globally.LATITUDE = wifiConfig.checkJsonParameter(canObj, "GPSLatitude", "");
+                                    Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(wifiConfig.checkJsonParameter(canObj, "GPSLongitude", ""));
+                                    String HighResolutionDistance = wifiConfig.checkJsonParameter(canObj, "HighResolutionTotalVehicleDistanceInKM", "-1");
+                                    String obdEngineHours = wifiConfig.checkJsonParameter(canObj, "EngineHours", "0");
+
+                                    String vin = wifiConfig.checkJsonParameter(canObj, ConstantsKeys.VIN, "");
+                                    if (vin.length() <= 5) {
+                                        vin = "";
+                                    }
+                                    SharedPref.setVehicleVin(vin, getApplicationContext());
+                                    SharedPref.SetObdEngineHours(obdEngineHours, getApplicationContext());
+                                    SharedPref.SetObdOdometer(Constants.meterToKmWithObd(HighResolutionDistance), getApplicationContext());
+                                    SharedPref.SetObdOdometerInMiles(Constants.meterToMilesWith2DecPlaces(currentHighPrecisionOdometer), getApplicationContext());
 
 
-                                    if (WheelBasedVehicleSpeed > 8 && lastVehSpeed > 8) {
+                                    if (Globally.LATITUDE.length() < 5) {
+                                        SharedPref.SetLocReceivedFromObdStatus(false, getApplicationContext());
+                                    } else {
+                                        SharedPref.SetLocReceivedFromObdStatus(true, getApplicationContext());
+                                    }
 
-                                        showNotificationAlert((int) WheelBasedVehicleSpeed);
+                                    if (ignitionStatus.equals("true")) {
+                                        SharedPref.SaveObdStatus(Constants.WIFI_CONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
+                                                global.GetCurrentUTCTimeFormat(), getApplicationContext());
 
-                                        if(SharedPref.IsAppRestricted(getApplicationContext())) {
-                                            SharedPref.setLoginAllowedStatus(false, getApplicationContext());
+
+                                        if (WheelBasedVehicleSpeed > 8 && lastVehSpeed > 8) {
+
+                                            showNotificationAlert((int) WheelBasedVehicleSpeed);
+
+                                            if (SharedPref.IsAppRestricted(getApplicationContext())) {
+                                                SharedPref.setLoginAllowedStatus(false, getApplicationContext());
+                                            }
+
+                                            //  Globally.ShowLogoutNotificationWithSound(getApplicationContext(), "ELD", AlertMsg, mNotificationManager);
+                                        } else {
+                                            SharedPref.setLoginAllowedStatus(true, getApplicationContext());
                                         }
 
-                                        //  Globally.ShowLogoutNotificationWithSound(getApplicationContext(), "ELD", AlertMsg, mNotificationManager);
+
+                                        lastVehSpeed = WheelBasedVehicleSpeed;
+
+                                        constants.saveEcmLocationWithTime(Globally.LATITUDE, Globally.LONGITUDE, HighResolutionDistance, getApplicationContext());
+
                                     } else {
-                                        SharedPref.setLoginAllowedStatus(true, getApplicationContext());
+                                        if (SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED) {
+                                            SharedPref.setLoginAllowedStatus(true, getApplicationContext());
+                                            SharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
+                                                    global.GetCurrentUTCTimeFormat(), getApplicationContext());
+                                        }
+                                        lastVehSpeed = -1;
                                     }
 
-
-                                    lastVehSpeed = WheelBasedVehicleSpeed;
-
-                                    constants.saveEcmLocationWithTime(Globally.LATITUDE, Globally.LONGITUDE, HighResolutionDistance, getApplicationContext());
-
-                                } else {
-                                    if(SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED) {
-                                        SharedPref.setLoginAllowedStatus(true, getApplicationContext());
-                                        SharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED,  global.GetDriverCurrentDateTime(global, getApplicationContext()),
-                                                global.GetCurrentUTCTimeFormat(), getApplicationContext());
-                                    }
-                                    lastVehSpeed = -1;
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
 
-                            } catch (Exception e) {
-                                e.printStackTrace();
                             }
-
+                        } else {
+                            lastVehSpeed = -1;
                         }
-                    }else{
-                        lastVehSpeed = -1;
-                    }
 
+                    }
                 }
             }catch (Exception e){
                 ignitionStatus = "false";
@@ -1589,7 +1601,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         try {
             Logger.LogDebug("-----------TruckID saveDrStatus: ",TruckID);
 
-            if(isValidCompanyIdVin()) {
+            if(isValidCompanyIdVin() &&  !SharedPref.IsDriverLogin(getApplicationContext())) {
                 JSONArray savedUnidentifiedLogArray = hMethods.getSavedUnidentifiedLogArray(Integer.parseInt(CompanyId), dbHelper);
                 JSONArray unPostedArray = hMethods.getUnpostedLogArray(Integer.parseInt(CompanyId), dbHelper);
                 LastDutyStatus = "DR";
@@ -1649,7 +1661,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 CurrentDutyStatus = obdSpeed >= ThreshHoldSpeed ? "DR" : "OD";
             }*/
 
-            if(isValidCompanyIdVin()) {
+            if(isValidCompanyIdVin() && !SharedPref.IsDriverLogin(getApplicationContext())) {
 
                 boolean isDriving = ((LastDutyStatus.equals("") || LastDutyStatus.equals("OD")) && obdSpeed >= ThreshHoldSpeed);   //CurrentDutyStatus.equals("DR") &&
                 boolean isOnDuty = (LastDutyStatus.equals("DR") && obdSpeed == 0 && continueSpeedZeroDiff > OnDutyRecordTime);    //CurrentDutyStatus.equals("OD") &&
@@ -1782,7 +1794,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     private void IntermediateRecords() {
 
         try {
-            if(isValidCompanyIdVin()) {
+            if(isValidCompanyIdVin() && !SharedPref.IsDriverLogin(getApplicationContext())) {
                 String startTime = SharedPref.getUnidentifiedIntermediateRecord(ConstantsKeys.UnidenStartTime, getApplicationContext());
                 if (startTime.length() > 10) {
 
@@ -2023,21 +2035,27 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if(getApplicationContext() != null) {
-                        locServiceIntent = new Intent(getApplicationContext(), LocationListenerService.class);
-                        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            startForegroundService(locServiceIntent);
-                        }
-                        startService(locServiceIntent);
-                    }
+                    startService();
                 }
             }, 5000);
 
         } catch (Exception e) {
             e.printStackTrace();
+            startService();
+
         }
     }
 
+
+    void startService(){
+        if(getApplicationContext() != null) {
+            locServiceIntent = new Intent(getApplicationContext(), LocationListenerService.class);
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(locServiceIntent);
+            }
+            startService(locServiceIntent);
+        }
+    }
 
     DriverLogResponse jsonApiResponse = new DriverLogResponse() {
 
@@ -2341,149 +2359,147 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         boolean isEventOccurred = false;
         try{
 
-            String currentDate = Globally.GetCurrentUTCTimeFormat();
+            if (!SharedPref.IsDriverLogin(getApplicationContext())) {
 
-            if(SharedPref.isPowerMalfunctionOccurred(getApplicationContext()) == false ) {
-                isEventOccurred = true;
+                String currentDate = Globally.GetCurrentUTCTimeFormat();
+                if (SharedPref.isPowerMalfunctionOccurred(getApplicationContext()) == false) {
+                    isEventOccurred = true;
 
 
-                boolean isPowerCompMalAllowed = SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PowerComplianceMal, getApplicationContext());
-                boolean isPowerCompDiaAllowed = SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PowerDataDiag, getApplicationContext());
+                    boolean isPowerCompMalAllowed = SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PowerComplianceMal, getApplicationContext());
+                    boolean isPowerCompDiaAllowed = SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PowerDataDiag, getApplicationContext());
 
-                if ( (isPowerCompMalAllowed || isPowerCompDiaAllowed) && isValidCompanyIdVin()) {
+                    if ((isPowerCompMalAllowed || isPowerCompDiaAllowed) && isValidCompanyIdVin()) {
 
-                    String PowerEventStatus = constants.isPowerDiaMalOccurred(currentHighPrecisionOdometer, ignitionStatus,
-                            EngineSeconds, "0", global, malfunctionDiagnosticMethod, isPowerCompMalAllowed, isPowerCompDiaAllowed,
-                            getApplicationContext(), constants, dbHelper, driverPermissionMethod, obdUtil);
+                        String PowerEventStatus = constants.isPowerDiaMalOccurred(currentHighPrecisionOdometer, ignitionStatus,
+                                EngineSeconds, "0", global, malfunctionDiagnosticMethod, isPowerCompMalAllowed, isPowerCompDiaAllowed,
+                                getApplicationContext(), constants, dbHelper, driverPermissionMethod, obdUtil);
 
-                    if (PowerEventStatus.length() > 0) {
-                        if (PowerEventStatus.contains(constants.MalfunctionEvent)) {
-                            if (isPowerCompMalAllowed) {
+                        if (PowerEventStatus.length() > 0) {
+                            if (PowerEventStatus.contains(constants.MalfunctionEvent)) {
+                                if (isPowerCompMalAllowed) {
 
+                                    if (isPowerCompDiaAllowed) {
+                                        currentDate = SharedPref.GetTruckInfoOnIgnitionChange(Constants.IgnitionUtcTimeMalDia, getApplicationContext());
+
+                                        // save power diagnostic event also when malfunction occurred
+                                        savePowerDiagnosticRecordInTable(currentDate, false);
+                                        // update mal/dia status for enable disable according to log
+                                        // malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable("0", global, constants, dbHelper, getApplicationContext());
+                                        SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
+                                    }
+
+                                    currentDate = global.GetCurrentUTCTimeFormat();
+
+                                    // updated values after save diagnostic with truck ignition status because in this case we are saving last ignition time in diagnostic
+                                    SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, Constants.WiredOBD,
+                                            global.GetDriverCurrentDateTime(global, getApplicationContext()), currentDate,
+                                            SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, getApplicationContext()),
+                                            SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, getApplicationContext()),
+                                            getApplicationContext());
+
+
+                                    savePowerMalfunctionRecordInTable(currentDate, true);
+                                }
+                            } else {
                                 if (isPowerCompDiaAllowed) {
+
                                     currentDate = SharedPref.GetTruckInfoOnIgnitionChange(Constants.IgnitionUtcTimeMalDia, getApplicationContext());
 
-                                    // save power diagnostic event also when malfunction occurred
-                                    savePowerDiagnosticRecordInTable(currentDate, false);
+                                    savePowerDiagnosticRecordInTable(currentDate, true);
+
+                                    Logger.LogDebug("Power event", ">>>>>Power event occurred " + malfunctionDiagnosticMethod.getMalDiaDurationArray(dbHelper));
+
+
                                     // update mal/dia status for enable disable according to log
-                                    // malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable("0", global, constants, dbHelper, getApplicationContext());
+                                    malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable("0", global, constants, dbHelper, getApplicationContext());
+
                                     SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
+
+                                }
+                            }
+
+
+                        }
+
+                        // updated values after save diagnostic with truck ignition status because in this case we are saving last ignition time in diagnostic
+                        SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, Constants.WiredOBD, global.GetDriverCurrentDateTime(global, getApplicationContext()),
+                                global.GetCurrentUTCTimeFormat(),
+                                SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, getApplicationContext()),
+                                SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, getApplicationContext()),
+                                getApplicationContext());
+
+
+                    }
+                }
+
+                // check if Malfunction/Diagnostic event occurred in ECM disconnection
+                if (SharedPref.isPowerDiagnosticOccurred(getApplicationContext())) {
+                    isEventOccurred = true;
+
+                    String PowerClearEventCallTime = SharedPref.getPowerClearEventCallTime(getApplicationContext());
+                    if (PowerClearEventCallTime.length() == 0) {
+                        PowerClearEventCallTime = currentDate;
+                        SharedPref.setPowerClearEventCallTime(PowerClearEventCallTime, getApplicationContext());
+                    }
+                    String dateee = SharedPref.getPowerMalOccTime(getApplicationContext());
+                    int secDiff = constants.getSecDifference(dateee, currentDate);
+                    int callTimeSecDiff = constants.getSecDifference(PowerClearEventCallTime, currentDate);
+
+                    // clear Power Diagnostic event after 1 min automatically when ECM is connected.
+                    if (secDiff > 60 && callTimeSecDiff > 18) {
+                        SharedPref.setPowerClearEventCallTime(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
+                        Logger.LogDebug("Clear event", ">>>>>Clear event occurred " + malfunctionDiagnosticMethod.getMalDiaDurationArray(dbHelper));
+
+                        powerEventInputArray = new JSONArray();
+                        ClearEventUpdate(Constants.PowerComplianceDiagnostic,
+                                "Auto clear Power data diagnostic event after ECM data received");
+
+                        if (powerEventInputArray.length() == 0) {
+                            // DateTime clearEventCallTime = Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getApplicationContext()).plusSeconds(40);
+                            SharedPref.setPowerClearEventCallTime(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
+
+                            if (global.isConnected(getApplicationContext())) {
+                                JSONArray savedEvents = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(dbHelper);
+                                if (savedEvents.length() > 0) {
+                                    SaveMalfnDiagnstcLogToServer(savedEvents, "0");
+                                } else {
+                                    GetMalDiaEventsDurationList();
                                 }
 
-                                currentDate = global.GetCurrentUTCTimeFormat();
-
-                                // updated values after save diagnostic with truck ignition status because in this case we are saving last ignition time in diagnostic
-                                SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, Constants.WiredOBD,
-                                        global.GetDriverCurrentDateTime(global, getApplicationContext()), currentDate,
-                                        SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, getApplicationContext()),
-                                        SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, getApplicationContext()),
-                                        getApplicationContext());
-
-
-                                savePowerMalfunctionRecordInTable(currentDate, true);
                             }
                         } else {
-                            if (isPowerCompDiaAllowed) {
+                            malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable("0", global, constants, dbHelper, getApplicationContext());
 
-                                currentDate = SharedPref.GetTruckInfoOnIgnitionChange(Constants.IgnitionUtcTimeMalDia, getApplicationContext());
-
-                                savePowerDiagnosticRecordInTable(currentDate, true);
-
-                                Logger.LogDebug("Power event", ">>>>>Power event occurred " + malfunctionDiagnosticMethod.getMalDiaDurationArray(dbHelper));
-
-
-                                // update mal/dia status for enable disable according to log
-                                malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable("0", global, constants, dbHelper, getApplicationContext());
-
-                                SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
-
+                            if (!SharedPref.isLocDiagnosticOccur(getApplicationContext()) && !SharedPref.isEngSyncDiagnstc(getApplicationContext())) {
+                                SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(getApplicationContext()),
+                                        SharedPref.isMalfunctionOccur(getApplicationContext()),
+                                        false,
+                                        SharedPref.isSuggestedEditOccur(getApplicationContext()), getApplicationContext());
                             }
+
+                            SharedPref.savePowerMalfunctionOccurStatus(
+                                    SharedPref.isPowerMalfunctionOccurred(getApplicationContext()),
+                                    false, global.GetCurrentUTCTimeFormat(), getApplicationContext());
                         }
-
-
+                    } else {
+                        if (callTimeSecDiff < 0) {
+                            SharedPref.setPowerClearEventCallTime(currentDate, getApplicationContext());
+                        }
                     }
 
-                    // updated values after save diagnostic with truck ignition status because in this case we are saving last ignition time in diagnostic
-                    SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, Constants.WiredOBD, global.GetDriverCurrentDateTime(global, getApplicationContext()),
-                            global.GetCurrentUTCTimeFormat(),
+
+                }
+
+                // this case is for engine sync event because of truck ignition was not updated if power event was already occurred
+                if (!isEventOccurred) {   // && SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext()).equals("")
+                    SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, SharedPref.getObdSourceName(getApplicationContext()),
+                            global.GetDriverCurrentDateTime(global, getApplicationContext()), global.GetCurrentUTCTimeFormat(),
                             SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, getApplicationContext()),
-                            SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, getApplicationContext()),
-                            getApplicationContext());
-
-
-
-                }
-            }
-
-            // check if Malfunction/Diagnostic event occurred in ECM disconnection
-            if (SharedPref.isPowerDiagnosticOccurred(getApplicationContext())) {
-                isEventOccurred = true;
-
-                String PowerClearEventCallTime = SharedPref.getPowerClearEventCallTime(getApplicationContext());
-                if(PowerClearEventCallTime.length() == 0){
-                    PowerClearEventCallTime = currentDate;
-                    SharedPref.setPowerClearEventCallTime(PowerClearEventCallTime, getApplicationContext());
-                }
-                String dateee = SharedPref.getPowerMalOccTime(getApplicationContext());
-                int secDiff = constants.getSecDifference(dateee, currentDate);
-                int callTimeSecDiff = constants.getSecDifference(PowerClearEventCallTime, currentDate);
-
-                // clear Power Diagnostic event after 1 min automatically when ECM is connected.
-                if (secDiff > 60 && callTimeSecDiff > 18) {
-                    SharedPref.setPowerClearEventCallTime(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
-                    Logger.LogDebug("Clear event", ">>>>>Clear event occurred " + malfunctionDiagnosticMethod.getMalDiaDurationArray(dbHelper));
-
-                    powerEventInputArray = new JSONArray();
-                    ClearEventUpdate( Constants.PowerComplianceDiagnostic,
-                            "Auto clear Power data diagnostic event after ECM data received");
-
-                    if(powerEventInputArray.length() == 0){
-                       // DateTime clearEventCallTime = Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getApplicationContext()).plusSeconds(40);
-                        SharedPref.setPowerClearEventCallTime(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
-
-                        if (global.isConnected(getApplicationContext())) {
-                            JSONArray savedEvents = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(dbHelper);
-                            if(savedEvents.length() > 0){
-                                SaveMalfnDiagnstcLogToServer(savedEvents, "0");
-                            }else {
-                                GetMalDiaEventsDurationList();
-                            }
-
-                        }
-                    }else {
-                        malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable("0", global, constants, dbHelper, getApplicationContext());
-
-                        if (!SharedPref.isLocDiagnosticOccur(getApplicationContext()) && !SharedPref.isEngSyncDiagnstc(getApplicationContext())) {
-                            SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(getApplicationContext()),
-                                    SharedPref.isMalfunctionOccur(getApplicationContext()),
-                                    false,
-                                    SharedPref.isSuggestedEditOccur(getApplicationContext()), getApplicationContext());
-                        }
-
-                        SharedPref.savePowerMalfunctionOccurStatus(
-                                SharedPref.isPowerMalfunctionOccurred(getApplicationContext()),
-                                false, global.GetCurrentUTCTimeFormat(), getApplicationContext());
-                    }
-                }else{
-                    if(callTimeSecDiff < 0){
-                        SharedPref.setPowerClearEventCallTime(currentDate, getApplicationContext());
-                    }
+                            SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, getApplicationContext()), getApplicationContext());
                 }
 
-
-
-
             }
-
-            // this case is for engine sync event because of truck ignition was not updated if power event was already occurred
-            if(!isEventOccurred){   // && SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext()).equals("")
-                SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, SharedPref.getObdSourceName(getApplicationContext()),
-                        global.GetDriverCurrentDateTime(global, getApplicationContext()), global.GetCurrentUTCTimeFormat(),
-                        SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, getApplicationContext()),
-                        SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, getApplicationContext()), getApplicationContext());
-            }
-
-
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -2560,7 +2576,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     void saveMalfunctionEventInTable(String malDiaType, String MalfunctionDefinition, String occurredTime, boolean isUpload){
 
         String clearedTime = "", clearTimeOdmeter = "", clearedTimeEngineHour = "";
-        JSONObject newOccuredEventObj = new JSONObject();
+        JSONObject newOccuredEventObj;
         String lastSavedOdometer =   SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, getApplicationContext());
         String lastSavedEngHr =  SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, getApplicationContext());
         String currentOdometer = SharedPref.getObdOdometer(getApplicationContext());
@@ -2769,119 +2785,118 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
         try {
 
-            if(!SharedPref.isEngSyncMalfunction(getApplicationContext())) {
-                boolean isEngineSyncMalAllowed = SharedPref.GetParticularMalDiaStatus(ConstantsKeys.EnginSyncMal, getApplicationContext());
-                boolean isEngineSyncDiaAllowed = SharedPref.GetParticularMalDiaStatus(ConstantsKeys.EnginSyncDiag, getApplicationContext());
-                String lastIgnitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
+            if (!SharedPref.IsDriverLogin(getApplicationContext())) {
+                if (!SharedPref.isEngSyncMalfunction(getApplicationContext())) {
+                    boolean isEngineSyncMalAllowed = SharedPref.GetParticularMalDiaStatus(ConstantsKeys.EnginSyncMal, getApplicationContext());
+                    boolean isEngineSyncDiaAllowed = SharedPref.GetParticularMalDiaStatus(ConstantsKeys.EnginSyncDiag, getApplicationContext());
+                    String lastIgnitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
 
-                if ((isEngineSyncMalAllowed || isEngineSyncDiaAllowed) && lastIgnitionStatus.equals("ON")) {
+                    if ((isEngineSyncMalAllowed || isEngineSyncDiaAllowed) && lastIgnitionStatus.equals("ON")) {
 
-                    DateTime disconnectTime = global.getDateTimeObj(SharedPref.getObdLastStatusTime(getApplicationContext()), false);
-                    DateTime currentTime = global.getDateTimeObj(global.GetDriverCurrentDateTime(global, getApplicationContext()), false);
+                        DateTime disconnectTime = global.getDateTimeObj(SharedPref.getObdLastStatusTime(getApplicationContext()), false);
+                        DateTime currentTime = global.getDateTimeObj(global.GetDriverCurrentDateTime(global, getApplicationContext()), false);
 
-                    if (disconnectTime != null && currentTime != null) {
-                        int timeInSec = (int) Constants.getDateTimeDuration(disconnectTime, currentTime).getStandardSeconds();
-                        //Seconds.secondsBetween(disconnectTime, currentTime).getSeconds();
-                        if (timeInSec >= 70 ) {
+                        if (disconnectTime != null && currentTime != null) {
+                            int timeInSec = (int) Constants.getDateTimeDuration(disconnectTime, currentTime).getStandardSeconds();
+                            //Seconds.secondsBetween(disconnectTime, currentTime).getSeconds();
+                            if (timeInSec >= 70) {
 
-                            boolean isEngSyncDiaOccurred = SharedPref.isEngSyncDiagnstc(getApplicationContext());
-                            if (!isEngSyncDiaOccurred && isEngineSyncDiaAllowed) {
+                                boolean isEngSyncDiaOccurred = SharedPref.isEngSyncDiagnstc(getApplicationContext());
+                                if (!isEngSyncDiaOccurred && isEngineSyncDiaAllowed) {
 
-                                SharedPref.saveEngSyncDiagnstcStatus(true, getApplicationContext());
-                                constants.saveDiagnstcStatus(getApplicationContext(), true);
-                                SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
-                                SharedPref.setEngSyncClearEventCallTime(Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
+                                    SharedPref.saveEngSyncDiagnstcStatus(true, getApplicationContext());
+                                    constants.saveDiagnstcStatus(getApplicationContext(), true);
+                                    SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
+                                    SharedPref.setEngSyncClearEventCallTime(Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
 
-                                // save occurred event in malfunction/diagnostic table
-                                saveMalfunctionEventInTable(Constants.EngineSyncDiagnosticEvent,
-                                        getString(R.string.eng_sync_dia_occured),
-                                        global.GetCurrentUTCTimeFormat(), true );
-
-
-                                // save malfunction entry in duration table
-                                malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, "0",
-                                        global.GetCurrentUTCTimeFormat(),
-                                        global.GetCurrentUTCTimeFormat(),
-                                        Constants.EngineSyncDiagnosticEvent,  "-1",
-                                        Constants.getLocationType(getApplicationContext()),
-                                        "", constants, getApplicationContext());
-
-                                // update mal/dia status for enable disable according to log
-                                malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable("0", global, constants, dbHelper, getApplicationContext());
+                                    // save occurred event in malfunction/diagnostic table
+                                    saveMalfunctionEventInTable(Constants.EngineSyncDiagnosticEvent,
+                                            getString(R.string.eng_sync_dia_occured),
+                                            global.GetCurrentUTCTimeFormat(), true);
 
 
-                                global.ShowLocalNotification(getApplicationContext(),
-                                        getString(R.string.dia_event),
-                                        getString(R.string.eng_sync_dia_occured_desc), 2090);
+                                    // save malfunction entry in duration table
+                                    malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, "0",
+                                            global.GetCurrentUTCTimeFormat(),
+                                            global.GetCurrentUTCTimeFormat(),
+                                            Constants.EngineSyncDiagnosticEvent, "-1",
+                                            Constants.getLocationType(getApplicationContext()),
+                                            "", constants, getApplicationContext());
 
-                                Globally.PlaySound(getApplicationContext());
+                                    // update mal/dia status for enable disable according to log
+                                    malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable("0", global, constants, dbHelper, getApplicationContext());
 
 
+                                    global.ShowLocalNotification(getApplicationContext(),
+                                            getString(R.string.dia_event),
+                                            getString(R.string.eng_sync_dia_occured_desc), 2090);
 
-                            } else {
+                                    Globally.PlaySound(getApplicationContext());
 
-                                if (isEngineSyncMalAllowed) {
 
-                                    String clearEventLastCallTime = SharedPref.getEngSyncMalEventCallTime(getApplicationContext());
-                                    if (clearEventLastCallTime.length() == 0) {
-                                        SharedPref.setEngSyncMalEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
-                                    }
+                                } else {
 
-                                    // Checking after 1 min
-                                    if (constants.minDiffMalfunction(clearEventLastCallTime, global, getApplicationContext()) > 0) {
-                                        // update call time
-                                        SharedPref.setEngSyncMalEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
+                                    if (isEngineSyncMalAllowed) {
 
-                                        double last24HrEngSyncEventTime = malfunctionDiagnosticMethod.getLast24HrEngSyncEvents(dbHelper);  //Constants.EngineSyncDiagnosticEvent,"", 0.0, constants, driverPermissionMethod, obdUtil,
+                                        String clearEventLastCallTime = SharedPref.getEngSyncMalEventCallTime(getApplicationContext());
+                                        if (clearEventLastCallTime.length() == 0) {
+                                            SharedPref.setEngSyncMalEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
+                                        }
+
+                                        // Checking after 1 min
+                                        if (constants.minDiffMalfunction(clearEventLastCallTime, global, getApplicationContext()) > 0) {
+                                            // update call time
+                                            SharedPref.setEngSyncMalEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
+
+                                            double last24HrEngSyncEventTime = malfunctionDiagnosticMethod.getLast24HrEngSyncEvents(dbHelper);  //Constants.EngineSyncDiagnosticEvent,"", 0.0, constants, driverPermissionMethod, obdUtil,
 //                                        int minDiff = constants.getMinDifference(SharedPref.getObdLastStatusTime(getApplicationContext()),
 //                                                global.GetDriverCurrentDateTime(global, getApplicationContext()));
 //                                        double totalEngSyncMissingMin = last24HrEngSyncEventTime;
-                                        Logger.LogDebug("last24HrEng", String.valueOf(last24HrEngSyncEventTime));
-                                        if (last24HrEngSyncEventTime >= Constants.PowerEngSyncMalOccTime) {
+                                            Logger.LogDebug("last24HrEng", String.valueOf(last24HrEngSyncEventTime));
+                                            if (last24HrEngSyncEventTime >= Constants.PowerEngSyncMalOccTime) {
 
-                                            SharedPref.saveEngSyncMalfunctionStatus(true, getApplicationContext());
-                                            constants.saveMalfncnStatus(getApplicationContext(), true);
-                                            SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
+                                                SharedPref.saveEngSyncMalfunctionStatus(true, getApplicationContext());
+                                                constants.saveMalfncnStatus(getApplicationContext(), true);
+                                                SharedPref.setClearEventCallTime(global.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
 
-                                            // save occurred event in malfunction/diagnostic table
-                                            saveMalfunctionEventInTable(Constants.EngineSyncMalfunctionEvent,
-                                                    getString(R.string.eng_sync_mal_occured),
-                                                    global.GetCurrentUTCTimeFormat(), true);  //SharedPref.getObdLastStatusUtcTime(getApplicationContext())
+                                                // save occurred event in malfunction/diagnostic table
+                                                saveMalfunctionEventInTable(Constants.EngineSyncMalfunctionEvent,
+                                                        getString(R.string.eng_sync_mal_occured),
+                                                        global.GetCurrentUTCTimeFormat(), true);  //SharedPref.getObdLastStatusUtcTime(getApplicationContext())
 
 
-                                            // save malfunction entry in duration table
-                                            malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, "0",
-                                                    global.GetCurrentUTCTimeFormat(),    //global.GetCurrentUTCTimeFormat(),
-                                                    global.GetCurrentUTCTimeFormat(),
-                                                    Constants.EngineSyncMalfunctionEvent,  "-1",
-                                                    Constants.getLocationType(getApplicationContext()), "",
-                                                    constants, getApplicationContext());
+                                                // save malfunction entry in duration table
+                                                malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, "0",
+                                                        global.GetCurrentUTCTimeFormat(),    //global.GetCurrentUTCTimeFormat(),
+                                                        global.GetCurrentUTCTimeFormat(),
+                                                        Constants.EngineSyncMalfunctionEvent, "-1",
+                                                        Constants.getLocationType(getApplicationContext()), "",
+                                                        constants, getApplicationContext());
 
-                                            // update mal/dia status for enable disable according to log
-                                            malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable("0", global, constants, dbHelper, getApplicationContext());
+                                                // update mal/dia status for enable disable according to log
+                                                malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable("0", global, constants, dbHelper, getApplicationContext());
 
-                                            global.ShowLocalNotification(getApplicationContext(),
-                                                    getString(R.string.malfunction_event),
-                                                    getString(R.string.eng_sync_mal_occured), 2090);
+                                                global.ShowLocalNotification(getApplicationContext(),
+                                                        getString(R.string.malfunction_event),
+                                                        getString(R.string.eng_sync_mal_occured), 2090);
 
-                                            Globally.PlaySound(getApplicationContext());
+                                                Globally.PlaySound(getApplicationContext());
+
+                                            }
+
 
                                         }
 
 
                                     }
 
-
-
-
                                 }
 
+
                             }
-
-
                         }
-                    }
 
+                    }
                 }
             }
         }catch (Exception e){
@@ -2954,7 +2969,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     private void checkPositionMalfunction(String currentHighPrecisionOdometer, String currentLogDate){
 
         try {
-            if(SharedPref.isLocMalfunctionOccur(getApplicationContext()) == false) {
+
+            if(!SharedPref.isLocMalfunctionOccur(getApplicationContext()) && !SharedPref.IsDriverLogin(getApplicationContext())) {
                 boolean isPositionMalAllowed = SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PostioningComplMal, getApplicationContext());
                 if (isPositionMalAllowed) {
                     String lastCalledTime = SharedPref.getLastMalfCallTime(getApplicationContext());

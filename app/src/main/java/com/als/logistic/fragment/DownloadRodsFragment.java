@@ -183,12 +183,12 @@ public class DownloadRodsFragment extends Fragment implements View.OnClickListen
       CurrentCycle = "CAN";
       dotSwitchButton.setText("CAN");
       dotCanLogArray = hMethods.getSavedDownlodedLogCanadaArray(DriverId, dbHelper);
-      if(dotCanLogArray.length()>0) {
+      if(dotCanLogArray.length() > 0) {
           setDataOnList(dotCanLogArray);
           noDataRODSTV.setVisibility(View.GONE);
-      }else{
-          checkInternetAvailability();
       }
+
+      checkInternetAvailability();
 
     }
 
@@ -199,9 +199,8 @@ public class DownloadRodsFragment extends Fragment implements View.OnClickListen
         if(dotUsLogArray.length()>0) {
             setDataOnList(dotUsLogArray);
             noDataRODSTV.setVisibility(View.GONE);
-        }else {
-            checkInternetAvailability();
         }
+        checkInternetAvailability();
     }
 
 

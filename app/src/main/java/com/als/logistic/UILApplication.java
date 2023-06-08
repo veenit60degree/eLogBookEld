@@ -157,6 +157,14 @@ public class UILApplication extends Application {
 		}
 	}
 
+	public int getBleLocThemeColor(){
+		if(isNightModeEnabled){
+			return Color.parseColor("#ffffff");
+		}else{
+			return Color.parseColor("#1A3561");
+		}
+	}
+
 
 	public void setIsNightModeEnabled(boolean isNightModeEnabled) {
 		this.isNightModeEnabled = isNightModeEnabled;

@@ -352,18 +352,15 @@ public class DriverLogInfoAdapter extends BaseAdapter {
             String locationKm = LogItem.getLocationKm().trim();
             String location = LogItem.getLocation().trim();
             if (locationKm.equals("null") || locationKm.equals(",") || locationKm.equals("") || locationKm.equals(context.getString(R.string.no_location_found))) {
-                if(location.equals("null") || location.equals(",") || location.equals("") || locationKm.equals(context.getString(R.string.no_location_found)) ){
+                if(location.equals("null") || location.equals(",") || location.equals("") || location.equals(context.getString(R.string.no_location_found)) ){
                      if(LogItem.getStartLatitude().length() > 4 && SharedPref.IsAOBRD(context) == false && IsEditView == false ){
-                      //  holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
                         holder.certifyLocationTV.setText(LogItem.getStartLatitude() + "," + LogItem.getStartLongitude());
                         holder.certifyLocationIV.setVisibility(View.GONE);
                     }else {
-                        // holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.blue_background_light));
                          holder.certifyLocationTV.setText(context.getResources().getString(R.string.no_location));
                          holder.certifyLocationIV.setVisibility(View.VISIBLE);
                      }
                 }else{
-                   // holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
                     holder.certifyLocationTV.setText(location);
                     if(SharedPref.IsAOBRD(context) == false && IsEditView == false ) {
                         holder.certifyLocationIV.setVisibility(View.GONE);
@@ -371,7 +368,6 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                 }
 
             } else {
-               // holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
                 holder.certifyLocationTV.setText(LogItem.getLocationKm());
                 if(SharedPref.IsAOBRD(context) == false && IsEditView == false ) {
                     holder.certifyLocationIV.setVisibility(View.GONE);
@@ -531,7 +527,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
         @Override
         public void JobBtnReady(String TrailorNo, String remarks, String type, boolean isUpdatedTrailer,
-                                int ItemPosition, EditText TrailorNoEditText, EditText ReasonEditText) {
+                                int ItemPosition, EditText TrailorNoEditText, EditText ReasonEditText, boolean isPartialUnload) {
 
                 if (remarks.length() > 0) {
                     HideKeyboard(ReasonEditText);

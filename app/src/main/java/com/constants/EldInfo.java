@@ -32,7 +32,8 @@ public class EldInfo {
 
 
     // Short link to download eld app from als server
-        //https://alsrealtime.com/app/relog.apk
+        //
+
 
     // super Admin
     // https://super-admin.alsrealtime.com/

@@ -12,6 +12,8 @@
         android:textColor="@color/black"
         android:singleLine="true"
         android:gravity="center_horizontal"
+    android:background="?attr/transparent_spinner"
+
         >
 
 </TextView>

@@ -8,6 +8,7 @@
         android:textSize="@dimen/text_size_16"
         android:layout_gravity="center_vertical"
         android:textColor="@color/black"
+        android:background="?attr/transparent_spinner"
         android:singleLine="true"
         android:gravity="center_horizontal|center_vertical" >
 

@@ -20,6 +20,12 @@
 
 
 
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        >
         <LinearLayout
             android:id="@+id/scrollChildMainLay"
             android:layout_width="match_parent"
@@ -44,7 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:layout_weight="0.44"
+                    android:layout_weight="0.47"
                     android:layout_marginLeft="@dimen/margin_short_8"
 
                     >
@@ -52,8 +58,9 @@
 
                     <RelativeLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="@dimen/view_height_230"
                         android:layout_weight="0.1"
+
                         android:background="@drawable/white_left"
                         >
 
@@ -65,7 +72,7 @@
                             app:cardElevation="@dimen/margin_short_1"
                             app:cardUseCompatPadding="true"
                             card_view:cardBackgroundColor="?attr/layout_color_dot"
-                            card_view:cardCornerRadius="@dimen/margin_10">
+                            card_view:cardCornerRadius="@dimen/margin_short_7">
 
 
                             <LinearLayout
@@ -141,7 +148,7 @@
 
                     <RelativeLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="@dimen/view_height_230"
                         android:layout_weight="0.1"
                         android:background="@drawable/white_left"
 
@@ -150,7 +157,7 @@
                         <androidx.cardview.widget.CardView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            card_view:cardCornerRadius="@dimen/margin_10"
+                            card_view:cardCornerRadius="@dimen/margin_short_7"
                             app:cardElevation="@dimen/margin_short_1"
                             app:cardUseCompatPadding="true"
                             android:background="@drawable/white_left"
@@ -222,7 +229,7 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="@dimen/view_height_230"
                         android:orientation="horizontal"
                         android:background="?attr/bgColor"
                         android:layout_weight="0.5"
@@ -244,14 +251,13 @@
                                 app:cardElevation="@dimen/margin_short_1"
                                 app:cardUseCompatPadding="true"
                                 card_view:cardBackgroundColor="?attr/layout_color_dot"
-                                card_view:cardCornerRadius="@dimen/margin_10">
+                                card_view:cardCornerRadius="@dimen/margin_short_7">
 
 
                                 <RelativeLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_gravity="center_horizontal"
-                                    android:padding="@dimen/text_size_3"
 
                                     >
                                     <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
@@ -328,7 +334,7 @@
                                 android:layout_height="match_parent"
                                 app:cardElevation="@dimen/margin_short_1"
                                 app:cardUseCompatPadding="true"
-                                card_view:cardCornerRadius="@dimen/margin_10"
+                                card_view:cardCornerRadius="@dimen/margin_short_7"
                                 android:layout_weight="1"
                                 card_view:cardBackgroundColor="?attr/layout_color_dot"
                                 >
@@ -412,7 +418,7 @@
                                 app:cardElevation="@dimen/margin_short_1"
                                 app:cardUseCompatPadding="true"
                                 card_view:cardBackgroundColor="?attr/layout_color_dot"
-                                card_view:cardCornerRadius="@dimen/margin_10">
+                                card_view:cardCornerRadius="@dimen/margin_short_7">
 
 
                                 <RelativeLayout
@@ -495,7 +501,7 @@
 
                     <RelativeLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="@dimen/view_height_230"
                         android:background="?attr/bgColor"
                         android:layout_weight="0.5"
                         >
@@ -515,7 +521,7 @@
                                 card_view:cardBackgroundColor="?attr/layout_color_dot"
                                 app:cardElevation="@dimen/margin_short_1"
                                 app:cardUseCompatPadding="true"
-                                card_view:cardCornerRadius="@dimen/margin_10">
+                                card_view:cardCornerRadius="@dimen/margin_short_7">
 
 
 
@@ -650,7 +656,7 @@
                                 app:cardElevation="@dimen/margin_short_1"
                                 card_view:cardBackgroundColor="?attr/layout_color_dot"
                                 app:cardUseCompatPadding="true"
-                                card_view:cardCornerRadius="@dimen/margin_10"
+                                card_view:cardCornerRadius="@dimen/margin_short_7"
                                 android:layout_weight="1"
                                 android:visibility="invisible"
 
@@ -736,7 +742,7 @@
                                 app:cardElevation="@dimen/margin_short_1"
                                 card_view:cardBackgroundColor="?attr/layout_color_dot"
                                 app:cardUseCompatPadding="true"
-                                card_view:cardCornerRadius="@dimen/margin_10"
+                                card_view:cardCornerRadius="@dimen/margin_short_7"
                                 android:visibility="invisible"
 
                                 >
@@ -852,17 +858,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:layout_weight="0.4"
+                    android:layout_weight="0.43"
                     android:layout_marginRight="@dimen/margin_short_5"
                     >
 
 
                     <RelativeLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="@dimen/view_height_180"
+                        android:layout_height="match_parent"
                         android:layout_weight="0.4"
                         android:background="?attr/bgColor"
-                        android:layout_marginBottom="@dimen/margin_short_5"
+
 
                         >
 
@@ -873,7 +879,7 @@
                             app:cardElevation="@dimen/margin_short_1"
                             card_view:cardBackgroundColor="?attr/layout_color_dot"
                             app:cardUseCompatPadding="true"
-                            card_view:cardCornerRadius="@dimen/margin_10">
+                            card_view:cardCornerRadius="@dimen/margin_short_7">
 
 
                             <RelativeLayout
@@ -899,9 +905,9 @@
                                     CircleProgressView:cpv_barWidth="@dimen/margin_10"
                                     CircleProgressView:cpv_innerContourSize="0dp"
                                     CircleProgressView:cpv_maxValue="100"
+
                                     CircleProgressView:cpv_outerContourSize="0dp"
                                     CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
-
                                     CircleProgressView:cpv_rimWidth="@dimen/margin_10"
                                     CircleProgressView:cpv_seekMode="true"
                                     CircleProgressView:cpv_showUnit="true"
@@ -951,7 +957,7 @@
 
                     <RelativeLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="@dimen/view_height_180"
+                        android:layout_height="match_parent"
                         android:layout_weight="0.4"
                         android:background="?attr/bgColor"
 
@@ -961,11 +967,11 @@
                             android:id="@+id/hosCycleCardView"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:visibility="invisible"
                             app:cardElevation="@dimen/margin_short_1"
                             app:cardUseCompatPadding="true"
-                            card_view:cardCornerRadius="@dimen/margin_10"
                             card_view:cardBackgroundColor="?attr/layout_color_dot"
-                            android:visibility="invisible"
+                            card_view:cardCornerRadius="@dimen/margin_short_7"
 
                             >
 
@@ -1024,12 +1030,12 @@
                                 <LinearLayout
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_gravity="center_horizontal"
-                                    android:gravity="center_vertical"
-                                    android:orientation="horizontal"
                                     android:layout_below="@+id/hosUsedCycleTV"
                                     android:layout_centerHorizontal="true"
+                                    android:layout_gravity="center_horizontal"
                                     android:layout_marginTop="@dimen/margin_short_1"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal"
 
                                     >
 
@@ -1058,7 +1064,6 @@
 
 
                             </RelativeLayout>
-
 
 
                         </androidx.cardview.widget.CardView>
@@ -1140,7 +1145,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight=".75"
                     android:layout_marginRight="@dimen/margin_short_2"
-                    card_view:cardCornerRadius="@dimen/margin_10"
+                    card_view:cardCornerRadius="@dimen/margin_short_7"
                     card_view:cardBackgroundColor="?attr/layout_color_dot"
 
                     app:cardElevation="@dimen/margin_short_2"
@@ -1239,7 +1244,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight=".75"
-                    card_view:cardCornerRadius="@dimen/margin_10"
+                    card_view:cardCornerRadius="@dimen/margin_short_7"
                     app:cardElevation="@dimen/margin_short_2"
                     app:cardUseCompatPadding="true"
                     card_view:cardBackgroundColor="?attr/layout_color_dot"
@@ -1317,7 +1322,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight=".9"
                     android:layout_marginLeft="@dimen/margin_short_2"
-                    card_view:cardCornerRadius="@dimen/margin_10"
+                    card_view:cardCornerRadius="@dimen/margin_short_7"
                     app:cardBackgroundColor="?attr/hos_send_log"
                     app:cardElevation="@dimen/margin_short_2"
                     app:cardUseCompatPadding="true"
@@ -1339,6 +1344,11 @@
 
             </LinearLayout>
         </LinearLayout>
+
+
+
+    </ScrollView>
+
 
 </LinearLayout>
 

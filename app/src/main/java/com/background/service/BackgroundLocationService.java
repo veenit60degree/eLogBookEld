@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.net.TrafficStats;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -54,10 +53,9 @@ import com.constants.SyncDataUpload;
 import com.constants.TcpClient;
 import com.constants.Utils;
 import com.constants.VolleyRequest;
+import com.constants.VolleyRequestWithoutRetry;
 import com.driver.details.DriverConst;
 import com.htstart.htsdk.HTBleSdk;
-import com.htstart.htsdk.bluetooth.HTBleData;
-import com.htstart.htsdk.bluetooth.HTBleDevice;
 import com.local.db.BleGpsAppLaunchMethod;
 import com.local.db.CTPatInspectionMethod;
 import com.local.db.CertifyLogMethod;
@@ -81,33 +79,23 @@ import com.local.db.VehiclePowerEventMethod;
 import com.models.EldDataModelNew;
 import com.notifications.NotificationManagerSmart;
 import com.shared.pref.CoDriverEldPref;
-import com.shared.pref.EldCoDriverLogPref;
-import com.shared.pref.EldSingleDriverLogPref;
 import com.shared.pref.MainDriverEldPref;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.MultipartBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Protocol;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
 import com.wifi.settings.WiFiConfig;
 
 import org.greenrobot.eventbus.EventBus;
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.Arrays;
+import java.sql.Driver;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 import dal.tables.OBDDeviceData;
 import models.RulesResponseObject;
@@ -158,6 +146,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     final int GetDriverLog                  = 26;
     final int GetDriverLog18Days            = 27;
     final int GetCoDriverLog18Days          = 28;
+    final int CheckConnection               = 29;
 
     final int GetRecapViewFlagMain          = 111;
     final int GetRecapViewFlagCo            = 112;
@@ -181,7 +170,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     int ignitionOffCount                    = 0;
     int onReceiveTotalCountOnReq            = 0;
 
-
+    int bleOnReceiveReqCountAtSame          = 0;
+    boolean isOnReceiverCounterCalled       = false;
     public static int obdVehicleSpeed       = -1;
 
     int LocRefreshTime = 10;
@@ -233,6 +223,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     boolean isDeferralAlreadyPostingCo = false;
     boolean IsMissingDiaInProgress = false;
     boolean MalDiaEventsApiInProcess = false;
+    boolean isAllowInSaveLogResponse = false;
 
     boolean isWiredObdRespond = false;
     public static boolean IsAutoChange = false;
@@ -347,7 +338,6 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         saveNotificationReq     = new SaveDriverLogPost(getApplicationContext(), saveLogRequestResponse);
 
         saveEventLogPost        = new SaveLogJsonObj(getApplicationContext(), saveEventRequestResponse );
-
 
         data                    = new OBDDeviceData();
         decoder                 = new Decoder();
@@ -665,7 +655,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             boolean IsValidTime = global.isCorrectTime(getApplicationContext(), false,
                     SharedPref.getCurrentUTCTime(getApplicationContext()) );
             if (IsValidTime) {
-                writeWiredObdLogs(OBD_LAST_STATUS, speed, timeStamp, "Save Truck Info - OBD_LAST_STATUS: ");
+                writeWiredBleObdLogs(speed, timeStamp);
 
 
                 if (OBD_LAST_STATUS == constants.WIRED_CONNECTED || OBD_LAST_STATUS == constants.BLE_CONNECTED) {
@@ -1007,23 +997,23 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     }
 
 
-    private void writeWiredObdLogs(int OBD_LAST_STATUS, int speed, String timeStamp, String detail){
+    private void writeWiredBleObdLogs(int speed, String timeStamp){
 
-        if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
+        if(constants.isObdConnectedWithELD(getApplicationContext())) {
             String lastCallTime = SharedPref.getObdWriteCallTime(getApplicationContext());
             if (lastCallTime.length() > 10) {
                 DateTime currentTime = Globally.GetDriverCurrentTime(Globally.GetCurrentUTCTimeFormat(), global, getApplicationContext());
                 DateTime lastCallDateTime = Globally.getDateTimeObj(lastCallTime, false);
                 long secDiff = Constants.getDateTimeDuration(lastCallDateTime, currentTime).getStandardSeconds();
-                long CheckIntervalInSec = 240;   // 4 min
+                long CheckIntervalInSec = 180;   // 3 min
                 if(ignitionStatus.equals("OFF")){
-                    CheckIntervalInSec = 420;   // 7 min
+                    CheckIntervalInSec = 360;   // 6 min
                 }
 
                 if (secDiff >= CheckIntervalInSec) {
                     SharedPref.setObdWriteCallTime(Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext());
                     constants.saveObdData(constants.getObdSource(getApplicationContext()),
-                            "VIN: " + SharedPref.getVehicleVin(getApplicationContext()) + ", " + detail +OBD_LAST_STATUS,
+                            SharedPref.getVehicleVin(getApplicationContext()),
                             "", currentHighPrecisionOdometer,
                             currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(speed),
                             String.valueOf(-1), obdEngineHours, timeStamp, timeStamp,
@@ -1257,6 +1247,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                             if (savedOnReceiveTime.length() > 10) {
                                 int timeInSec = constants.getSecDifference(savedOnReceiveTime, Globally.GetDriverCurrentDateTime(global, getApplicationContext()));
                                 if (timeInSec > 1) {
+                                    bleOnReceiveReqCountAtSame = 0;
+                                    isOnReceiverCounterCalled = false;
                                     SharedPref.setBleOnReceiveTime(getApplicationContext());
 
                                     // Logger.LogError("TAG", "onReceiveTime==" + htBleData);
@@ -1309,6 +1301,22 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                     if(timeInSec < 0){
                                         SharedPref.setBleOnReceiveTime(getApplicationContext());
                                     }
+
+                        // some times onReceive is calling so many time on single request thats why app performance is going down grade. Then we are disconnecting book from device and connecting again.
+                                    if(bleOnReceiveReqCountAtSame > 10 && !isOnReceiverCounterCalled){
+                                        isOnReceiverCounterCalled = true;
+                                        if (HTBleSdk.Companion.getInstance().isAllConnected()) {
+                                            HTBleSdk.Companion.getInstance().disAllConnect();
+                                        }
+                                        constants.saveBleLog("Forcefully disconnected due to multiple hits on same sec", Globally.GetDriverCurrentDateTime(global, getApplicationContext()), getApplicationContext(), dbHelper,
+                                                driverPermissionMethod, obdUtil);
+                                        HTBleSdk.Companion.getInstance().unRegisterCallBack();//Remove data callback listener
+
+                                        if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+                                            startBleService();
+                                        }
+                                    }
+                                    bleOnReceiveReqCountAtSame++;
                                 }
                             } else {
                                 SharedPref.setBleOnReceiveTime(getApplicationContext());
@@ -1389,7 +1397,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             obdEngineHours = decodedDataArray[12];
             currentHighPrecisionOdometer = decodedDataArray[11];
 
-            Globally.LATITUDE = decodedDataArray[14];
+            Globally.LATITUDE  = decodedDataArray[14];
             Globally.LONGITUDE = decodedDataArray[15];
 
             if(decodedDataArray[17].length() > 0) {
@@ -2142,6 +2150,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             e.printStackTrace();
         }
     }
+
     // check Positioning compliance malfunction Event
     private void checkPositionMalfunction(String currentHighPrecisionOdometer, String currentLogDate){
 
@@ -2964,10 +2973,6 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         Constants.isDriverSwitchEvent = false;
         SharedPref.SetPingStatus("", getApplicationContext());
 
-       /* if(Globally.LATITUDE.length() < 4){
-            startLocationService();
-        }*/
-
 
         //Make it stick to the notification panel so it is less prone to get cancelled by the Operating System.
         return START_STICKY;
@@ -2977,9 +2982,12 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
     void startLocationService(boolean isTimer){
         try {
+            if(locServiceIntent == null){
+                locServiceIntent = new Intent(getApplicationContext(), LocationListenerService.class);
+            }
+
             if(isTimer) {
                 if(getApplicationContext() != null) {
-                    locServiceIntent = new Intent(getApplicationContext(), LocationListenerService.class);
                     if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         startForegroundService(locServiceIntent);
                     }
@@ -2992,7 +3000,6 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                     @Override
                     public void run() {
                         if (getApplicationContext() != null) {
-                            locServiceIntent = new Intent(getApplicationContext(), LocationListenerService.class);
                             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 startForegroundService(locServiceIntent);
                             }
@@ -3023,8 +3030,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
         @Override
         public void run() {
-            // Logger.LogError(TAG, "-----Running timerTask");
-            Logger.LogDebug("SpeedCounter", "SpeedCounter: " +SpeedCounter);
+             Logger.LogError(TAG, "-----Running login timerTask");
+           // Logger.LogDebug("SpeedCounter", "SpeedCounter: " +SpeedCounter);
 
             try {
                 if (SharedPref.IsDriverLogin(getApplicationContext())) {
@@ -3055,7 +3062,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                     }
                     else if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
 
-                        // if device not `connected
+                        // if device not connected
                         if (!BleDataService.isBleConnected || !HTBleSdk.Companion.getInstance().isConnected()) {
                             if (!SharedPref.GetNewLoginStatus(getApplicationContext())) {
                                 if(BleDataService.IsScanClick) {
@@ -3065,6 +3072,10 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                                 if (SpeedCounter == 10 || SpeedCounter == HalfSpeedCounter) {
                                     startBleService();
+
+                                    if(Globally.GPS_LATITUDE.length() < 4 && SpeedCounter == HalfSpeedCounter){
+                                        startLocationService(true);
+                                    }
                                 }
                             }
 
@@ -3297,13 +3308,15 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                             warningTime = global.GetCurrentUTCTimeFormat();
                                             SharedPref.saveTimingMalfunctionWarningTime(warningTime, getApplicationContext());
                                             Globally.PlayNotificationSound(getApplicationContext());
-                                            global.ShowLocalNotification(getApplicationContext(), getString(R.string.timing_mal_alert), getString(R.string.timing_mal_alert_desc), 20910);
+                                            global.ShowLocalNotification(getApplicationContext(), getString(R.string.timing_mal_alert),
+                                                    getString(R.string.timing_mal_alert_desc), 20910);
 
                                             Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
                                             intent.putExtra(ConstantsKeys.PersonalUse75Km, false);
                                             intent.putExtra(ConstantsKeys.IsInvalidTime, true);
                                             LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
 
+                                            GetServerCurrentUtcTime();
                                         }
 
                                        // int minDiff = getTimeDiff(warningTime);
@@ -3431,13 +3444,13 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             JSONArray GpsStatusLog = bleGpsAppLaunchMethod.GetSelectedEventLog(Constants.LogEventTypeGps, dbHelper);
 
             if(BleStatusLog.length() > 0 && Globally.isConnected(getApplicationContext())){
-                JSONObject finalBleObj = bleGpsAppLaunchMethod.GetFinalBleGpsLogInJson(DriverId, DeviceId, BleStatusLog);
+                JSONObject finalBleObj = bleGpsAppLaunchMethod.GetFinalBleGpsLogInJson(DriverId, CoDriverId, DeviceId, BleStatusLog);
                 saveEventLogPost.SaveLogJsonObj(finalBleObj, APIs.ADD_DEVICE_BLE_SETTINGS, Constants.SocketTimeout10Sec,
                         true, false, Integer.valueOf(DriverId), SaveBleEventLog);
             }
 
             if(GpsStatusLog.length() > 0 && Globally.isConnected(getApplicationContext())){
-                JSONObject finalGpsObj = bleGpsAppLaunchMethod.GetFinalBleGpsLogInJson(DriverId, DeviceId, GpsStatusLog);
+                JSONObject finalGpsObj = bleGpsAppLaunchMethod.GetFinalBleGpsLogInJson(DriverId, CoDriverId, DeviceId, GpsStatusLog);
                 saveEventLogPost.SaveLogJsonObj(finalGpsObj, APIs.ADD_DEVICE_GPS_SETTINGS, Constants.SocketTimeout10Sec,
                         true, false, Integer.valueOf(DriverId), SaveGpsEventLog);
             }
@@ -3471,6 +3484,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                     SharedPref.setVehilceMovingStatus(false, getApplicationContext());
                 }
             } else {
+                SharedPref.setVehilceMovingStatus(false, getApplicationContext());
                 if (SharedPref.getObdStatus(getApplicationContext()) == Constants.WIFI_CONNECTED) {
                     sendEcmBroadcast(true);
                     Globally.PlayNotificationSound(getApplicationContext());
@@ -3481,10 +3495,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                     SharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED, global.GetDriverCurrentDateTime(global, getApplicationContext()),
                             global.GetCurrentUTCTimeFormat(), getApplicationContext());
                     SharedPref.SaveConnectionInfo(constants.DataMalfunction, "", getApplicationContext());
-                    SharedPref.setVehilceMovingStatus(false, getApplicationContext());
 
                 }else{
-
                     if(!wifiConfig.isWifiConnected(getApplicationContext()) && wifiConnectCount <= 5) {
                         wifiConnectCount++;
                         wifiConfig.testConnect(getApplicationContext());
@@ -3531,6 +3543,11 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                 saveDriverLogPost.PostDriverLogData(driverLogArray, SavedLogApi, socketTimeout, false, false,
                         DriverType, SaveMainDriverLogData);
+
+                constants.saveBleLog("BgService-SaveApi", Globally.GetCurrentUTCTimeFormat(),
+                        getApplicationContext(), dbHelper, driverPermissionMethod, obdUtil);
+
+
             }
         }
     }
@@ -3592,14 +3609,14 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             } else {
                 if(driverName.equalsIgnoreCase(mainDriverName)){
                     // pass driver and co driver id in the object (DriverId and CoDriverId).
-                    DriverId        =  DriverConst.GetDriverDetails(DriverConst.DriverID, getApplicationContext());
-                    CoDriverId      =  DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getApplicationContext());
+                    DriverId        = DriverConst.GetDriverDetails(DriverConst.DriverID, getApplicationContext());
+                    CoDriverId      = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getApplicationContext());
                     CoDriverName    = DriverConst.GetCoDriverDetails(DriverConst.CoDriverName, getApplicationContext());
                 }else{
                     // Exchange driver and co driver id when co driver is logged In.
-                    CoDriverId      =  DriverConst.GetDriverDetails(DriverConst.DriverID, getApplicationContext());
-                    DriverId        =  DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getApplicationContext());
-                    CoDriverName    =   DriverConst.GetDriverDetails(DriverConst.DriverName, getApplicationContext());
+                    CoDriverId      = DriverConst.GetDriverDetails(DriverConst.DriverID, getApplicationContext());
+                    DriverId        = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getApplicationContext());
+                    CoDriverName    = DriverConst.GetDriverDetails(DriverConst.DriverName, getApplicationContext());
                 }
 
                 SharedPref.setDriverId(DriverId, getApplicationContext());
@@ -3741,6 +3758,17 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         }
     }
 
+
+
+    //*================== Get Server Current Utc Time request ===================*//*
+    void GetServerCurrentUtcTime() {
+        if(global.isConnected(getApplicationContext())){
+            VolleyRequestWithoutRetry GetServerTimeRequest = new VolleyRequestWithoutRetry(getApplicationContext());
+            Map<String, String> params = new HashMap<String, String>();
+            GetServerTimeRequest.executeRequest(Request.Method.GET, APIs.CONNECTION_UTC_DATE, params, CheckConnection,
+                    Constants.SocketTimeout4Sec, ResponseCallBack, ErrorCallBack);
+        }
+    }
 
 
     /* ================== Get Driver Details =================== */
@@ -3981,6 +4009,9 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             if (result) {
                 //if(flag == CheckInternetConnection) {
                 constants.IsAlsServerResponding = true;
+
+            }else{
+                constants.saveAppLog("Network API failed", DriverId, dbHelper, driverPermissionMethod, obdUtil);
 
             }
         }
@@ -4467,7 +4498,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         JSONArray notificationArray = notificationMethod.getSaveToNotificationArray(Integer.valueOf(DriverId), dbHelper);
 
         if(notificationArray.length() > 0){
-            saveNotificationReq.PostDriverLogData(notificationArray, APIs.SAVE_NOTIFICATION,
+            saveNotificationReq.PostDriverLogData(notificationArray, APIs.SAVE_NOTIFICATION_NEW_LOG,
                     constants.SocketTimeout20Sec, false, false, DriverType, MainDriverNotification);
         }
 
@@ -4475,7 +4506,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
             JSONArray saveToCoDriverSaveToArray = notificationMethod.getSaveToNotificationArray(Integer.valueOf(CoDriverId), dbHelper);
             if(saveToCoDriverSaveToArray.length() > 0){
-                saveNotificationReq.PostDriverLogData(saveToCoDriverSaveToArray, APIs.SAVE_NOTIFICATION, constants.SocketTimeout20Sec,
+                saveNotificationReq.PostDriverLogData(saveToCoDriverSaveToArray, APIs.SAVE_NOTIFICATION_NEW_LOG, constants.SocketTimeout20Sec,
                         false, false, DriverType, CoDriverNotification);
             }
         }
@@ -4901,6 +4932,22 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                 switch (flag) {
 
+                    case CheckConnection:
+                        try{
+                            String date = obj.getString("Data");
+                            if(getApplicationContext() != null) {
+                                SharedPref.setCurrentUTCTime(date, getApplicationContext());
+                                boolean isCorrectTime = global.isCorrectTime(getApplicationContext(), false, date);
+
+                                if (isCorrectTime) {
+                                    mNotificationManager.dismissNotification(getApplicationContext(), 20910);
+                                }
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        break;
+
                     case GetDriverLog:
 
                         //
@@ -4920,7 +4967,13 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                     }
 
                                     // ------------ Update log array in local DB ---------
-                                    hMethods.DriverLogHelper(Integer.valueOf(DriverId), dbHelper, logArrayBeforeSelectedDate);
+                                    JSONArray driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
+                                    if(logArrayBeforeSelectedDate.length() == driverLogArray.length()) {
+                                        hMethods.DriverLogHelper(Integer.valueOf(DriverId), dbHelper, logArrayBeforeSelectedDate);
+                                        // Logger.LogDebug("DriverLogHelper-E9", "DriverLogHelper-E9");
+                                    }else{
+                                        // Logger.LogDebug("DriverLogHelper-E-LogMismatch", "DriverLogHelper-E-LogMismatch");
+                                    }
 
 
                                 }
@@ -4947,6 +5000,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                     if(flag == GetDriverLog18Days){
                                         if(SelectedDriverId.length() > 0)
                                             hMethods.DriverLogHelper(Integer.valueOf(SelectedDriverId), dbHelper, resultArray);
+                                        // Logger.LogDebug("DriverLogHelper-14", "DriverLogHelper-14");
 
                                         if(resultArray.length() > 0) {
                                             JSONObject lastItemJson = hMethods.GetLastJsonFromArray(resultArray);
@@ -4960,6 +5014,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                                     }else{
                                         hMethods.DriverLogHelper(Integer.valueOf(CoDriverId), dbHelper, resultArray);
+                                        // Logger.LogDebug("DriverLogHelper-E10", "DriverLogHelper-E10");
+
                                     }
 
                                 }
@@ -5095,7 +5151,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                     case UpdateOffLineStatus:
 
-                       //    Logger.LogDebug("response", ">>>UpdateOffLine: " + flag  ); //  + ": " + response
+                           Logger.LogDebug("response", ">>>UpdateOffLine: " + flag  ); //  + ": " + response
                         try {
 
                             updateOfflineNoResponseCount = 0;
@@ -5150,11 +5206,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                     // Save Driver Cycle With Current Date
                                     constants.SaveCycleWithCurrentDate(CycleId, utcCurrentDateTime.toString(), "UpdateOfflineDriverLog_api",
                                             global, getApplicationContext());
-
-
-                                    //
-
                                 }
+
 
 
                             } catch (Exception e) {
@@ -5285,7 +5338,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                     getString(R.string.disable_agriculture_exception),
                                     SharedPref.getLocationEventType(getApplicationContext()), "", false,
                                     SharedPref.IsNorthCanada(getApplicationContext()), DriverType, constants,
-                                    MainDriverPref, CoDriverPref, new EldSingleDriverLogPref(), new EldCoDriverLogPref(),
+                                    MainDriverPref, CoDriverPref,
                                     syncingMethod, global, hMethods, dbHelper, getApplicationContext(), false,
                                     CoDriverId, CoDriverName, false, Constants.Auto);
 
@@ -5347,6 +5400,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                     if(updateOfflineNoResponseCount > 0) {
                         constants.IsAlsServerResponding = false;
+                        constants.saveAppLog("Update Offline API failed", DriverId, dbHelper, driverPermissionMethod, obdUtil);
                     }
 
                     updateOfflineNoResponseCount++;
@@ -5554,12 +5608,12 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         List<EldDataModelNew> driverLogList = constants.getLogInList(driverLogArray);
 
         if (DriverType == Constants.MAIN_DRIVER_TYPE) { // Single Driver Type and Position is 0
-            MainDriverPref.ClearLocFromList(getApplicationContext());
+            MainDriverPref.ClearLogFromList(getApplicationContext());
 
             //  Save data for Main Driver
             MainDriverPref.SaveDriverLoc(getApplicationContext(), driverLogList);
         }else {
-            CoDriverPref.ClearLocFromList(getApplicationContext());
+            CoDriverPref.ClearCoDrLogFromList(getApplicationContext());
 
             //  Save data for Co Driver
             CoDriverPref.SaveDriverLoc(getApplicationContext(), driverLogList);
@@ -5620,7 +5674,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                         driverLogArray = constants.GetDriversSavedArray(getApplicationContext(), MainDriverPref, CoDriverPref);
                         //boolean IsDuplicateStatusAllowed = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.IsDuplicateStatusAllowed, getApplicationContext());
                         boolean IsEditedData = Constants.isEditedLog(getApplicationContext());
-
+                        isAllowInSaveLogResponse = false;
 
                       //  SharedPref.SetMainDriverEditedLogStatus(false, getApplicationContext());
                         // set edited log status true
@@ -5633,9 +5687,12 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                         try {
                             if (driverLogArray.length() == 1 || IsEditedData) {
                                 ClearLogAfterSuccess(driver_id);
+                                EldFragment.IsSaveOperationInProgress = false;
 
                                 // save Co Driver Data if login with co driver
                                 SaveCoDriverData();
+
+
 
                                 // update DriverLogId of current saved status
                                 if (!IsEditedData) {
@@ -5645,15 +5702,28 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                                     if(EldFragment.IsSaveJobException){
                                         EldFragment.IsSaveJobException = false;
-                                       // SelectedDriverId = getSelectedDriverId(driver_id);
-                                        DataRequest18Days(SelectedDriverId, GetDriverLog18Days);
+                                        if(!SharedPref.isVehicleMoving(getApplicationContext())) {
+                                            DataRequest18Days(SelectedDriverId, GetDriverLog18Days);
+                                        }else{
+                                            // Logger.LogDebug("DriverLogHelper-E-NewStatus", "DriverLogHelper-E-NewStatus");
+                                        }
                                     }
 
                                 }else{
 
-                                   // SelectedDriverId = getSelectedDriverId(driver_id);
-                                    DataRequest18Days(SelectedDriverId, GetDriverLog18Days);
+                                    if(!SharedPref.isVehicleMoving(getApplicationContext())) {
+                                        DataRequest18Days(SelectedDriverId, GetDriverLog18Days);
+                                    }else{
+                                        // Logger.LogDebug("DriverLogHelper-E-NewStatus", "DriverLogHelper-E-NewStatus");
+                                    }
                                 }
+
+                                if(isAllowInSaveLogResponse){
+                                    String VIN = SharedPref.getVINNumber(getApplicationContext());
+                                    UpdateOfflineDriverLog(DriverId, CoDriverId, DeviceId, VIN,
+                                            String.valueOf(obdVehicleSpeed), true);
+                                }
+
 
                             } else {
 
@@ -5664,7 +5734,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                     if (RePostDataCountMain > 1 ) { //|| !IsDuplicateStatusAllowed
                                         ClearLogAfterSuccess(driver_id);
                                         RePostDataCountMain = 0;
-
+                                        EldFragment.IsSaveOperationInProgress = false;
                                         // save Co Driver Data if login with co driver
                                         SaveCoDriverData();
 
@@ -5683,27 +5753,36 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                             ClearLogBeforeResend();
                                         } else {
                                             ClearLogAfterSuccess(driver_id);
+                                            EldFragment.IsSaveOperationInProgress = false;
 
                                             // save Co Driver Data if login with co driver
                                             SaveCoDriverData();
 
                                         }
 
-
-
                                     }
 
                                     if(EldFragment.IsSaveJobException){
                                         EldFragment.IsSaveJobException = false;
-                                       // SelectedDriverId = getSelectedDriverId(driver_id);
-                                        DataRequest18Days(SelectedDriverId, GetDriverLog18Days);
+                                        if(!SharedPref.isVehicleMoving(getApplicationContext())) {
+                                            DataRequest18Days(SelectedDriverId, GetDriverLog18Days);
+                                        }else{
+                                            // Logger.LogDebug("DriverLogHelper-E-NewStatus", "DriverLogHelper-E-NewStatus");
+                                        }
                                     }
 
+
+                                    if(!isAllowInSaveLogResponse){
+                                        String VIN = SharedPref.getVINNumber(getApplicationContext());
+                                        UpdateOfflineDriverLog(DriverId, CoDriverId, DeviceId, VIN,
+                                                String.valueOf(obdVehicleSpeed), true);
+                                    }
                                 } else {
                                     if (RePostDataCountMain > 2) {
                                         ClearLogAfterSuccess(driver_id);
                                         RePostDataCountMain = 0;
                                         ClearLogBeforeResend();
+                                        EldFragment.IsSaveOperationInProgress = false;
 
                                         // save Co Driver Data if login with co driver
                                         SaveCoDriverData();
@@ -5994,75 +6073,85 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         //syncingMethod.SyncingLogVersion2Helper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
 
         if (driverType == 0) { // Single Driver Type and Position is 0
-            MainDriverPref.ClearLocFromList(getApplicationContext());
+            MainDriverPref.ClearLogFromList(getApplicationContext());
         }else{
-            CoDriverPref.ClearLocFromList(getApplicationContext());
+            CoDriverPref.ClearCoDrLogFromList(getApplicationContext());
         }
     }
 
 
-    private String getSelectedDriverId(int driverType){
-        if (driverType == 0) { // Single Driver Type and Position is 0
-            return DriverConst.GetDriverDetails(DriverConst.DriverID, getApplicationContext());
-        }else{
-            return DriverConst.GetDriverDetails(DriverConst.DriverID, getApplicationContext());
-        }
-    }
+
     /* ------------ Save Co-Driver Data those data was saved in offline mode -------------- */
     void SaveCoDriverData() {
-        JSONArray LogArray = new JSONArray();
-        int SecondDriverType = 0;
-        int logArrayCount = 0, socketTimeout = 10000;
+        if(!EldFragment.IsSaveOperationInProgress) {
+            JSONArray LogArray = new JSONArray();
+            int SecondDriverType = 0;
+            int logArrayCount = 0, socketTimeout = 10000;
 
-        if (!global.isSingleDriver(getApplicationContext())) {
+            if (!global.isSingleDriver(getApplicationContext())) {
 
-            String SavedLogApi = Constants.getSaveApiInCoDriverCase(getApplicationContext());
-            if(DriverType == Constants.MAIN_DRIVER_TYPE) {  // Current active driver is Main Driver. So we need co driver details and we are getting co driver's details.
+                String SavedLogApi = Constants.getSaveApiInCoDriverCase(getApplicationContext());
+                if (DriverType == Constants.MAIN_DRIVER_TYPE) {  // Current active driver is Main Driver. So we need co driver details and we are getting co driver's details.
 
-                try {
-                    SecondDriverType = 1;   // Co Driver
+                    try {
+                        SecondDriverType = 1;   // Co Driver
 
-                    LogArray = constants.GetDriverOffLineSavedLog(getApplicationContext(), SecondDriverType, MainDriverPref, CoDriverPref);
-                    logArrayCount = LogArray.length();
-                    if(logArrayCount <= 3 ){
-                        socketTimeout = Constants.SocketTimeout10Sec;  //10 seconds
-                    }else if(logArrayCount > 3 && logArrayCount <= 10){
-                        socketTimeout = Constants.SocketTimeout20Sec;  //20 seconds
-                    }else if(logArrayCount > 10 && logArrayCount <= 30){
-                        socketTimeout = Constants.SocketTimeout40Sec;  //40 seconds
-                    }else if(logArrayCount > 30 && logArrayCount <= 60){
-                        socketTimeout = Constants.SocketTimeout70Sec;  //70 seconds
-                    }else{
-                        socketTimeout = Constants.SocketTimeout120Sec;  //70 seconds
+                        LogArray = constants.GetDriverOffLineSavedLog(getApplicationContext(), SecondDriverType, MainDriverPref, CoDriverPref);
+                        logArrayCount = LogArray.length();
+                        if (logArrayCount <= 3) {
+                            socketTimeout = Constants.SocketTimeout10Sec;  //10 seconds
+                        } else if (logArrayCount > 3 && logArrayCount <= 10) {
+                            socketTimeout = Constants.SocketTimeout20Sec;  //20 seconds
+                        } else if (logArrayCount > 10 && logArrayCount <= 30) {
+                            socketTimeout = Constants.SocketTimeout40Sec;  //40 seconds
+                        } else if (logArrayCount > 30 && logArrayCount <= 60) {
+                            socketTimeout = Constants.SocketTimeout70Sec;  //70 seconds
+                        } else {
+                            socketTimeout = Constants.SocketTimeout120Sec;  //70 seconds
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
 
-                if (LogArray.length() > 0) {
-                    EldFragment.IsSaveOperationInProgress = true;
-                    saveDriverLogPost.PostDriverLogData(LogArray, SavedLogApi, socketTimeout, false,
-                            false, SecondDriverType, SaveCoDriverLogData);
-                }
+                    if (LogArray.length() > 0) {
+                        EldFragment.IsSaveOperationInProgress = true;
+                        saveDriverLogPost.PostDriverLogData(LogArray, SavedLogApi, socketTimeout, false,
+                                false, SecondDriverType, SaveCoDriverLogData);
 
+                        constants.saveBleLog("BgService-SaveApi-Co1", Globally.GetCurrentUTCTimeFormat(),
+                                getApplicationContext(), dbHelper, driverPermissionMethod, obdUtil);
+
+
+                    } else {
+                        isAllowInSaveLogResponse = true;
+                    }
+
+                } else {
+                    // Current active driver is Co Driver. So we need main driver details and we are getting main driver's details.
+                    try {
+
+                        SecondDriverType = 0;
+                        LogArray = constants.GetDriverOffLineSavedLog(getApplicationContext(), SecondDriverType, MainDriverPref, CoDriverPref);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if (LogArray.length() > 0) {
+                        EldFragment.IsSaveOperationInProgress = true;
+                        saveDriverLogPost.PostDriverLogData(LogArray, SavedLogApi, socketTimeout, false,
+                                false, SecondDriverType, SaveCoDriverLogData);
+
+                        constants.saveBleLog("BgService-SaveApi-Co2", Globally.GetCurrentUTCTimeFormat(),
+                                getApplicationContext(), dbHelper, driverPermissionMethod, obdUtil);
+
+                    } else {
+                        isAllowInSaveLogResponse = true;
+                    }
+
+                }
             } else {
-                // Current active driver is Co Driver. So we need main driver details and we are getting main driver's details.
-                try {
-
-                    SecondDriverType = 0;
-                    LogArray = constants.GetDriverOffLineSavedLog(getApplicationContext(), SecondDriverType, MainDriverPref, CoDriverPref);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (LogArray.length() > 0) {
-                    EldFragment.IsSaveOperationInProgress = true;
-                    saveDriverLogPost.PostDriverLogData(LogArray, SavedLogApi, socketTimeout, false,
-                            false, SecondDriverType, SaveCoDriverLogData);
-                }
-
+                isAllowInSaveLogResponse = true;
             }
         }
-
 
     }
 

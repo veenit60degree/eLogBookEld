@@ -100,6 +100,8 @@
         <item name="camera_transparent_dark">#30C0C0C0</item>
         <item name="transparent">#00000000</item>
         <item name="transparent_sidemenu">#00000000</item>
+        <item name="transparent_spinner">#00000000</item>
+
         <item name="slide_menu_icon">#A1A0A0</item>
         <item name="blue_button_hover">#287CD1</item>
         <item name="hos_send_log">#1A8DFF</item>
@@ -218,6 +220,7 @@
         <item name="transparent">#343345</item>
 
         <item name="transparent_sidemenu">#00000000</item>
+        <item name="transparent_spinner">#959597</item>
 
         <item name="slide_menu_icon">#FFFFFF</item>
         <item name="blue_button_hover">#0D0B22</item>
@@ -615,7 +618,12 @@
         <item name="android:drawablePadding">@dimen/margin_short_5</item>
         <item name="android:paddingLeft">@dimen/margin_short_8</item>
         <item name="android:paddingRight">@dimen/margin_short_8</item>
+        <item name="android:textColor">?attr/color_eld_theme</item>
+
     </style>
 
-
+    `<!--<item name="background">?attr/bgColor</item>
+    <item name="android:popupBackground">?attr/color_eld_theme</item>
+    <item name="android:dropDownSelector">?attr/bgColor</item>
+    -->`
 </resources>

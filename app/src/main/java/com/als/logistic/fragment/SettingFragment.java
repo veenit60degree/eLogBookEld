@@ -98,8 +98,6 @@ import com.shared.pref.CoCAPref;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.CoTimeZonePref;
 import com.shared.pref.CoUSPref;
-import com.shared.pref.EldCoDriverLogPref;
-import com.shared.pref.EldSingleDriverLogPref;
 import com.shared.pref.MainDriverEldPref;
 import com.shared.pref.TimeZonePrefManager;
 import com.shared.pref.USCyclePrefManager;
@@ -184,10 +182,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     AgricultureDialog agricultureDialog;
 
     CheckConnectivity connectivityTask;
-    File syncingFile = new File("");
-    File coDriverSyncFile = new File("");
-    File DriverLogFile = new File("");
-    File cycleUpdationRecordFile = new File("");
+    File syncingFile = null;
+    File coDriverSyncFile = null;
+    File DriverLogFile = null;
+    File cycleUpdationRecordFile = null;
 
     private String url = "", ApkFilePath = "", existingApkFilePath = "";
     String VersionCode = "", VersionName = "", ExistingApkVersionCode = "", ExistingApkVersionName = "";
@@ -204,8 +202,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     DriverPermissionMethod driverPermissionMethod;
     MainDriverEldPref MainDriverPref;
     CoDriverEldPref CoDriverPref;
-    EldSingleDriverLogPref eldSharedPref;
-    EldCoDriverLogPref coEldSharedPref;
     // SyncDataUpload asyncTaskUpload;
     DownloadAppService downloadAppService = new DownloadAppService();
     Globally global;
@@ -309,8 +305,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         wifiConfig                  = new WiFiConfig();
         MainDriverPref              = new MainDriverEldPref();
         CoDriverPref                = new CoDriverEldPref();
-        eldSharedPref               = new EldSingleDriverLogPref();
-        coEldSharedPref             = new EldCoDriverLogPref();
 
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Loading ...");
@@ -1369,7 +1363,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             settingSpinImgVw.startAnimation();
             connectivityTask.ConnectivityRequest(SyncData, ConnectivityInterface);
         }else{
-            ClearDriverUnSavedlog();
+           // ClearDriverUnSavedlog();
             global.EldScreenToast(SyncDataBtn, "No data available for syncing.", getResources().getColor(R.color.colorVoilation));
         }
 
@@ -1855,9 +1849,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
                 hMethods.SaveDriversJob(DriverId, DeviceId, AdverseExceptionRemarks, getString(R.string.enable_adverse_exception),
                         LocationType, "", false, isNorthCanada, DriverType, constants,
-                        MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
-                        syncingMethod, global, hMethods, dbHelper, getActivity(), false ,
-                        CoDriverId, CoDriverName, false, Constants.Auto) ;
+                        MainDriverPref, CoDriverPref, syncingMethod, global, hMethods, dbHelper, getActivity(),
+                        false, CoDriverId, CoDriverName, false, Constants.Auto) ;
 
             }catch (Exception e){
                 e.printStackTrace();
@@ -2205,10 +2198,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     void ClearDriverUnSavedlog(){
         if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) { // Single Driver Type and Position is 0
             DriverType = Constants.MAIN_DRIVER_TYPE;
-            MainDriverPref.ClearLocFromList(getActivity());
+            MainDriverPref.ClearLogFromList(getActivity());
         }else{
             DriverType = Constants.CO_DRIVER_TYPE;
-            CoDriverPref.ClearLocFromList(getActivity());
+            CoDriverPref.ClearCoDrLogFromList(getActivity());
         }
     }
 
@@ -2591,7 +2584,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                             hMethods.SaveDriversJob(DriverId, DeviceId, getString(R.string.begin_ag_Exemption),
                                     getString(R.string.enable_agriculture_exception),
                                     LocationType, "", false, isNorthCanada, DriverType, constants,
-                                    MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
+                                    MainDriverPref, CoDriverPref,
                                     syncingMethod, global, hMethods, dbHelper, getActivity(), false,
                                     CoDriverId, CoDriverName, false, Constants.Auto);
                             global.EldScreenToast(SyncDataBtn, "Agriculture Exemption Enabled", UILApplication.getInstance().getThemeColor());
@@ -2603,7 +2596,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                             SharedPref.SaveAgricultureRecord("","","",getContext());
                             hMethods.SaveDriversJob(DriverId, DeviceId, getString(R.string.end_ag_Exemption), getString(R.string.disable_agriculture_exception),
                                     LocationType, "", false, isNorthCanada, DriverType, constants,
-                                    MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
+                                    MainDriverPref, CoDriverPref,
                                     syncingMethod, global, hMethods, dbHelper, getActivity(), false,
                                     CoDriverId, CoDriverName, false, Constants.Auto );
 
@@ -2721,10 +2714,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     }else{
                         if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) { // Single Driver Type and Position is 0
                             // when main driver is selected, clear co driver data
-                            CoDriverPref.ClearLocFromList(getActivity());
+                            CoDriverPref.ClearCoDrLogFromList(getActivity());
                         }else{
                             // clear main driver data
-                            MainDriverPref.ClearLocFromList(getActivity());
+                            MainDriverPref.ClearLogFromList(getActivity());
                         }
 
                         if (coDriverSyncFile != null && coDriverSyncFile.exists()) {
@@ -2927,7 +2920,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
                                 hMethods.SaveDriversJob(DriverId, DeviceId, "", getString(R.string.enable_ShortHaul_exception),
                                         LocationType, "", true, isNorthCanada, DriverType, constants,
-                                        MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
+                                        MainDriverPref, CoDriverPref,
                                         syncingMethod, global, hMethods, dbHelper, getActivity(), false,
                                         CoDriverId, CoDriverName, false, Constants.Auto);
 

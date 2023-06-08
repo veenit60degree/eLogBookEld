@@ -2,17 +2,16 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
 
-
         <layer-list>
             <item>
                 <shape>
                     <stroke
                         android:width="@dimen/margin_short_1"
-                        android:color="?attr/gray_text" />
+                        android:color="@color/ripple_effect_dark_gray" />
 
                     <corners android:radius="@dimen/margin_short_3" />
 
-                    <solid android:color="@color/transparent"></solid>
+                    <solid android:color="?attr/transparent_spinner"></solid>
 
 
                     <padding
@@ -28,7 +27,7 @@
                 <bitmap
                     android:gravity="center_vertical|right"
                     android:src="@drawable/dropdown_gray"
-                    android:tint="?attr/gray_text"
+                    android:tint="@color/ripple_effect_dark_gray"
                     />
 
             </item>

@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.RequiresApi;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.text.Editable;
 import android.text.InputFilter;
@@ -88,6 +89,7 @@ public class ShippingDocDialog extends Dialog {
     final int Save18DaysList    = 5;
     int DriverType;
     private boolean IsShippingCleared;
+    private  boolean isOffline15DaysRecordExist = false;
     JSONObject lastSavedJson, lastUsedJson;
     private String blockCharacterSet = "~#^|$%&*!";
 
@@ -209,53 +211,48 @@ public class ShippingDocDialog extends Dialog {
             CallApiToSaveShipping(IsShippingCleared);
         }
 
-        if(global.isConnected(getContext())) {
-            GetShippingInfoWithDate(DriverId, DeviceId, SelectedDate);
-        }
-
         // Check is array is empty then call API to get data from server
         if (IsSingleDriver.equals(DriverConst.SingleDriver)) {
             if (shipment18DaysJsonArray.length() == 0) {
                 if(global.isConnected(getContext())) {
-                    GetShippingInfoWithDate(DriverId, DeviceId, SelectedDate);
                     GetShipment18Days(DriverId, DeviceId, SelectedDate, GetShipping18Days);
                 }
             }else {
                 if(!IsShippingCleared) {
-                    ParseShippingData(lastSavedJson);
+                    ParseShippingData(lastSavedJson, false);
                     setDataOnField();
                 }
             }
         }else{
             if (MainDriver18DaysJsonArray.length() == 0) {
                 if(global.isConnected(getContext())) {
-                    GetShippingInfoWithDate(MainDriverId, DeviceId, SelectedDate);
                     GetShipment18Days(MainDriverId, DeviceId, SelectedDate, Get18DaysListMain);
                 }
             }else{
                 if(!IsShippingCleared && DriverType == Constants.MAIN_DRIVER_TYPE) {   // DriverType = 0 means Main driver
                     lastSavedJson = shipmentHelper.GetLastJsonObject(MainDriver18DaysJsonArray, 0);
-
-                    ParseShippingData(lastSavedJson);
+                    ParseShippingData(lastSavedJson,false);
                     setDataOnField();
                 }
             }
 
             if (CoDriver18DaysJsonArray.length() == 0) {
                 if(global.isConnected(getContext())) {
-                    GetShippingInfoWithDate(CoDriverId, DeviceId, SelectedDate);
                     GetShipment18Days(CoDriverId, DeviceId, SelectedDate, Get18DaysListCo);
                 }
             }else{
                 if(!IsShippingCleared && DriverType == Constants.CO_DRIVER_TYPE) {   // DriverType = 1 means Co driver
                     lastSavedJson = shipmentHelper.GetLastJsonObject(CoDriver18DaysJsonArray, 0);
-                    ParseShippingData(lastSavedJson);
+                    ParseShippingData(lastSavedJson, false);
                     setDataOnField();
                 }
             }
 
         }
 
+        if(global.isConnected(getContext())) {
+            GetShippingInfoWithDate(DriverId, DeviceId, SelectedDate);
+        }
 
         shippingDocSaveBtn.setOnClickListener(new ShipperFieldListener());
 
@@ -472,6 +469,11 @@ public class ShippingDocDialog extends Dialog {
         try {
             if(getContext() != null ) {
                 Toast.makeText(getContext(), msgg, Toast.LENGTH_LONG).show();
+                if(msgg.equals(Msg)){
+                    Intent intent = new Intent(ConstantsKeys.IsIgnitionOn);
+                    intent.putExtra(ConstantsKeys.IsShippingUpdate, true);
+                    LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+                }
             }
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -500,25 +502,40 @@ public class ShippingDocDialog extends Dialog {
     }
 
 
-    void ParseShippingData(JSONObject dataObj){
+    void ParseShippingData(JSONObject dataObj, boolean isOnline){
         lastUsedJson = dataObj;
         try {
             if(dataObj != null) {
-                if (!dataObj.isNull(ConstantsKeys.ShippingDocumentNumber))
-                    ShipperNumber = dataObj.getString(ConstantsKeys.ShippingDocumentNumber);
-                if (!dataObj.isNull(ConstantsKeys.Commodity))
-                    Commodity = dataObj.getString(ConstantsKeys.Commodity);
-                if (!dataObj.isNull(ConstantsKeys.ShipperName))
-                    ShipperName = dataObj.getString(ConstantsKeys.ShipperName);
-                if (!dataObj.isNull(ConstantsKeys.FromAddress))         // ShipperState is used as From address
-                    FromAddress = dataObj.getString(ConstantsKeys.FromAddress);
-                if (!dataObj.isNull(ConstantsKeys.ToAddress))    // ShipperState is used as To address
-                    ToAddress = dataObj.getString(ConstantsKeys.ToAddress);
-                //   if(dataObj.has(ConstantsKeys.IsShippingCleared) && !dataObj.isNull(ConstantsKeys.IsShippingCleared))    // ShipperState is used as To address
-                //   IsShippingCleared     = dataObj.getBoolean(ConstantsKeys.IsShippingCleared);
+                String ShippingDocDate = dataObj.getString(ConstantsKeys.ShippingDocDate);
+                if(ShippingDocDate.length() < 11){
+                    ShippingDocDate = Globally.ConvertDateFormat(ShippingDocDate);
+                }
+                int dayDiff = constant.getDayDiff(ShippingDocDate, Globally.GetDriverCurrentDateTime(new Globally(), getContext()));
+                if(dayDiff > 16 && isOnline && !isOffline15DaysRecordExist) {
+                        ShipperNumber = "";  Commodity = "";
+                        ShipperName = "";  FromAddress = "";
+                        ToAddress = "";  ShipperNumber = "";
+                }else {
+                    if(dayDiff > 15 && !isOnline) {
+                        isOffline15DaysRecordExist = true;
+                    }
 
-                if (ShipperNumber.equals(getContext().getResources().getString(R.string.Empty))) {
-                    ShipperNumber = "";
+                    if (!dataObj.isNull(ConstantsKeys.ShippingDocumentNumber))
+                        ShipperNumber = dataObj.getString(ConstantsKeys.ShippingDocumentNumber);
+                    if (!dataObj.isNull(ConstantsKeys.Commodity))
+                        Commodity = dataObj.getString(ConstantsKeys.Commodity);
+                    if (!dataObj.isNull(ConstantsKeys.ShipperName))
+                        ShipperName = dataObj.getString(ConstantsKeys.ShipperName);
+                    if (!dataObj.isNull(ConstantsKeys.FromAddress))         // ShipperState is used as From address
+                        FromAddress = dataObj.getString(ConstantsKeys.FromAddress);
+                    if (!dataObj.isNull(ConstantsKeys.ToAddress))    // ShipperState is used as To address
+                        ToAddress = dataObj.getString(ConstantsKeys.ToAddress);
+                    //   if(dataObj.has(ConstantsKeys.IsShippingCleared) && !dataObj.isNull(ConstantsKeys.IsShippingCleared))    // ShipperState is used as To address
+                    //   IsShippingCleared     = dataObj.getBoolean(ConstantsKeys.IsShippingCleared);
+
+                    if (ShipperNumber.equals(getContext().getResources().getString(R.string.Empty))) {
+                        ShipperNumber = "";
+                    }
                 }
             }
         } catch (JSONException e) {
@@ -761,7 +778,7 @@ public class ShippingDocDialog extends Dialog {
 
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
-         params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.DeviceId, DeviceId );
         params.put(ConstantsKeys.ShippingDocDate, ShippingDocDate);
 
         GetShippingRequest.executeRequest(Request.Method.POST, APIs.GET_SHIPPING_DOC_NUMBER , params, GetShippingNo,
@@ -798,7 +815,7 @@ public class ShippingDocDialog extends Dialog {
                         if (!obj.isNull("Data")) {
                             dataObj = new JSONObject(obj.getString("Data"));
                             if (dataObj != null) { // && shipmentJsonArray.length() == 0
-                                ParseShippingData(dataObj);
+                                ParseShippingData(dataObj, true);
                                 setDataOnField();
                             }
                         }

@@ -360,23 +360,28 @@ public class VehicleDialogLogin extends Dialog implements View.OnClickListener{
 
     //*================== Logout User request ===================*//*
     void LogoutUser(final String DriverId){
-        progressD.show();
 
-        String date = global.GetDriverCurrentDateTime(global, getContext());
-        params = new HashMap<String, String>();
-        params.put(ConstantsKeys.DriverId, DriverId);
-        params.put(ConstantsKeys.MobileDeviceCurrentDateTime, date);
-        params.put(ConstantsKeys.CompanyId, DriverConst.GetDriverDetails(DriverConst.CompanyId, getContext()));
-        params.put(ConstantsKeys.LocationType, SharedPref.getLocationEventType(getContext()));
+        if(DriverId.length() > 0 && !DriverId.equals("0")) {
+            progressD.show();
 
-        params.put(ConstantsKeys.Latitude,  Globally.LATITUDE);
-        params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
+            String date = global.GetDriverCurrentDateTime(global, getContext());
+            params = new HashMap<String, String>();
+            params.put(ConstantsKeys.DriverId, DriverId);
+            params.put(ConstantsKeys.MobileDeviceCurrentDateTime, date);
+            params.put(ConstantsKeys.CompanyId, DriverConst.GetDriverDetails(DriverConst.CompanyId, getContext()));
+            params.put(ConstantsKeys.LocationType, SharedPref.getLocationEventType(getContext()));
+
+            params.put(ConstantsKeys.Latitude, Globally.LATITUDE);
+            params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
 
 
-        Logger.LogDebug("DateLogout", "MobileDeviceCurrentDateTime: " +date);
+            Logger.LogDebug("DateLogout", "MobileDeviceCurrentDateTime: " + date);
 
-        LogoutRequest.executeRequest(Request.Method.POST, APIs.DRIVER_LOGOUT , params, 1,
-                Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
+            LogoutRequest.executeRequest(Request.Method.POST, APIs.DRIVER_LOGOUT, params, 1,
+                    Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
+        }else{
+            global.EldScreenToast(logoutTruckPopupTV, "Driver info is invalid", getContext().getResources().getColor(R.color.colorSleeper));
+        }
 
     }
 

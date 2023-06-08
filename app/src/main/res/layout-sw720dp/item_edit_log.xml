@@ -38,7 +38,7 @@
                     android:src="@drawable/icon_drag_drop"
                     android:layout_marginTop="@dimen/margin_short_1"
                     android:layout_gravity="center_vertical"
-                    android:tint="?attr/textColor"
+                    android:tint="?attr/deferal_icon_color"
 
                     />
                 <TextView
@@ -113,8 +113,8 @@
                 android:layout_toLeftOf="@+id/startTimeIV"
                 android:gravity="center_horizontal|center_vertical"
                 android:text="00:00"
-                android:textSize="@dimen/text_size_22"
                 android:textColor="?attr/textColor"
+                android:textSize="@dimen/text_size_22"
 
                 />
 
@@ -122,19 +122,19 @@
                 android:id="@+id/startTimeIV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/margin_short_5"
-                android:padding="@dimen/margin_short_5"
-                >
+                android:padding="@dimen/margin_short_5">
 
 
                 <ImageView
                     android:layout_width="@dimen/margin_28"
                     android:layout_height="@dimen/margin_28"
-                    android:src="@drawable/time_clock"
                     android:layout_centerVertical="true"
-                    android:tint="?attr/gray_text"
+                    android:src="@drawable/time_clock"
+                    android:tint="@color/black"
+
                     />
 
             </RelativeLayout>
@@ -176,18 +176,17 @@
                 android:id="@+id/endTimeIV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/margin_short_5"
-                android:padding="@dimen/margin_short_5"
-                >
+                android:padding="@dimen/margin_short_5">
 
 
                 <ImageView
                     android:layout_width="@dimen/margin_28"
                     android:layout_height="@dimen/margin_28"
                     android:src="@drawable/time_clock"
-                    android:tint="?attr/gray_text"
+                    android:tint="@color/black"
 
                     />
             </RelativeLayout>
@@ -247,7 +246,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:src="@drawable/delete_edit_log"
-                android:tint="?attr/textColor"
+                android:tint="@color/black"
 
                 />
 

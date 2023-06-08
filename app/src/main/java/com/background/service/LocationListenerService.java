@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
-import com.als.logistic.R;
+import com.als.logistic.Globally;
 import com.constants.Constants;
 import com.constants.Logger;
 import com.constants.SharedPref;
@@ -25,16 +25,15 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.als.logistic.Globally;
 
 public class LocationListenerService extends Service  implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    public static boolean IS_LOC_SERVICE_RUNNING = false;
-    private static final long MIN_TIME_LOCATION_UPDATES = 2 * 1000;   // 2 sec
-    int MIN_DISTANCE_METER = 10;
-    public static LocationRequest locationRequest;
-    public static GoogleApiClient mGoogleApiClient;
+    boolean IS_LOC_SERVICE_RUNNING = false;
+    long MIN_TIME_LOCATION_UPDATES = 0;   // 2 sec
+    int MIN_DISTANCE_METER = 0;
+    LocationRequest locationRequest;
+    GoogleApiClient mGoogleApiClient;
     protected LocationManager locationManager;
     Globally global;
     Constants constants;
@@ -56,7 +55,7 @@ public class LocationListenerService extends Service  implements GoogleApiClient
             e.printStackTrace();
         }
 
-        createLocationRequest(MIN_TIME_LOCATION_UPDATES);
+        createLocationRequest(MIN_TIME_LOCATION_UPDATES, false);
 
         // check availability of play services
         if (global.checkPlayServices(getApplicationContext())) {
@@ -69,7 +68,14 @@ public class LocationListenerService extends Service  implements GoogleApiClient
 
         IS_LOC_SERVICE_RUNNING = true;
 
+
+
+
+
     }
+
+
+
 
 
     protected synchronized void buildGoogleApiClient() {
@@ -86,12 +92,19 @@ public class LocationListenerService extends Service  implements GoogleApiClient
 
 
     @SuppressLint("RestrictedApi")
-    protected void createLocationRequest(long time) {
-        locationRequest = new LocationRequest();
+    protected void createLocationRequest(long time, boolean isIntervalUpdate) {
+        if(locationRequest == null)
+            locationRequest = new LocationRequest();
+
         locationRequest.setInterval(time);
         locationRequest.setFastestInterval(time);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
+        if(isIntervalUpdate){
+            locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+            requestLocationUpdates();
+        }else {
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        }
     }
 
 
@@ -129,6 +142,8 @@ public class LocationListenerService extends Service  implements GoogleApiClient
             Globally.GPS_LATITUDE = "" + location.getLatitude();
             Globally.GPS_LONGITUDE = "" + location.getLongitude();
 
+            Logger.LogDebug("onLocationChanged", "Location: "+location.getLatitude() + ","+location.getLongitude());
+
           /*  global.ShowLocalNotification(getApplicationContext(), "LocationListener",
                     "Latitude: " + location.getLatitude() + ",Longitude: " + location.getLongitude(), 5001);
 */
@@ -153,11 +168,20 @@ public class LocationListenerService extends Service  implements GoogleApiClient
 
             SharedPref.setLocChangeTime(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
 
-            /*if (SharedPref.IsDriverLogin(getApplicationContext())) {
-                stopForeground(true);
-                stopSelf();
-            }*/
 
+            if(MIN_DISTANCE_METER == 0) {
+                MIN_TIME_LOCATION_UPDATES = 20000;   // 20 sec
+                MIN_DISTANCE_METER = 100;    // 100 meter
+                createLocationRequest(MIN_TIME_LOCATION_UPDATES, true);
+            }
+
+            int ObdStatus = SharedPref.getObdStatus(getApplicationContext());
+            boolean IsLocReceivedFromObd = SharedPref.IsLocReceivedFromObd(getApplicationContext());
+            if(ObdStatus == Constants.BLE_CONNECTED && IsLocReceivedFromObd){
+                Globally.GPS_LATITUDE = "";
+                Globally.GPS_LONGITUDE = "";
+                stopSelf();
+            }
 
         }
 
@@ -183,7 +207,7 @@ public class LocationListenerService extends Service  implements GoogleApiClient
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        //  Logger.LogDebug("onConnected", "onConnected");
+          Logger.LogDebug("Location", "Location onConnected");
         try {
             requestLocationUpdates();
         }catch (Exception e){
@@ -206,6 +230,7 @@ public class LocationListenerService extends Service  implements GoogleApiClient
 
         Globally.GPS_LATITUDE = "" + location.getLatitude();
         Globally.GPS_LONGITUDE = "" + location.getLongitude();
+        Logger.LogDebug("onLocationChanged", "Location: "+location.getLatitude() + ","+location.getLongitude());
 
         if(!SharedPref.IsLocReceivedFromObd(getApplicationContext())) {
 
@@ -217,7 +242,7 @@ public class LocationListenerService extends Service  implements GoogleApiClient
                     SharedPref.getHighPrecisionOdometer(getApplicationContext()), getApplicationContext());
 
 
-           /* Globally.ShowLocalNotification(getApplicationContext(),
+       /*     Globally.ShowLocalNotification(getApplicationContext(),
                     "LocationChanged-Loc","Lat: " +Globally.LATITUDE + ", Lon: " + Globally.LONGITUDE, 2081111);
 
             constants.saveAppUsageLog("LocationChangedLoc - Lat: " +Globally.LATITUDE + ", Lon: " + Globally.LONGITUDE ,
@@ -227,10 +252,19 @@ public class LocationListenerService extends Service  implements GoogleApiClient
 
         SharedPref.setLocChangeTime(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
 
-        /*if (SharedPref.IsDriverLogin(getApplicationContext())) {
-            stopForeground(true);
+        if(MIN_DISTANCE_METER == 0) {
+            MIN_TIME_LOCATION_UPDATES = 20000;   // 20 sec
+            MIN_DISTANCE_METER = 100;    // 100 meter
+            createLocationRequest(MIN_TIME_LOCATION_UPDATES, true);
+        }
+
+        int ObdStatus = SharedPref.getObdStatus(getApplicationContext());
+        boolean IsLocReceivedFromObd = SharedPref.IsLocReceivedFromObd(getApplicationContext());
+        if(ObdStatus == Constants.BLE_CONNECTED && IsLocReceivedFromObd){
+            Globally.GPS_LATITUDE = "";
+            Globally.GPS_LONGITUDE = "";
             stopSelf();
-        }*/
+        }
 
     }
 

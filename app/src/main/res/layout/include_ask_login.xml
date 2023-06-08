@@ -48,7 +48,10 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/view_height_50"
             android:layout_marginBottom="@dimen/margin_10"
-            android:src="@drawable/als_logo" />
+            android:src="@drawable/als_logo"
+            android:visibility="visible"
+
+            />
 
 
 
@@ -124,9 +127,18 @@
 
 
 
+
     </RelativeLayout>
 
     </ScrollView>
+
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        />
+
 
 
 </RelativeLayout>

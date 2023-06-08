@@ -19,12 +19,14 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"
         android:usesPermissionFlags="neverForLocation"
         />
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
 
     <!-- Needed only if your app looks for Bluetooth devices.
       If your app doesn't use Bluetooth scan results to derive physical
@@ -130,6 +132,17 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
+        <receiver
+            android:name="com.background.LocationProviderChangedReceiver"
+            android:exported="true"
+            >
+            <intent-filter>
+                <action android:name="android.location.PROVIDERS_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+
         <!--
    <meta-data
                android:name="io.fabric.ApiKey"
@@ -299,7 +312,10 @@
         <service
             android:name="com.background.service.LocationListenerService"
             android:foregroundServiceType="location"
+            android:enabled="true"
             android:exported="true" />
+
+
         <service
             android:name="com.background.service.BleDataService"
             android:foregroundServiceType="connectedDevice"

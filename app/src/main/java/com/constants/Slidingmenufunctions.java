@@ -88,7 +88,7 @@ public class Slidingmenufunctions implements OnClickListener {
 	ProgressDialog dialog;
 	DBHelper dbHelper;
 	HelperMethods hMethod;
-	int DriverId, DriverStatus;
+	int DriverStatus;
 	MainDriverEldPref MainDriverPref;
 	CoDriverEldPref CoDriverPref;
 	Constants constants;
@@ -102,7 +102,7 @@ public class Slidingmenufunctions implements OnClickListener {
 	RecapViewMethod recapViewMethod;
 	DriverPermissionMethod driverPermissionMethod;
 	MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
-
+	Utils obdUtil;
 
 	public Slidingmenufunctions() {
 		super();
@@ -175,6 +175,8 @@ public class Slidingmenufunctions implements OnClickListener {
 		invisibleRefreshAdapterEvent.setOnClickListener(this);
 		invisibleLogoutEvent.setOnClickListener(this);
 
+
+		obdUtil = new Utils(context);
 
 	}
 
@@ -429,7 +431,7 @@ public class Slidingmenufunctions implements OnClickListener {
 
 				if(!SharedPref.getCurrentDriverType(context).equals("main_driver")) {
 					if(SharedPref.getDriverId(context).trim().length() > 0) {
-						DriverId = Integer.valueOf(SharedPref.getDriverId(context));
+						int DriverId = Integer.valueOf(SharedPref.getDriverId(context));
 						DriverStatus = hMethod.GetDriverStatus(DriverId, dbHelper);
 					}
 
@@ -447,7 +449,7 @@ public class Slidingmenufunctions implements OnClickListener {
 			case R.id.CoDriverBtn:
 				if(!SharedPref.getCurrentDriverType(context).equals("co_driver")) {
 					if(SharedPref.getDriverId(context).trim().length() > 0) {
-						DriverId = Integer.valueOf(SharedPref.getDriverId(context));
+						int DriverId = Integer.valueOf(SharedPref.getDriverId(context));
 						DriverStatus = hMethod.GetDriverStatus(DriverId, dbHelper);
 					}
 
@@ -602,9 +604,9 @@ public class Slidingmenufunctions implements OnClickListener {
 					startService();
 
 
-					if (SharedPref.getDriverId(context).trim().length() > 0) {
+					/*if (SharedPref.getDriverId(context).trim().length() > 0) {
 						DriverId = Integer.valueOf(SharedPref.getDriverId(context));
-					}
+					}*/
 
 					if (global.isSingleDriver(context)) {
 						JSONArray driverArray = GetDriversSavedData(true);
@@ -646,36 +648,42 @@ public class Slidingmenufunctions implements OnClickListener {
 			// add this check and confirm
 		}
 
-		if(DriverLogArray.length() > 0) {
-			String SavedLogApi;
-			if(isCoDriver){
-				SavedLogApi = Constants.getSaveApiInCoDriverCase(context);
-			}else{
-				SavedLogApi = Constants.getSaveStatusOrEditedApi(context);
+		try {
+			if (DriverLogArray.length() > 0) {
+				String SavedLogApi;
+				if (isCoDriver) {
+					SavedLogApi = Constants.getSaveApiInCoDriverCase(context);
+				} else {
+					SavedLogApi = Constants.getSaveStatusOrEditedApi(context);
+				}
+
+
+				int socketTimeout;
+				int logArrayCount = DriverLogArray.length();
+
+				if (logArrayCount <= 3) {
+					socketTimeout = Constants.SocketTimeout10Sec;  //10 seconds
+				} else if (logArrayCount > 3 && logArrayCount <= 10) {
+					socketTimeout = Constants.SocketTimeout20Sec;  //20 seconds
+				} else if (logArrayCount > 10 && logArrayCount <= 30) {
+					socketTimeout = Constants.SocketTimeout40Sec;  //40 seconds
+				} else if (logArrayCount > 30 && logArrayCount <= 60) {
+					socketTimeout = Constants.SocketTimeout70Sec;  //70 seconds
+				} else {
+					socketTimeout = Constants.SocketTimeout120Sec;  //70 seconds
+				}
+				saveDriverLogPost.PostDriverLogData(DriverLogArray, SavedLogApi, socketTimeout, false,
+						false, DriverType, 101);
+
+				constants.saveBleLog("SideMenu-SaveApi-Co2", Globally.GetCurrentUTCTimeFormat(),
+						context, dbHelper, driverPermissionMethod, obdUtil);
+
+			} else {
+				LogoutUser(SharedPref.getDriverId(context));
 			}
-
-
-			int socketTimeout;
-			int logArrayCount = DriverLogArray.length();
-
-			if(logArrayCount <= 3 ){
-				socketTimeout = Constants.SocketTimeout10Sec;  //10 seconds
-			}else if(logArrayCount > 3 && logArrayCount <= 10){
-				socketTimeout = Constants.SocketTimeout20Sec;  //20 seconds
-			}else if(logArrayCount > 10 && logArrayCount <= 30){
-				socketTimeout = Constants.SocketTimeout40Sec;  //40 seconds
-			}else if(logArrayCount > 30 && logArrayCount <= 60){
-				socketTimeout = Constants.SocketTimeout70Sec;  //70 seconds
-			}else{
-				socketTimeout = Constants.SocketTimeout120Sec;  //70 seconds
-			}
-			saveDriverLogPost.PostDriverLogData(DriverLogArray, SavedLogApi, socketTimeout, false,
-					false, DriverType, 101);
-
-		}else{
-			LogoutUser(SharedPref.getDriverId(context));
+		}catch (Exception e){
+			e.printStackTrace();
 		}
-
 
 
 	}
@@ -1010,110 +1018,112 @@ public class Slidingmenufunctions implements OnClickListener {
 
 
 	/*================== Logout User ===================*/
-	void LogoutUser(final String DriverId){
+	void LogoutUser(final String CurrentDriverId){
 
-		dialog.setMessage("Logging out..");
-		boolean isExemptDriver;
-		if(SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
-			isExemptDriver = SharedPref.IsExemptDriverMain(context);
-		} else {
-			isExemptDriver = SharedPref.IsExemptDriverCo(context);
-		}
-		if(isExemptDriver && context != null ){
-			//Toast.makeText(context, context.getResources().getString(R.string.exempt_logout_desc), Toast.LENGTH_LONG).show();
-			global.ShowToastWithDuration(context.getResources().getString(R.string.exempt_logout_desc), context);
-		}
+		if(CurrentDriverId.length() > 0 && !CurrentDriverId.equals("0")) {
+			dialog.setMessage("Logging out..");
+			boolean isExemptDriver;
+			if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
+				isExemptDriver = SharedPref.IsExemptDriverMain(context);
+			} else {
+				isExemptDriver = SharedPref.IsExemptDriverCo(context);
+			}
+			if (isExemptDriver && context != null) {
+				//Toast.makeText(context, context.getResources().getString(R.string.exempt_logout_desc), Toast.LENGTH_LONG).show();
+				global.ShowToastWithDuration(context.getResources().getString(R.string.exempt_logout_desc), context);
+			}
 
-		//global.ShowToastWithDuration(context.getResources().getString(R.string.exempt_logout_desc), context);
+			final String DriverCompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, context);
+			final String TRUCK_NUMBER = SharedPref.getTruckNumber(context);    //DriverConst.GetDriverTripDetails(DriverConst.Truck, context);
+			final String VIN = SharedPref.getVINNumber(context);    //DriverConst.GetDriverTripDetails(DriverConst.VIN, context);
 
-		final String DriverCompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, context);
-		final String TRUCK_NUMBER = SharedPref.getTruckNumber(context);	//DriverConst.GetDriverTripDetails(DriverConst.Truck, context);
-		final String VIN = SharedPref.getVINNumber(context);	//DriverConst.GetDriverTripDetails(DriverConst.VIN, context);
+			RequestQueue queue = Volley.newRequestQueue(context);
+			StringRequest postRequest = new StringRequest(Request.Method.POST, APIs.DRIVER_LOGOUT, new Response.Listener<String>() {
+				@Override
+				public void onResponse(String response) {
 
-		RequestQueue queue = Volley.newRequestQueue(context);
-		StringRequest postRequest = new StringRequest(Request.Method.POST, APIs.DRIVER_LOGOUT , new Response.Listener<String>() {
-			@Override
-			public void onResponse(String response) {
-
-				if (context != null) {
-					if (dialog != null && dialog.isShowing()) {
-						dialog.dismiss();
-					}
-				}
-
-					Logger.LogDebug("response", " Slidemenu logout response: " + response);
-				String status = "", message = "";
-
-				try {
-					JSONObject obj = new JSONObject(response);
-					status 	= obj.getString(ConstantsKeys.Status);
-					message	= obj.getString(ConstantsKeys.Message);
-
-					if(status.equalsIgnoreCase("true")){
-						constants.ClearLogoutData(context);
-					}else{
-						if(obj.getString("Message").equals("Device Logout")) {
-							constants.ClearLogoutData(context);
-						}else{
-							if (context != null) {
-								global.EldScreenToast(MainDriverBtn, message,
-										context.getResources().getColor(R.color.red_eld));
-							}
+					if (context != null) {
+						if (dialog != null && dialog.isShowing()) {
+							dialog.dismiss();
 						}
 					}
 
-				}catch(Exception e){  }
-			}
-		},
-				new Response.ErrorListener()  {
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						Logger.LogDebug("response error", "error: " + error.toString());
+					Logger.LogDebug("response", " Slidemenu logout response: " + response);
+					String status = "", message = "";
 
-						try {
-							if (context != null) {
-								if (dialog != null && dialog.isShowing()) {
-									dialog.dismiss();
+					try {
+						JSONObject obj = new JSONObject(response);
+						status = obj.getString(ConstantsKeys.Status);
+						message = obj.getString(ConstantsKeys.Message);
+
+						if (status.equalsIgnoreCase("true")) {
+							constants.ClearLogoutData(context);
+						} else {
+							if (obj.getString("Message").equals("Device Logout")) {
+								constants.ClearLogoutData(context);
+							} else {
+								if (context != null) {
+									global.EldScreenToast(MainDriverBtn, message,
+											context.getResources().getColor(R.color.red_eld));
 								}
-
-								String message = constants.getErrorMsg(error.toString());
-								global.EldScreenToast(MainDriverBtn, message,
-										context.getResources().getColor(R.color.red_eld));
 							}
-						}catch (Exception e){}
+						}
+
+					} catch (Exception e) {
 					}
 				}
-		) {
-			@Override
-			protected Map<String, String> getParams()
-			{
-				String utcDate = Globally.GetCurrentUTCTimeFormat();
-				String date = global.GetDriverCurrentDateTime(global, context);
+			},
+					new Response.ErrorListener() {
+						@Override
+						public void onErrorResponse(VolleyError error) {
+							Logger.LogDebug("response error", "error: " + error.toString());
 
-				Map<String,String> params = new HashMap<String, String>();
-				params.put(ConstantsKeys.DriverId, DriverId);
-				params.put(ConstantsKeys.MobileDeviceCurrentDateTime, date);
-				params.put(ConstantsKeys.MobileUtcDate, utcDate);
-				params.put(ConstantsKeys.TruckEquipment, TRUCK_NUMBER);
-				params.put(ConstantsKeys.CompanyId, DriverCompanyId);
-				params.put(ConstantsKeys.VIN, VIN);
-				params.put(ConstantsKeys.LocationType, SharedPref.getLocationEventType(context));
-				params.put(ConstantsKeys.EngineHours,  Constants.get2DecimalEngHour(context));	//SharedPref.getObdEngineHours(context));
-				params.put(ConstantsKeys.CrntOdodmeter, SharedPref.getObdOdometer(context));
-				params.put(ConstantsKeys.Latitude,  Globally.LATITUDE);
-				params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
+							try {
+								if (context != null) {
+									if (dialog != null && dialog.isShowing()) {
+										dialog.dismiss();
+									}
 
-				Logger.LogDebug("DateLogout", ">>>MobileDeviceCurrentDateTime: " +date);
+									String message = constants.getErrorMsg(error.toString());
+									global.EldScreenToast(MainDriverBtn, message,
+											context.getResources().getColor(R.color.red_eld));
+								}
+							} catch (Exception e) {
+							}
+						}
+					}
+			) {
+				@Override
+				protected Map<String, String> getParams() {
+					String utcDate = Globally.GetCurrentUTCTimeFormat();
+					String date = global.GetDriverCurrentDateTime(global, context);
 
-				return params;
-			}
-		};
+					Map<String, String> params = new HashMap<String, String>();
+					params.put(ConstantsKeys.DriverId, CurrentDriverId);
+					params.put(ConstantsKeys.MobileDeviceCurrentDateTime, date);
+					params.put(ConstantsKeys.MobileUtcDate, utcDate);
+					params.put(ConstantsKeys.TruckEquipment, TRUCK_NUMBER);
+					params.put(ConstantsKeys.CompanyId, DriverCompanyId);
+					params.put(ConstantsKeys.VIN, VIN);
+					params.put(ConstantsKeys.LocationType, SharedPref.getLocationEventType(context));
+					params.put(ConstantsKeys.EngineHours, Constants.get2DecimalEngHour(context));    //SharedPref.getObdEngineHours(context));
+					params.put(ConstantsKeys.CrntOdodmeter, SharedPref.getObdOdometer(context));
+					params.put(ConstantsKeys.Latitude, Globally.LATITUDE);
+					params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
 
-		int socketTimeout = 8000;   //8 seconds - change to what you want
-		RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-		postRequest.setRetryPolicy(policy);
-		queue.add(postRequest);
+					Logger.LogDebug("DateLogout", ">>>MobileDeviceCurrentDateTime: " + date);
 
+					return params;
+				}
+			};
+
+			int socketTimeout = 8000;   //8 seconds - change to what you want
+			RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+			postRequest.setRetryPolicy(policy);
+			queue.add(postRequest);
+		}else{
+			global.EldScreenToast(MainDriverBtn, "Driver info is invalid", context.getResources().getColor(R.color.colorSleeper));
+		}
 	}
 
 

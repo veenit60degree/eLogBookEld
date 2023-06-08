@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="?attr/bgColor"
 
     >
 
@@ -17,6 +18,7 @@
         />
 
 
+
     <TextView
         android:id="@+id/permissionTitleTV"
         android:layout_width="wrap_content"
@@ -24,7 +26,6 @@
         android:layout_below="@+id/actionbarAppPermission"
         android:layout_marginLeft="@dimen/margin_10"
         android:layout_marginTop="@dimen/margin_short_8"
-        android:paddingTop="@dimen/margin_short_7"
         android:text="@string/need_permissions"
         android:textColor="?attr/colorPrimary"
         android:textSize="@dimen/text_size_18"
