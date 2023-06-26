@@ -2,6 +2,7 @@ package com.als.logistic.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -56,6 +57,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.background.service.AppDownloadService;
 import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.AsyncResponse;
@@ -126,7 +128,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
     View rootView;
     TextView actionBarTitle, caCycleTV, usCycleTV, timeZoneTV, dateActionBarTV, checkAppUpdateTV, haulExpTxtView, haulExcptnTxtVw,adverseExpTxtView,adverseCanadaExpTxtView,deferralTxtView;
-    TextView caCurrentCycleTV, usCurrentCycleTV, operatingZoneTV, agricultureExpTxtView, storageTextView;
+    TextView caCurrentCycleTV, usCurrentCycleTV, operatingZoneTV, agricultureExpTxtView, loggingTxtView, storageTextView;
     Spinner caCycleSpinner, usCycleSpinner, timeZoneSpinner;
     Button SettingSaveBtn;
     ImageView updateAppDownloadIV, downloadHintImgView, opZoneTmgView, canEditImgView, usEditImgView;
@@ -135,7 +137,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             obdDiagnoseBtn, docBtn, deferralRuleLay, brightnessSoundEditBtn, settingsMainLay, actionbarMainLay,
             updateBlinkLayout, checkPermissionBtn;
     LinearLayout canCycleLayout, usaCycleLayout, timeZoneLayout;
-    SwitchCompat deferralSwitchButton, haulExceptnSwitchButton, adverseSwitchButton,adverseCanadaSwitchButton,agricultureSwitchButton,dayNightSwitchButton;
+    SwitchCompat deferralSwitchButton, haulExceptnSwitchButton, adverseSwitchButton,adverseCanadaSwitchButton,
+            loggingSwitchButton, agricultureSwitchButton,dayNightSwitchButton;
     List<CycleModel> CanCycleList;
     List<CycleModel> UsaCycleList;
     List<TimeZoneModel> TimeZoneList;
@@ -321,6 +324,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         haulExpTxtView       = (TextView)v.findViewById(R.id.haulExpTxtView);
         operatingZoneTV      = (TextView)v.findViewById(R.id.operatingZoneTV);
         agricultureExpTxtView= (TextView)v.findViewById(R.id.agricultureExpTxtView);
+        loggingTxtView       = (TextView)v.findViewById(R.id.loggingTxtView);
         storageTextView      = (TextView)v.findViewById(R.id.storageTextView);
 
         caCurrentCycleTV     = (TextView)v.findViewById(R.id.caCurrentCycleTV);
@@ -372,6 +376,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         adverseSwitchButton = (SwitchCompat)v.findViewById(R.id.adverseSwitchButton);
         adverseCanadaSwitchButton  = (SwitchCompat) v.findViewById(R.id.adverseCanadaSwitchButton);
         agricultureSwitchButton  = (SwitchCompat) v.findViewById(R.id.agricultureSwitchButton);
+        loggingSwitchButton     =  (SwitchCompat) v.findViewById(R.id.loggingSwitchButton);
+
         dayNightSwitchButton  = (SwitchCompat) v.findViewById(R.id.dayNightSwitchButton);
 
         showBrightnessSeekBar = (SeekBar)v.findViewById(R.id.sbBrightness);
@@ -657,6 +663,40 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             }
         });
 
+
+        loggingSwitchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(buttonView.isPressed()) {
+
+                    String CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getActivity()), getActivity());
+                    if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
+
+                        if (isChecked) {
+
+                            boolean isVehicleMoving = SharedPref.isVehicleMoving(getContext());
+                            getExceptionStatus();
+
+
+                        }else{
+
+                        }
+
+                    }else{
+                        buttonView.setChecked(false);
+                        global.EldScreenToast(SyncDataBtn, getString(R.string.excp_usa_cycle_check), getResources().getColor(R.color.colorSleeper));
+                    }
+
+
+
+
+                }
+            }
+        });
+
+
+
         dayNightSwitchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -803,9 +843,13 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         if(CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS) ){
             adverseCanadaExpTxtView.setTextColor(ColorGrayBackground);
             deferralTxtView.setTextColor(ColorGrayBackground);
+            loggingTxtView.setTextColor(ColorGrayBackground);
+
             haulExpTxtView.setTextColor(ColorGrayCategory);
             adverseExpTxtView.setTextColor(ColorGrayCategory);
             agricultureExpTxtView.setTextColor(ColorGrayCategory);
+
+
             adverseCanadaSwitchButton.setChecked(false);
 
             adverseSwitchButton.setChecked(isAdverseExcptn);
@@ -816,6 +860,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             adverseCanadaExpTxtView.setTextColor(ColorGrayCategory);
             deferralTxtView.setTextColor(ColorGrayCategory);
             agricultureExpTxtView.setTextColor(ColorGrayBackground);
+            loggingTxtView.setTextColor(ColorGrayCategory);
 
             adverseSwitchButton.setChecked(false);
             adverseCanadaSwitchButton.setChecked(isAdverseExcptn);
@@ -1446,24 +1491,29 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         checkAppUpdateTV.setText(getResources().getString(R.string.Update_Status));
                     }
 
-                    if (ExistingApkVersionCode.equals(VersionCode) && ExistingApkVersionName.equals(VersionName)) {
-                        global.EldScreenToast(SyncDataBtn, "Your application is up to date", UILApplication.getInstance().getThemeColor());
+                    if (checkAppUpdateTV.getText().toString().equals("Install Updates") ) {
+                        openFileLocation("");
+                        //global.EldScreenToast(SyncDataBtn, "Update app from Downloads/EldApp folder.", getResources().getColor(R.color.colorPrimary));
                     } else {
-                        String updateTvText = checkAppUpdateTV.getText().toString();
-                        if (updateTvText.equals(getResources().getString(R.string.install_updates))) {
-                            if (ApkFilePath.length() > 0) {
-                               // InstallApp(ApkFilePath);
-                                openFileLocation(ApkFilePath);
-                            } else {
-                                checkAppUpdateTV.setText(getResources().getString(R.string.Update_Status));
-                                global.EldScreenToast(SyncDataBtn, "File not found", getResources().getColor(R.color.colorVoilation));
-                            }
+
+                        if (ExistingApkVersionCode.equals(VersionCode) && ExistingApkVersionName.equals(VersionName)) {
+                            global.EldScreenToast(SyncDataBtn, "Your application is up to date", UILApplication.getInstance().getThemeColor());
                         } else {
-                            connectivityTask.ConnectivityRequest(CheckUpdate, ConnectivityInterface);
+                            String updateTvText = checkAppUpdateTV.getText().toString();
+                            if (updateTvText.equals(getResources().getString(R.string.install_updates))) {
+                                if (ApkFilePath.length() > 0) {
+                                    // InstallApp(ApkFilePath);
+                                    openFileLocation(ApkFilePath);
+                                } else {
+                                    checkAppUpdateTV.setText(getResources().getString(R.string.Update_Status));
+                                    global.EldScreenToast(SyncDataBtn, "File not found", getResources().getColor(R.color.colorVoilation));
+                                }
+                            } else {
+                                connectivityTask.ConnectivityRequest(CheckUpdate, ConnectivityInterface);
+                            }
                         }
                     }
                 }
-
 
 
                 break;
@@ -1915,7 +1965,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         if(ApkFilePath.length() == 0) {
                             GetAppDetails(APIs.GET_ANDROID_APP_DETAIL);
                         }else{
-                            CheckAppStatus(); //downloadButtonClicked(ApkFilePath, VersionCode, VersionName, IsDownloading);
+                            CheckAppStatus();
                         }
                     }
 
@@ -1992,10 +2042,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 agricultureSwitchButton.setChecked(isAgricultureExcptn);
 
             }else {
-                long percentage = intent.getIntExtra("percentage", 0);
-                ApkFilePath = intent.getStringExtra("path");
-                boolean isCompleted = intent.getBooleanExtra("isCompleted", false);
-                boolean IsInterrupted = intent.getBooleanExtra("isInterrupted", false);
+                long percentage = intent.getIntExtra(ConstantsKeys.Percentage, 0);
+                ApkFilePath = intent.getStringExtra(ConstantsKeys.Path);
+                boolean isCompleted = intent.getBooleanExtra(ConstantsKeys.IsCompleted, false);
+                boolean IsInterrupted = intent.getBooleanExtra(ConstantsKeys.IsInterrupted, false);
 
                 if (percentage >= progressPercentage) {
                     //  IsDownloading = true;
@@ -2048,25 +2098,34 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     };
 
     private void openFileLocation(String path){
-      //  path = Globally.getAlsApkPath(getActivity()).toString() + "/";
-       // Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-       // Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getPath() +  File.separator + path + File.separator);
-     //   Uri uri = Uri.parse(path);
 
-      //  intent.setDataAndType(uri, "*/*");  //text/csv
-      //  startActivity(intent);  //Intent.createChooser(intent, "Open folder")
+        Intent intent = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
+        startActivity(intent);
 
-       // Intent intent = new Intent(Intent.ACTION_VIEW);
-       // Uri uri = Uri.parse(path);
-       // intent.setDataAndType(uri, "*/*");
-        //startActivity(intent);
-
-
-        Globally.DriverSwitchAlert(getActivity(), "Eld App !!" , "Update app from Download/EldApp folder.", "Ok");
+        Toast.makeText(getActivity(), "Update app from Downloads/EldApp folder.", Toast.LENGTH_LONG).show();
+        //Globally.DriverSwitchAlert(getActivity(), "Eld App !!" , "Update app from Downloads/EldApp folder.", "Ok");
     }
 
 
-    private
+    private void openFolder(String folderPath) {
+
+           /*Intent intent = new Intent(Intent.ACTION_VIEW);
+            Uri folderUri = Uri.parse(path);
+            intent.setDataAndType(folderUri, "resource/folder");
+            if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                startActivity(intent);
+            } else {
+                Toast.makeText(getActivity(), "No app found to handle the folder.", Toast.LENGTH_SHORT).show();
+            }*/
+
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        Uri uri = Uri.parse(folderPath);
+        intent.setDataAndType(uri, "*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivity(Intent.createChooser(intent, "Open folder"));
+    }
+
 
     String getExistingApkPath(){
         File apkFile = global.getAlsApkPath();
@@ -2158,12 +2217,24 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         downloadHintImgView.startAnimation(fadeViewAnim);
         downloadBlinkIV.startAnimation();
 
-        Intent serviceIntent = new Intent(getActivity(), downloadAppService.getClass());
-        serviceIntent.putExtra("url", url);
-        serviceIntent.putExtra("VersionCode", VersionCode);
-        serviceIntent.putExtra("VersionName", VersionName);
-        serviceIntent.putExtra("isDownloading", downloadStatus);
+        /*Intent serviceIntent = new Intent(getActivity(), downloadAppService.getClass());
+        serviceIntent.putExtra(ConstantsKeys.url, url);
+        serviceIntent.putExtra(ConstantsKeys.VersionCode, VersionCode);
+        serviceIntent.putExtra(ConstantsKeys.VersionName, VersionName);
+        serviceIntent.putExtra(ConstantsKeys.IsDownloading, downloadStatus);
         getActivity().startService(serviceIntent);
+*/
+
+        Intent intent = new Intent(getActivity(), AppDownloadService.class);
+        intent.setAction(Constants.ACTION_START_DOWNLOAD);
+        intent.putExtra(Constants.EXTRA_APK_URL, url);
+
+        intent.putExtra(ConstantsKeys.VersionCode, VersionCode);
+        intent.putExtra(ConstantsKeys.VersionName, VersionName);
+        intent.putExtra(ConstantsKeys.IsDownloading, downloadStatus);
+
+        getActivity().startService(intent);
+
 
     }
 

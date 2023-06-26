@@ -105,6 +105,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
     boolean isHaulExcptn;
     boolean isAdverseExcptn;
     boolean isNorthCanada;
+    boolean isHosLogging;
 
     boolean isOldRecord      = false;
     boolean isSingleDriver   = true;
@@ -227,6 +228,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             // Calculate 18 days log data
            // if(selectedArray != null && selectedArray.length() > 0) {
                 try {
+
                     JSONObject lastJsonItem = hMethods.GetLastJsonFromArray(driverLogArray);
                     DRIVER_JOB_STATUS = lastJsonItem.getInt(ConstantsKeys.DriverStatusId);
 
@@ -859,6 +861,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             OnDutyInterval      = DriverConst.getDriverConfiguredTime(DriverConst.OnDutyMinute, context);
             OnDutySpeedLimit    = DriverConst.getDriverConfiguredTime(DriverConst.OnDutySpeed, context);
 
+            isHosLogging = SharedPref.getMainDriverLoggingStatus(context);
 
         } else{
             OffDutyInterval     = DriverConst.getCoDriverConfiguredTime(DriverConst.CoOffDutyMinute, context);
@@ -869,6 +872,9 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
             OnDutyInterval      = DriverConst.getCoDriverConfiguredTime(DriverConst.CoOnDutyMinute, context);
             OnDutySpeedLimit    = DriverConst.getCoDriverConfiguredTime(DriverConst.CoOnDutySpeed, context);
+
+            isHosLogging = SharedPref.getCoDriverLoggingStatus(context);
+
         }
 
         if(OnDutyInterval > 5){
@@ -981,7 +987,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                 "", LocationType, "", isNorthCanada, false,
                                 SharedPref.getObdOdometer(context), CoDriverId, CoDriverName, TruckNo,
                                 SharedPref.getTrailorNumber(context), SharedPref.getObdEngineHours(context),
-                                SharedPref.getObdOdometer(context), Constants.Auto, hMethods, dbHelper, context);
+                                SharedPref.getObdOdometer(context), Constants.Auto, isHosLogging, hMethods, dbHelper, context);
 
                         String CurrentDate = Global.GetDriverCurrentDateTime(Global, context);
                         String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
@@ -1013,7 +1019,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         RulesObj.getViolationReason(), ChangedDriverStatus, isAutomatic, false, false, Constants.Auto);
 
                 // callback method called to update Eld home screen
-                serviceCallback.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, true, "", context.getResources().getString(R.string.screen_reset));
+
+                serviceCallback.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, true, message, "");   //context.getResources().getString(R.string.screen_reset)
 
             }
         }catch (Exception e){
@@ -1323,8 +1330,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         Constants.getLocationSource(context),
                         SharedPref.getObdEngineHours(context),
                         SharedPref.getObdOdometer(context),
-                        DriverVehicleTypeId
-
+                        DriverVehicleTypeId,
+                        ""+isHosLogging
 
                 );
 
@@ -1463,7 +1470,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 SharedPref.getObdEngineHours(context),
                 SharedPref.getObdOdometer(context),
                 DriverVehicleTypeId,
-                false
+                false,
+                isHosLogging
 
         );
 
@@ -1521,7 +1529,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         SharedPref.getObdEngineHours(context),
                         SharedPref.getObdOdometer(context),
                         DriverVehicleTypeId,
-                        false
+                        false,
+                        isHosLogging
 
                 );
 

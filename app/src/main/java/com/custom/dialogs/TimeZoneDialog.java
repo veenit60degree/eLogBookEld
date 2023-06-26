@@ -127,17 +127,10 @@ public class TimeZoneDialog extends Dialog {
                 logoutTV.setText(Html.fromHtml("<font color='blue'><u>Logout</u></font>"));
             }
             logoutTV.setVisibility(View.GONE);
-            try {
-                int timeSettingStatus = Settings.Global.getInt(mContext.getContentResolver(), Settings.Global.AUTO_TIME);
-                Logger.LogDebug("timeSettingStatus","timeSettingStatus: " +timeSettingStatus);
 
-                String autoTimeSettingDesc = "<b>Note: </b>" + getContext().getString(R.string.auto_time_setting_desc);
-                autoTimeSettingDescTV.setText(Html.fromHtml(autoTimeSettingDesc));
-                autoTimeSettingDescTV.startAnimation(timeSettingsDescAnim);
-
-            } catch (Settings.SettingNotFoundException e) {
-                e.printStackTrace();
-            }
+            String autoTimeSettingDesc = "<b>Note: </b>" + getContext().getString(R.string.auto_time_setting_desc);
+            autoTimeSettingDescTV.setText(Html.fromHtml(autoTimeSettingDesc));
+            autoTimeSettingDescTV.startAnimation(timeSettingsDescAnim);
 
             if (isTimeZoneValid) {
                 // if time zone is valid, means time is invalid
@@ -164,8 +157,26 @@ public class TimeZoneDialog extends Dialog {
                              timeZoneShortName = timeZoneShortName + timeZoneArray[i].substring(0, 1);
                          }
                      }
+
+                    String timeZoneStatus = "";
+                    try {
+                        int timeSettingStatus = Settings.Global.getInt(mContext.getContentResolver(), Settings.Global.AUTO_TIME);
+                        Logger.LogDebug("timeSettingStatus","timeSettingStatus: " +timeSettingStatus);
+                        if(timeSettingStatus == 0){
+                            timeZoneStatus = "<br/><b>Time Settings:</b> Manual";
+                        }else{
+                            timeZoneStatus = "<br/><b>Time Settings:</b> Automatic";
+                        }
+
+                    } catch (Settings.SettingNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
                     String timeAlert = fontColor + "<b>Current " + timeZoneShortName +" Time:</b>   </font> " + serverSavedTime + fontColor +
-                            "<br/><b>Your Device Time in " + timeZoneShortName+" :</b> </font> " + DeviceTime;
+                            "<br/><b>Your Device Time in " + timeZoneShortName+" :</b> </font> " + DeviceTime + timeZoneStatus;
+
+
+
                     timezoneDetailIssueTV.setText(Html.fromHtml(timeAlert));
                 }
 

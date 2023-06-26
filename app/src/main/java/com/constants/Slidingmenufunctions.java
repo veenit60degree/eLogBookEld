@@ -579,7 +579,8 @@ public class Slidingmenufunctions implements OnClickListener {
 
 
 	private void callLogoutApi(){
-		Logger.LogDebug("callLogoutApi", "callLogoutApi");
+
+		//boolean isMissingEventLog = false;
 		try {
 			if (context != null) {
 				if (global.isWifiOrMobileDataEnabled(context)) {
@@ -602,11 +603,6 @@ public class Slidingmenufunctions implements OnClickListener {
 					Constants.isLogoutEvent = true;
 					SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
 					startService();
-
-
-					/*if (SharedPref.getDriverId(context).trim().length() > 0) {
-						DriverId = Integer.valueOf(SharedPref.getDriverId(context));
-					}*/
 
 					if (global.isSingleDriver(context)) {
 						JSONArray driverArray = GetDriversSavedData(true);
@@ -644,9 +640,9 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	private void SaveDataToServer(JSONArray DriverLogArray, int DriverType, boolean isCoDriver){
 
-		if(!EldFragment.IsSaveOperationInProgress) {
+		/*if(!EldFragment.IsSaveOperationInProgress) {
 			// add this check and confirm
-		}
+		}*/
 
 		try {
 			if (DriverLogArray.length() > 0) {
@@ -672,8 +668,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				} else {
 					socketTimeout = Constants.SocketTimeout120Sec;  //70 seconds
 				}
-				saveDriverLogPost.PostDriverLogData(DriverLogArray, SavedLogApi, socketTimeout, false,
-						false, DriverType, 101);
+				saveDriverLogPost.PostDriverLogData(DriverLogArray, SavedLogApi, socketTimeout, false, false, DriverType, 101);
 
 				constants.saveBleLog("SideMenu-SaveApi-Co2", Globally.GetCurrentUTCTimeFormat(),
 						context, dbHelper, driverPermissionMethod, obdUtil);
@@ -793,24 +788,27 @@ public class Slidingmenufunctions implements OnClickListener {
 		public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, JSONArray inputData) {
 
 			try {
-				if (global.isSingleDriver(context)) {
-					LogoutUser(SharedPref.getDriverId(context));
-				} else {
-					if (DriverType == MainDriver) {
-						if (coDriverArray.length() > 0) {
-							SaveDataToServer(coDriverArray, CoDriver, true);
+
+				if(flag == SaveMalDiagnstcEvent) {
+					// clear malfunction array
+					malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(dbHelper, new JSONArray());
+
+					//	Logger.LogDebug("Logout", ">>>Logout 1");
+					//LogoutUser(SharedPref.getDriverId(context));
+				}else{
+					if (global.isSingleDriver(context)) {
+						LogoutUser(SharedPref.getDriverId(context));
+					} else {
+						if (DriverType == MainDriver) {
+							if (coDriverArray.length() > 0) {
+								SaveDataToServer(coDriverArray, CoDriver, true);
+							} else {
+								LogoutUser(SharedPref.getDriverId(context));
+							}
 						} else {
 							LogoutUser(SharedPref.getDriverId(context));
 						}
-					} else {
-						LogoutUser(SharedPref.getDriverId(context));
 					}
-				}
-
-
-				if(flag == SaveMalDiagnstcEvent){
-					// clear malfunction array
-					malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(dbHelper, new JSONArray());
 				}
 
 			}catch (Exception e){
@@ -1020,7 +1018,9 @@ public class Slidingmenufunctions implements OnClickListener {
 	/*================== Logout User ===================*/
 	void LogoutUser(final String CurrentDriverId){
 
+
 		if(CurrentDriverId.length() > 0 && !CurrentDriverId.equals("0")) {
+			Logger.LogDebug("Logout", ">>>Logout DriverId: " +CurrentDriverId);
 			dialog.setMessage("Logging out..");
 			boolean isExemptDriver;
 			if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
@@ -1048,7 +1048,7 @@ public class Slidingmenufunctions implements OnClickListener {
 						}
 					}
 
-					Logger.LogDebug("response", " Slidemenu logout response: " + response);
+					Logger.LogDebug("response", ">>>>> Slidemenu logout response: " + response);
 					String status = "", message = "";
 
 					try {
@@ -1111,7 +1111,7 @@ public class Slidingmenufunctions implements OnClickListener {
 					params.put(ConstantsKeys.Latitude, Globally.LATITUDE);
 					params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
 
-					Logger.LogDebug("DateLogout", ">>>MobileDeviceCurrentDateTime: " + date);
+					Logger.LogDebug("DateLogout", ">>>Logout params: " + params);
 
 					return params;
 				}

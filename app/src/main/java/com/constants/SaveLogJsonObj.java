@@ -104,7 +104,8 @@ public class SaveLogJsonObj {
                 @Override
                 public byte[] getBody() throws AuthFailureError {
                     try {
-                        Logger.LogDebug("certify", "certify Data: " + geoData.toString());
+                        Logger.LogDebug("api", ">>>certify Json api: " + api);
+                        Logger.LogDebug("certify", ">>>certify Json Data: " + geoData.toString());
                         return geoData.toString().getBytes("utf-8");
                     } catch (UnsupportedEncodingException uee) {
                         VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s",
@@ -117,6 +118,9 @@ public class SaveLogJsonObj {
                 @Override
                 protected Map<String, String> getParams() {
                     Map<String, String> params = new HashMap<String, String>();
+
+                    Logger.LogDebug("API TAG", ">>>SaveJsonLog 1- " +api);
+
                     return params;
                 }
             };
@@ -186,6 +190,9 @@ public class SaveLogJsonObj {
                         @Override
                         protected Map<String, String> getParams() {
                             Map<String, String> params = new HashMap<String, String>();
+
+                            Logger.LogDebug("API TAG", ">>>SaveJsonLog- " +api);
+
                             return params;
                         }
                     };

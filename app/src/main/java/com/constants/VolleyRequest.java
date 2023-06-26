@@ -16,6 +16,7 @@ import java.util.Map;
 public class VolleyRequest {
     final String contentType = "application/x-www-form-urlencoded";  //"application/json; charset=utf-8";
     Context context;
+    String url = "";
    // RequestQueue requestQueue;
 
     public VolleyRequest(Context context) {
@@ -29,6 +30,7 @@ public class VolleyRequest {
     public void executeRequest(int method, final String JsonURL, final Map<String, String> params,
                                final int flag, int socketTimeout, final VolleyCallback callback, final VolleyErrorCall ErrorCallback) {
 
+        url = JsonURL;
         if (TabAct.requestQueue == null) {
             TabAct.requestQueue = Volley.newRequestQueue(context);
         }
@@ -56,6 +58,10 @@ public class VolleyRequest {
             @Override
             protected Map<String, String> getParams() {
               //  Logger.LogError("params", " params: " + params);
+
+                Logger.LogDebug("API TAG", ">>>SendDriverLog- " +url);
+
+
                 return params;
             }
 

@@ -416,6 +416,28 @@ public class SharedPref {
 
 
 
+
+    // Set HOS logging status for both drivers  -------------------
+    public static void SetHosLoggingStatus( boolean mainDriverStatus, boolean coDriverStatus, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("mainDriverLoggingStatus", mainDriverStatus);
+        editor.putBoolean("coDriverLoggingStatus", coDriverStatus);
+        editor.apply();
+    }
+
+    // Get HOS logging status of main driver -------------------
+    public static boolean getMainDriverLoggingStatus( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("mainDriverLoggingStatus", false);
+    }
+
+    // Get HOS logging status of co-driver -------------------
+    public static boolean getCoDriverLoggingStatus( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("coDriverLoggingStatus", false);
+    }
+
     // Set Wired Obd Call Time  -------------------
     public static void SetWiredObdCallTime( String date, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

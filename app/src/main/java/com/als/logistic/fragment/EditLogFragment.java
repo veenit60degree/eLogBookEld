@@ -1217,6 +1217,11 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                     DriverVehicleTypeId = obj.getString(ConstantsKeys.DriverVehicleTypeId);
                 }
 
+                String IsHosLoggingRule = "false";
+                if (obj.has(ConstantsKeys.IsHosLoggingRule) && !obj.getString(ConstantsKeys.IsHosLoggingRule).equals("null")) {
+                    IsHosLoggingRule = obj.getString(ConstantsKeys.IsHosLoggingRule);
+                }
+
                 EldDataModelNew eldModel = new EldDataModelNew(
 
                         obj.getString(ConstantsKeys.ProjectId),
@@ -1270,7 +1275,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                         LocationSource,
                         EngHour,
                         odometer,
-                        DriverVehicleTypeId
+                        DriverVehicleTypeId,
+                        IsHosLoggingRule
                         );
 
                     if(eldModel != null) {

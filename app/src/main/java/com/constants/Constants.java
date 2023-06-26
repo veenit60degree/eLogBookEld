@@ -111,6 +111,9 @@ import webapi.LocalCalls;
 
 public class Constants {
 
+    public static final String ACTION_START_DOWNLOAD = "com.background.service.ACTION_START_DOWNLOAD";
+    public static final String EXTRA_APK_URL = "com.background.service.EXTRA_APK_URL";
+
     public static final int OBD_PREF_WIFI = 1;
     public static final int OBD_PREF_WIRED = 2;
     public static final int OBD_PREF_BLE = 3;
@@ -624,6 +627,7 @@ public class Constants {
                 locationObj.put(ConstantsKeys.AppVersionCode, Globally.GetAppVersion(context, "VersionCode"));
             }
         }
+        locationObj.put(ConstantsKeys.IsHosLoggingRule, ListModel.isLoggingRule());
 
         jsonArray.put(locationObj);
     }
@@ -840,6 +844,11 @@ public class Constants {
                     DriverVehicleTypeId = obj.getString(ConstantsKeys.DriverVehicleTypeId);
                 }
 
+                String isHosLogging = "false";
+                if (obj.has(ConstantsKeys.IsHosLoggingRule) && !obj.getString(ConstantsKeys.IsHosLoggingRule).equals("null")) {
+                    DriverVehicleTypeId = obj.getString(ConstantsKeys.IsHosLoggingRule);
+                }
+
                 EldDataModelNew logModel = new EldDataModelNew(
                         obj.getString(ConstantsKeys.ProjectId),
                         obj.getString(ConstantsKeys.DriverId),
@@ -889,7 +898,8 @@ public class Constants {
                         obj.getString(ConstantsKeys.CoDriverId),
                         obj.getString(ConstantsKeys.CoDriverName),
                         "false", LocationSource, EngHour,
-                        odometer, DriverVehicleTypeId
+                        odometer, DriverVehicleTypeId,
+                        isHosLogging
 
                 );
 
@@ -2116,7 +2126,7 @@ public class Constants {
                                         String isAdverseException, String adverseExceptionRemark, String LocationType,
                                         String malAddInfo, boolean IsNorthCanada, boolean IsCycleChanged, String Odometer,
                                         String CoDriverId, String CoDriverName, String Truck, String Trailer, String EngHour,
-                                        String odometer, String DriverVehicleTypeId, HelperMethods hMethods,
+                                        String odometer, String DriverVehicleTypeId, boolean isHosLogging, HelperMethods hMethods,
                                         DBHelper dbHelper, Context context) {
 
         JSONArray driverArray = new JSONArray();
@@ -2231,7 +2241,8 @@ public class Constants {
                 EngHour,
                 odometer,
                 DriverVehicleTypeId,
-                false
+                false,
+                isHosLogging
 
 
 

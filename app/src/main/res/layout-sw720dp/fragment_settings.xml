@@ -675,23 +675,21 @@
                                 android:layout_width="@dimen/margin_19"
                                 android:layout_height="@dimen/margin_19"
                                 android:layout_centerInParent="true"
-                                android:tint="?attr/adverse_icon_color"
-                                android:src="@drawable/adverse_exception" />
+                                android:src="@drawable/adverse_exception"
+                                android:tint="?attr/adverse_icon_color" />
                         </RelativeLayout>
-
 
 
                         <TextView
                             android:id="@+id/adverseCanadaExpTxtView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/canada_adverse_excp"
-                            android:textColor="?attr/gray_category_color"
-                            android:textSize="@dimen/text_size_19"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/adverseCanadaExpImgView"
                             android:paddingLeft="@dimen/margin_10"
-                            android:layout_centerVertical="true"
-                            />
+                            android:text="@string/canada_adverse_excp"
+                            android:textColor="?attr/gray_category_color"
+                            android:textSize="@dimen/text_size_19" />
 
 
                         <androidx.appcompat.widget.SwitchCompat
@@ -710,6 +708,7 @@
                             app:thumbTextPadding="@dimen/margin_short_5" />
 
                     </RelativeLayout>
+
 
                     <RelativeLayout
                         android:id="@+id/deferralRuleLay"
@@ -763,6 +762,63 @@
                              android:theme="@style/Custom.Widget.SwitchCompatDark" />
 
                     </RelativeLayout>
+
+
+                    <RelativeLayout
+                        android:id="@+id/loggingRuleLay"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/view_height_65"
+                        android:paddingRight="@dimen/margin_10"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:layout_marginBottom="@dimen/margin_10"
+                        android:visibility="visible"
+
+                        >
+
+                        <RelativeLayout
+                            android:id="@+id/loggingLayout"
+                            android:layout_width="@dimen/view_height_50"
+                            android:layout_height="@dimen/view_height_50"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/circle_shape_document">
+
+
+                            <ImageView
+                                android:id="@+id/loggingImgView"
+                                android:layout_width="@dimen/margin_19"
+                                android:layout_height="@dimen/margin_19"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/logging"
+                                android:tint="?attr/deferal_icon_color" />
+
+                        </RelativeLayout>
+
+                        <TextView
+                            android:id="@+id/loggingTxtView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/logging_rule"
+                            android:textColor="?attr/gray_category_color"
+                            android:textSize="@dimen/text_size_19"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/loggingLayout"
+                            />
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/loggingSwitchButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerInParent="true"
+                            android:checked="false"
+                            android:theme="@style/Custom.Widget.SwitchCompatDark" />
+
+                    </RelativeLayout>
+
+
+
+
 
                 </LinearLayout>
 
@@ -1198,7 +1254,7 @@
                                 app:indeterminateMinimumAngle="45"
                                 app:indeterminateRotationAnimationDuration="1200"
                                 app:indeterminateSweepAnimationDuration="600"
-                                app:maximum="100"
+                                app:maximum="6553600"
                                 app:progress="0"
                                 app:progressAnimationDuration="100"
                                 app:startAngle="270"

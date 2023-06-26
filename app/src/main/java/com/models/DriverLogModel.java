@@ -60,6 +60,7 @@ public class DriverLogModel {
     private String DriverVehicleTypeId;
     private String AppVersionCode;
     private boolean IsUnAssignedMileRecord;
+    private boolean IsHosLoggingRule;
 
     public DriverLogModel() {
     }
@@ -115,6 +116,7 @@ public class DriverLogModel {
         this.DriverVehicleTypeId = logModel.getDriverVehicleTypeId();
         this.AppVersionCode = logModel.getAppVersionCode();
         this.IsUnAssignedMileRecord = logModel.IsUnAssignedMileRecord();
+        this.IsHosLoggingRule = logModel.isHosLoggingRule();
 
     }
 
@@ -547,4 +549,11 @@ public class DriverLogModel {
         return IsUnAssignedMileRecord;
     }
 
+    public boolean setHosLoggingRule(boolean isHosLoggingRule){
+        return isHosLoggingRule;
+    }
+
+    public boolean isHosLoggingRule(){
+        return IsHosLoggingRule;
+    }
 }

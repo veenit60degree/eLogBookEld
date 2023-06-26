@@ -1083,6 +1083,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.updateApiCallStatus( 0, false, global, getApplicationContext());
 			SharedPref.setUnIdenLastDutyStatus("", getApplicationContext());
 			SharedPref.setAutomaticTimeAlertWithStatus("", false, getApplicationContext());
+			SharedPref.SetHosLoggingStatus( false,false, getApplicationContext());
 
 			// clear array in table
 			if(CompanyId.length() > 0) {

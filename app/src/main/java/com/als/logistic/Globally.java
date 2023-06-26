@@ -2861,19 +2861,7 @@ public class Globally {
 	}
 
 
-	public static void DisConnectBleDevice(Context context){
-		try{
-			if(SharedPref.getObdPreference(context) == Constants.OBD_PREF_BLE) {
-				if (HTBleSdk.Companion.getInstance().isConnected()) {
-					//EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_DISCONNECTED, HTBleSdk.Companion.getInstance().getAddress()));
-					HTBleSdk.Companion.getInstance().disAllConnect();
-				}
-				HTBleSdk.Companion.getInstance().unRegisterCallBack();
-			}
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-	}
+
 	public static void ClearSqliteDB(Context c) {
 
 		try {

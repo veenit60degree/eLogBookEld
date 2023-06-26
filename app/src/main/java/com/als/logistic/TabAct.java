@@ -34,6 +34,7 @@ import com.background.service.BackgroundLocationService;
 import com.constants.CheckIsUpdateReady;
 import com.constants.CommonUtils;
 import com.constants.Constants;
+import com.constants.ConstantsEnum;
 import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.Slidingmenufunctions;
@@ -762,6 +763,8 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         SharedPref.SetWrongVinAlertView(false, getApplicationContext());
 
     }*/
+
+
 
     @Override
     public void onClick(View v) {

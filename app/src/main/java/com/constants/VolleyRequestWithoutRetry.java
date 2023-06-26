@@ -15,6 +15,7 @@ import java.util.Map;
 public class VolleyRequestWithoutRetry {
 
         final String contentType = "application/x-www-form-urlencoded";  //"application/json; charset=utf-8";
+    String url = "";
         Context context;
        // RequestQueue requestQueue;
 
@@ -29,6 +30,7 @@ public class VolleyRequestWithoutRetry {
         public void executeRequest(int method, final String JsonURL, final Map<String, String> params,
                                    final int flag, int socketTimeout, final VolleyRequest.VolleyCallback callback, final VolleyRequest.VolleyErrorCall ErrorCallback) {
 
+            url = JsonURL;
             if (TabAct.alsConnRequestQueue == null) {
                 TabAct.alsConnRequestQueue = Volley.newRequestQueue(context);
             }
@@ -60,6 +62,9 @@ public class VolleyRequestWithoutRetry {
                 @Override
                 protected Map<String, String> getParams() {
                     //  Logger.LogError("params", " params: " + params);
+
+                    Logger.LogDebug("API TAG", ">>>Without retry " + url);
+
                     return params;
                 }
 

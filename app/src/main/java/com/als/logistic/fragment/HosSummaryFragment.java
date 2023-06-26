@@ -32,6 +32,7 @@ import androidx.fragment.app.Fragment;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.background.service.BackgroundLocationService;
+import com.background.service.BleDataService;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
@@ -40,6 +41,7 @@ import com.constants.InitilizeEldView;
 import com.constants.LoadingSpinImgView;
 import com.constants.Logger;
 import com.constants.SharedPref;
+import com.constants.Utils;
 import com.constants.VolleyRequest;
 import com.constants.VolleyRequestWithoutRetry;
 import com.custom.dialogs.HosInfoDialog;
@@ -170,6 +172,9 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
     int deferralBlueLightDark;
     int resetWhiteColor;
+    Utils obdUtil;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -452,6 +457,13 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                         }else{
                             buttonView.setChecked(true);
                         }
+
+                        constants.saveBleLog("HOS validation - obdVehicleSpeed: "+ BackgroundLocationService.obdVehicleSpeed +
+                                        "\n onReceived: " +BleDataService.ReceivedData,
+                                Globally.GetDriverCurrentDateTime(global, getActivity()), getActivity(), dbHelper,
+                                driverPermissionMethod, obdUtil);
+
+
                     }else{
                         setReverseCycleName();
                         if(CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) || CurrentCycle.equals(Globally.CANADA_CYCLE_2_NAME)){
@@ -494,6 +506,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         }
 
         checkScreenPixel();
+        obdUtil = new Utils(getActivity());
 
     }
 
@@ -1612,6 +1625,13 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     Globally.EldScreenToast(eldMenuLay, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
                                     getString(R.string.stop_vehicle_alert),
                             getResources().getColor(R.color.colorVoilation));
+
+                    constants.saveBleLog("HOS validation - obdVehicleSpeed: "+ BackgroundLocationService.obdVehicleSpeed +
+                                    "\n onReceived: " +BleDataService.ReceivedData,
+                            Globally.GetDriverCurrentDateTime(global, getActivity()), getActivity(), dbHelper,
+                            driverPermissionMethod, obdUtil);
+
+
                 }
 
                 break;
@@ -1631,6 +1651,12 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     Globally.EldScreenToast(eldMenuLay, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
                                     getString(R.string.stop_vehicle_alert),
                             getResources().getColor(R.color.colorVoilation));
+
+                    constants.saveBleLog("HOS validation - obdVehicleSpeed: "+ BackgroundLocationService.obdVehicleSpeed +
+                                    "\n onReceived: " +BleDataService.ReceivedData,
+                                    Globally.GetDriverCurrentDateTime(global, getActivity()), getActivity(), dbHelper,
+                                    driverPermissionMethod, obdUtil);
+
                 }
 
                 break;
@@ -1651,6 +1677,12 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                                 global.EldScreenToast(sendLogHosBtn, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
                                                 getString(R.string.stop_vehicle_alert),
                                         getResources().getColor(R.color.colorVoilation));
+
+                                constants.saveBleLog("HOS validation - obdVehicleSpeed: "+ BackgroundLocationService.obdVehicleSpeed +
+                                                "\n onReceived: " +BleDataService.ReceivedData,
+                                        Globally.GetDriverCurrentDateTime(global, getActivity()), getActivity(), dbHelper,
+                                        driverPermissionMethod, obdUtil);
+
                             }
                         }
 
@@ -1661,6 +1693,12 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     Globally.EldScreenToast(eldMenuLay, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
                                     getString(R.string.stop_vehicle_alert),
                             getResources().getColor(R.color.colorVoilation));
+
+                    constants.saveBleLog("HOS validation - obdVehicleSpeed: "+ BackgroundLocationService.obdVehicleSpeed +
+                                    "\n onReceived: " +BleDataService.ReceivedData,
+                            Globally.GetDriverCurrentDateTime(global, getActivity()), getActivity(), dbHelper,
+                            driverPermissionMethod, obdUtil);
+
                 }
 
 
@@ -1691,6 +1729,12 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     Globally.EldScreenToast(eldMenuLay, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
                                     getString(R.string.stop_vehicle_alert),
                             getResources().getColor(R.color.colorVoilation));
+
+                    constants.saveBleLog("HOS validation - obdVehicleSpeed: "+ BackgroundLocationService.obdVehicleSpeed +
+                                    "\n onReceived: " +BleDataService.ReceivedData,
+                            Globally.GetDriverCurrentDateTime(global, getActivity()), getActivity(), dbHelper,
+                            driverPermissionMethod, obdUtil);
+
                 }
 
 
@@ -1773,6 +1817,17 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         params.put(ConstantsKeys.CompanyId, CompanyId);
         params.put(ConstantsKeys.LogDate, String.valueOf(currentDateTime) );
         params.put(ConstantsKeys.UTCStartDateTime, utcDateStr );
+
+/*
+        params.put(ConstantsKeys.DriverId, "130814");   //DriverId
+        params.put(ConstantsKeys.DeviceId, "f3275df0-76ae-4a7e-93fe-df97c3fd37d8" );  //DeviceId
+        params.put(ConstantsKeys.IsOdometerFromOBD, "true" );   //String.valueOf(isOdometer)
+        params.put(ConstantsKeys.VIN, "1XKWD40X5EJ966790"); //VIN
+        params.put(ConstantsKeys.CompanyId, "40543"); //CompanyId
+        params.put(ConstantsKeys.LogDate, "2023-05-30T09:36:47" );//String.valueOf(currentDateTime)
+        params.put(ConstantsKeys.UTCStartDateTime, "2023-05-30T16:36:47"  );    //utcDateStr
+*/
+
 
         GetMilesRequest.executeRequest(Request.Method.POST, APIs.GET_DRIVER_MILES, params, GetMiles,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);

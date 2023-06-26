@@ -1,9 +1,12 @@
 package com.constants;
 
 import android.app.Service;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -25,6 +28,7 @@ public class DownloadAppService extends Service {
     private String VersionCode = "", VersionName = "";
     boolean isDownloading ;
     DownloadingTask downloadTaskAsync = new DownloadingTask();
+    FileUtil fileUtil = new FileUtil();
 
     @Override
     public void onCreate() {
@@ -37,10 +41,11 @@ public class DownloadAppService extends Service {
         String url = " ";
 
         if (intent != null) {
-            url             = intent.getStringExtra("url");
-            VersionCode     = intent.getStringExtra("VersionCode");
-            VersionName     = intent.getStringExtra("VersionName");
-            isDownloading   = intent.getBooleanExtra("isDownloading", false);
+            url             = intent.getStringExtra(ConstantsKeys.url);
+            VersionCode     = intent.getStringExtra(ConstantsKeys.VersionCode);
+            VersionName     = intent.getStringExtra(ConstantsKeys.VersionName);
+            isDownloading   = intent.getBooleanExtra(ConstantsKeys.IsDownloading, false);
+
         }
 
         String[] params = new String[]{url};
@@ -110,10 +115,14 @@ public class DownloadAppService extends Service {
 
 
                 // input stream to read file - with 8k buffer
-                InputStream input = new BufferedInputStream(url.openStream(), 8192);
+              InputStream input = new BufferedInputStream(url.openStream(), 8192);
+                String filePath = folder + fileName;
 
+                /*    String mimeType = "application/vnd.android.package-archive";
+                fileUtil.createFile(contentResolver, filePath, mimeType);
+*/
                 // Output stream to write file
-                OutputStream output = new FileOutputStream(folder + fileName);
+                OutputStream output = new FileOutputStream(filePath);
 
                 byte data[] = new byte[1024];
 
@@ -148,7 +157,7 @@ public class DownloadAppService extends Service {
                 return folder + fileName;
 
             } catch (Exception e) {
-                Logger.LogError("Error: ", e.getMessage());
+                e.printStackTrace();
             }
 
 
@@ -197,6 +206,19 @@ public class DownloadAppService extends Service {
 
 
 
+        }
+    }
+
+
+    public static void writeFile(ContentResolver contentResolver, Uri uri, byte[] data) {
+        try {
+            OutputStream outputStream = contentResolver.openOutputStream(uri);
+            if (outputStream != null) {
+                outputStream.write(data);
+                outputStream.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

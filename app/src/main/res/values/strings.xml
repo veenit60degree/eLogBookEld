@@ -535,6 +535,7 @@
     <string name="usa_take_16_hour_exc">16 Hour Short Haul 395.1(0)</string>
     <string name="USA_Exemption">USA Exemptions</string>
     <string name="CANADA_Exemption">CANADA Exemptions</string>
+    <string name="logging_rule">Logging Rule</string>
 
     <string name="who_conducted_security">Person who conducted security inspection upon arrival</string>
     <string name="who_conducted_followup">Person who conducted follow up security inspection</string>

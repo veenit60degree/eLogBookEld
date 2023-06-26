@@ -226,6 +226,9 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
         if(bleStatus != Constants.BLE_CONNECTED){
             SharedPref.SaveBleOBDMacAddress("", getActivity());
             BleDataService.IsScanClick = true;
+            // set false to register ble callback listener
+            BackgroundLocationService.IReceiveUnRegisteredCalled = false;
+
             loaderProgress.setVisibility(View.VISIBLE);
             bleObdTxtView.setText(getString(R.string.start_scan));
             obdDataTxtView.setText("");

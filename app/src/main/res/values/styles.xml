@@ -114,6 +114,7 @@
 
         <item name="shadow">#30a8a8a8</item>
         <item name="pager_blue">#256CB4</item>
+        <item name="logging_rule_color">#DF781B</item>
 
     </style>
 
@@ -233,6 +234,8 @@
 
         <item name="shadow">#3069687F</item>
         <item name="pager_blue">#FFFFFF</item>
+        <item name="logging_rule_color">#959597</item>
+
 
     </style>
 

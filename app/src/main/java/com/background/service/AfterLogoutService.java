@@ -1062,11 +1062,15 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
     private void startBleService(){
         if(TruckID.length() > 0 && CompanyId.length() > 0) {
-            Intent serviceIntent = new Intent(getApplicationContext(), BleDataService.class);
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(serviceIntent);
+            try {
+                Intent serviceIntent = new Intent(getApplicationContext(), BleDataService.class);
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(serviceIntent);
+                }
+                startService(serviceIntent);
+            }catch (Exception e){
+                e.printStackTrace();
             }
-            startService(serviceIntent);
         }
     }
 

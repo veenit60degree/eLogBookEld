@@ -28,6 +28,17 @@ public class ConstantsKeys {
     public static String EndLatitude        = "EndLatitude";
     public static String EndLongitude       = "EndLongitude";
 
+    public static String url                = "url";
+    public static String VersionCode        = "VersionCode";
+    public static String VersionName        = "VersionName";
+    public static String IsDownloading      = "IsDownloading";
+    public static String Percentage         = "percentage";
+    public static String Path               = "path";
+    public static String IsCompleted        = "isCompleted";
+    public static String IsInterrupted      = "isInterrupted";
+
+
+
     public static String YardMove           = "YardMove";
     public static String Personal           = "Personal";
     public static String IsEdited           = "IsEdited";
@@ -197,6 +208,7 @@ public class ConstantsKeys {
     public static String DayOdometerInKm        = "DayOdometerInKm";
     public static String DayOdometerInMiles     = "DayOdometerInMiles";
     public static String DriverVehicleTypeId    = "DriverVehicleTypeId";
+    public static String IsHosLoggingRule       = "IsHosLoggingRule";
 
 
     // --------------------- Inspection params -------------------------
@@ -312,6 +324,7 @@ public class ConstantsKeys {
     public static String IsOBDPingAllowed               = "IsOBDPingAllowed";
     public static String IsAutoSync                     = "IsAutoSync";
     public static String IsShippingUpdate               = "IsShippingUpdate";
+    public static String IsCycleChange                  = "IsCycleChange";
 
 
     public static String IsStorageMalfunction           = "IsStorageMalfunction";

@@ -87,28 +87,36 @@ public class DatePickerDialog extends Dialog {
         recapViewMethod         = new RecapViewMethod();
 
         datePicker              =(DatePicker)findViewById(R.id.datePicker);
-        Calendar calendar       = Calendar.getInstance();
-        calendar.setTimeZone(TimeZone.getDefault());
+
+        int customOffset = (int) global.GetDriverTimeZoneOffSet(getContext());
+        customOffset = customOffset * 3600000;
+        TimeZone customTimeZone = TimeZone.getTimeZone("CustomTimeZone");
+        customTimeZone.setRawOffset(customOffset);
+
+        Calendar calendar       = Calendar.getInstance(customTimeZone);
+        calendar.setTimeZone(customTimeZone);
+
+      //  calendar.setTimeZone(TimeZone.getTimeZone());    //getDefault()
 
         setDateJob = (Button)findViewById(R.id.setDate);
         setDateJob.setText("Show Details");
 
 
 
-        String CoDriverId = "", firstLoginTime = "";
+        String CoDriverId = ""; //, firstLoginTime = "";
         int DRIVER_ID           = Integer.valueOf(SharedPref.getDriverId(getContext()));
 
-        if (!SharedPref.getDriverType(getContext()).equals(DriverConst.SingleDriver)) {
+      //  if (!SharedPref.getDriverType(getContext()).equals(DriverConst.SingleDriver)) {
             if(SharedPref.getDriverId(getContext()).equals(DriverConst.GetDriverDetails(DriverConst.DriverID, getContext()))){
                 CoDriverId   = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getContext());
-                firstLoginTime = SharedPref.getCoDriverFirstLoginTime(getContext());
+               // firstLoginTime = SharedPref.getCoDriverFirstLoginTime(getContext());
             }else{
                 CoDriverId   = DriverConst.GetDriverDetails(DriverConst.DriverID, getContext());
-                firstLoginTime = SharedPref.getDriverFirstLoginTime(getContext());
+               // firstLoginTime = SharedPref.getDriverFirstLoginTime(getContext());
             }
-        }else{
+       /* }else{
             firstLoginTime = SharedPref.getDriverFirstLoginTime(getContext());
-        }
+        }*/
 
 
         JSONObject logPermissionObj    = driverPermissionMethod.getDriverPermissionObj(DRIVER_ID, CoDriverId, dbHelper);
@@ -156,12 +164,27 @@ public class DatePickerDialog extends Dialog {
 
             DriverPermitMaxDays = getDays(DRIVER_ID, DriverPermitMaxDays);
 
-            calendar.add(Calendar.DAY_OF_MONTH, -DriverPermitMaxDays);
-            Date mindate = calendar.getTime();
-            datePicker.setMinDate(mindate.getTime());
+            calendar.add(calendar.DAY_OF_MONTH, -DriverPermitMaxDays);
 
-            // Calendar.MONTH start from 0, so that we are subtracting month value with -1
-            datePicker.updateDate(selectedYear, selectedMonth - 1, selectedDay);    // yy mm dd
+
+            String year = ""+calendar.get(Calendar.YEAR);
+            String month = checkSingleDigitValue(""+ (calendar.get(Calendar.MONTH)+1) ); // Note: Months are zero-based (0 = January)
+            String dayOfMonth = checkSingleDigitValue(""+calendar.get(Calendar.DAY_OF_MONTH));
+          /*  String hourOfDay = checkSingleDigitValue(""+calendar.get(Calendar.HOUR_OF_DAY));
+            String minute = checkSingleDigitValue(""+calendar.get(Calendar.MINUTE));
+            String second = checkSingleDigitValue(""+calendar.get(Calendar.SECOND));*/
+
+            String date = year + "-" + month + "-"+ dayOfMonth; // + "T" + hourOfDay+":"+minute+":"+second;
+            SimpleDateFormat curFormater = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                Date mindate = curFormater.parse(date);
+                datePicker.setMinDate(mindate.getTime());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            // Highlighted Date: Calendar.MONTH start from 0 (0 = Jan), so that we are subtracting month value with -1
+            datePicker.updateDate(selectedYear, (selectedMonth-1), selectedDay);    // yy mm dd
         }
 
 
@@ -169,6 +192,13 @@ public class DatePickerDialog extends Dialog {
 
     }
 
+
+    private String checkSingleDigitValue(String value){
+        if(value.length() == 1){
+            value = "0"+value;
+        }
+        return value;
+    }
 
   /*  private int getDays(String firstLoginTime, int DriverPermitMaxDays){
         if(firstLoginTime.length() > 10) {

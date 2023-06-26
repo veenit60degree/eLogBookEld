@@ -106,7 +106,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
     int CountryCan          = 1;
     int CountryUsa          = 2;
     int UsaMaxDays          = 7;    // 1 + 7  = 8 days
-    int CanMaxDays          = 13;   // 1 = 13  = 14 days
+    int CanMaxDays          = 14;   // 1 = 13  = 14 days
     int MaxDays, SelectedCountry = 0;
     boolean IsAOBRD;
     private String City = "", Country = "", canSelectedEmail = "", selectedCountry = "Select", LocationFromApi = "" ;
@@ -217,7 +217,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
             MaxDays = CanMaxDays;
         }
 
-        ArrayAdapter countryAdapter = new ArrayAdapter(getContext(), R.layout.item_editlog_spinner, R.id.editlogSpinTV,
+        ArrayAdapter countryAdapter = new ArrayAdapter(getContext(), R.layout.item_sharelog_spinner, R.id.shareLogSpinTV,
                 getContext().getResources().getStringArray(R.array.country_array));
         countrySpinner.setAdapter(countryAdapter);
 
@@ -954,6 +954,8 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                 params.put(ConstantsKeys.DriverTimeZone, DriverTimeZone);
                 params.put(ConstantsKeys.Country, selectedCountry );    // for canada view
                 params.put(ConstantsKeys.EmailAddress, canSelectedEmail);   // for canada view
+
+                Logger.LogDebug("API TAG", ">>>SendDriverLog");
 
                 return params;
             }

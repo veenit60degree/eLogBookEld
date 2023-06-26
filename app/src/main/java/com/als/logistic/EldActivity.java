@@ -10,13 +10,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.background.service.BackgroundLocationService;
+import com.background.service.BleDataService;
 import com.constants.Constants;
 import com.constants.ExitStrategy;
 import com.constants.SharedPref;
+import com.constants.Utils;
 import com.custom.dialogs.LoginDialog;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
+import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
 import com.als.logistic.fragment.EldFragment;
 
@@ -37,6 +40,10 @@ public class EldActivity extends FragmentActivity  {
     Globally globally;
     HelperMethods hMethods;
     DBHelper dbHelper;
+    Constants constants;
+    Utils obdUtil;
+    DriverPermissionMethod driverPermissionMethod;
+
 
 
     @Override
@@ -57,6 +64,10 @@ public class EldActivity extends FragmentActivity  {
         globally = new Globally();
         hMethods = new HelperMethods();
         dbHelper = new DBHelper(this);
+        constants = new Constants();
+        obdUtil = new Utils(getApplicationContext());
+        driverPermissionMethod  = new DriverPermissionMethod();
+
 
         DOTButton = (TextView)findViewById(R.id.tripTitleTV);
 
@@ -251,6 +262,13 @@ public class EldActivity extends FragmentActivity  {
                     Globally.EldScreenToast(DOTButton, "Vehicle speed is " + BackgroundLocationService.obdVehicleSpeed +" km/h. " +
                                     getString(R.string.stop_vehicle_alert),
                             getResources().getColor(R.color.colorVoilation));
+
+                    constants.saveBleLog("onBackPressed validation - obdVehicleSpeed: "+
+                                    BackgroundLocationService.obdVehicleSpeed + "\n onReceived: " + BleDataService.ReceivedData,
+                            Globally.GetDriverCurrentDateTime(globally, getApplicationContext()), getApplicationContext(),
+                            dbHelper, driverPermissionMethod, obdUtil);
+
+
                 }
 
             }

@@ -95,7 +95,7 @@ public class SaveUnidentifiedRecord
                 public byte[] getBody() throws AuthFailureError {
                     try {
                         Logger.LogDebug("api", ">>certify uniden Data api: " + api);
-                        Logger.LogDebug("certify", ">>certify uniden Data: " + driverLogData.toString());
+                        Logger.LogDebug("certify", ">>>certify uniden Data: " + driverLogData.toString());
                         return driverLogData.toString().getBytes("utf-8");
                     } catch (UnsupportedEncodingException uee) {
                         VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s",
@@ -108,6 +108,7 @@ public class SaveUnidentifiedRecord
                 @Override
                 protected Map<String, String> getParams() {
                     Map<String, String> params = new HashMap<String, String>();
+                    Logger.LogDebug("API TAG", ">>>SaveUnidentifiedRecord1- " +api);
                     return params;
                 }
             };
@@ -166,6 +167,7 @@ public class SaveUnidentifiedRecord
                         @Override
                         public byte[] getBody() throws AuthFailureError {
                             try {
+                                Logger.LogDebug("FailedDataInput", ">>>FailedData api: " + APIs.FAILED_API_TRACK);
                                 Logger.LogDebug("FailedDataInput", ">>FailedDataInput: " + failedInputData);
                                 return failedInputData.getBytes("utf-8");
                             } catch (UnsupportedEncodingException uee) {
@@ -179,6 +181,9 @@ public class SaveUnidentifiedRecord
                         @Override
                         protected Map<String, String> getParams() {
                             Map<String, String> params = new HashMap<String, String>();
+
+                            Logger.LogDebug("API TAG", ">>>SaveUnidentifiedRecord- " +api);
+
                             return params;
                         }
                     };

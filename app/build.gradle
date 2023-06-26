@@ -20,8 +20,8 @@ android {
         applicationId "com.als.logistic"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 192    //188
-        versionName "3.6.42.15.2" //3.6.42.13.4
+        versionCode 193    //193
+        versionName "3.6.42.15.3" //3.6.42.15.3
         // Enabling multidex support.
         multiDexEnabled true
 

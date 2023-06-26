@@ -172,6 +172,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
     int bleOnReceiveReqCountAtSame          = 0;
     boolean isOnReceiverCounterCalled       = false;
+    public static boolean IReceiveUnRegisteredCalled      = false;
     public static int obdVehicleSpeed       = -1;
 
     int LocRefreshTime = 10;
@@ -353,7 +354,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         SharedPref.saveBleScanCount(0, getApplicationContext());
         isTeamDriverLogin = SharedPref.getDriverType(getApplicationContext()).equals(DriverConst.TeamDriver);
 
-
+        IReceiveUnRegisteredCalled = false;
         startLocationService(false);
 
         getDriverIDs();
@@ -1293,9 +1294,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                         obdCallBackObservable(obdVehicleSpeed, decodedDataArray[13], global.GetDriverCurrentDateTime(global, getApplicationContext()));
 
 
-                                    } /*else {
-                                            disconnectBleObd();
-                                        }*/
+                                    }
 
                                 }else{
                                     if(timeInSec < 0){
@@ -1313,6 +1312,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                         HTBleSdk.Companion.getInstance().unRegisterCallBack();//Remove data callback listener
 
                                         if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+                                            IReceiveUnRegisteredCalled = true;
                                             startBleService();
                                         }
                                     }
@@ -1662,7 +1662,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                     // update mal/dia status for enable disable according to log
                                     malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(DriverId, global, constants, dbHelper, getApplicationContext());
 
-                                    updateMalDiaInfoWindowAtHomePage();
+                                    updateMalDiaInfoWindowAtHomePage(true, false);
 
                                     // update malfunction & diagnostic Fragment screen
                                     updateMalDiaFragment(true);
@@ -1733,7 +1733,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                                 // update mal/dia status for enable disable according to log
                                                 malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(DriverId, global, constants, dbHelper, getApplicationContext());
 
-                                                updateMalDiaInfoWindowAtHomePage();
+                                                updateMalDiaInfoWindowAtHomePage(true, false);
 
                                                 // update malfunction & diagnostic Fragment screen
                                                 updateMalDiaFragment(true);
@@ -1996,7 +1996,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                 false, currentDate, getApplicationContext());
 
 
-                        updateMalDiaInfoWindowAtHomePage();
+                        updateMalDiaInfoWindowAtHomePage(true, false);
                         // update malfunction & diagnostic Fragment screen
                         updateMalDiaFragment(true);
                     }
@@ -2040,7 +2040,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             // update mal/dia status for enable disable according to log
             malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(DriverId, global, constants, dbHelper, getApplicationContext());
 
-            updateMalDiaInfoWindowAtHomePage();
+            updateMalDiaInfoWindowAtHomePage(true, false);
             // update malfunction & diagnostic Fragment screen
             updateMalDiaFragment(true);
 
@@ -2061,7 +2061,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
         malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(DriverId, global, constants, dbHelper, getApplicationContext());
 
-        updateMalDiaInfoWindowAtHomePage();
+        updateMalDiaInfoWindowAtHomePage(true, false);
         // update malfunction & diagnostic Fragment screen
         updateMalDiaFragment(true);
 
@@ -2211,7 +2211,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                                     Globally.PlaySound(getApplicationContext());
 
 
-                                    updateMalDiaInfoWindowAtHomePage();
+                                    updateMalDiaInfoWindowAtHomePage(true, false);
 
                                     // update malfunction & diagnostic Fragment screen
                                     updateMalDiaFragment(true);
@@ -2257,7 +2257,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                     malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(DriverId, global, constants, dbHelper, getApplicationContext());
 
-                    updateMalDiaInfoWindowAtHomePage();
+                    updateMalDiaInfoWindowAtHomePage(true, false);
                     // update malfunction & diagnostic Fragment screen
                     updateMalDiaFragment(true);
 
@@ -2327,7 +2327,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                         SharedPref.isMalfunctionOccur(getApplicationContext()), true,
                         SharedPref.isSuggestedEditOccur(getApplicationContext()), getApplicationContext());
 
-                updateMalDiaInfoWindowAtHomePage();
+                updateMalDiaInfoWindowAtHomePage(true, false);
 
                 // update malfunction & diagnostic Fragment screen
                 updateMalDiaFragment(true);
@@ -2421,7 +2421,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                         }else{
 
 
-                            updateMalDiaInfoWindowAtHomePage();
+                            updateMalDiaInfoWindowAtHomePage(true, false);
 
                             // update malfunction & diagnostic Fragment screen
                             updateMalDiaFragment(true);
@@ -2449,7 +2449,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                             constants.saveDiagnstcStatus(getApplicationContext(), false);
                         }
 
-                        updateMalDiaInfoWindowAtHomePage();
+                        updateMalDiaInfoWindowAtHomePage(true, false);
 
                         // update malfunction & diagnostic Fragment screen
                         updateMalDiaFragment(true);
@@ -2597,12 +2597,13 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
 
 
-    void updateMalDiaInfoWindowAtHomePage(){
+    void updateMalDiaInfoWindowAtHomePage(boolean IsUpdateMalDiaInfoWindow, boolean isCycleChange){
         try{
             Intent intent = new Intent(ConstantsKeys.IsIgnitionOn);
             intent.putExtra(ConstantsKeys.IsIgnitionOn, false);
             intent.putExtra(ConstantsKeys.IsNeedToUpdate18DaysLog, false);
-            intent.putExtra(ConstantsKeys.IsUpdateMalDiaInfoWindow, true);
+            intent.putExtra(ConstantsKeys.IsUpdateMalDiaInfoWindow, IsUpdateMalDiaInfoWindow);
+            intent.putExtra(ConstantsKeys.IsCycleChange, isCycleChange);
             LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
 
         }catch (Exception e){
@@ -2794,10 +2795,6 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         }
 
     }
-
-
-
-
 
 
 
@@ -3015,11 +3012,15 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
 
     private void startBleService(){
-        Intent serviceIntent = new Intent(getApplicationContext(), BleDataService.class);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent);
+        try {
+            Intent serviceIntent = new Intent(getApplicationContext(), BleDataService.class);
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent);
+            }
+            startService(serviceIntent);
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        startService(serviceIntent);
     }
 
 
@@ -3692,6 +3693,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     public void onDestroy() {
 
+        Logger.LogDebug("---onDestroy " , "-----------onDestroy");
+
         if(!isStopService) {
 
             Logger.LogDebug("---onDestroy service_re", ConstantsEnum.StatusAppKilled );
@@ -3749,6 +3752,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
             HTBleSdk.Companion.getInstance().stopHTBleScan();
             HTBleSdk.Companion.getInstance().unRegisterCallBack();
+            IReceiveUnRegisteredCalled = true;
 
             if (!HTBleSdk.Companion.getInstance().isAllConnected())
                 HTBleSdk.Companion.getInstance().disAllConnect();
@@ -4011,7 +4015,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                 constants.IsAlsServerResponding = true;
 
             }else{
-                constants.saveAppLog("Network API failed", DriverId, dbHelper, driverPermissionMethod, obdUtil);
+                constants.saveAppLog("Network API failed - " +Globally.GetCurrentDateTime(global, getApplicationContext()), DriverId, dbHelper, driverPermissionMethod, obdUtil);
 
             }
         }
@@ -4820,7 +4824,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
         }
 
         ClearEventType = "";
-        updateMalDiaInfoWindowAtHomePage();
+        updateMalDiaInfoWindowAtHomePage(true, false);
 
         // update malfunction & diagnostic Fragment screen
         updateMalDiaFragment(false);
@@ -5120,7 +5124,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                             malfunctionDiagnosticMethod.MalDiaDurationHelper(dbHelper, durationArray);
 
                             malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(DriverId, global, constants, dbHelper, getApplicationContext());
-                            updateMalDiaInfoWindowAtHomePage();
+                            updateMalDiaInfoWindowAtHomePage(true, false);
 
                             // update malfunction & diagnostic Fragment screen
                             updateMalDiaFragment(true);
@@ -5202,10 +5206,17 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                                 if (dataObj.has(ConstantsKeys.CycleId) && !dataObj.getString(ConstantsKeys.CycleId).equals("null")){
                                     int CycleId = dataObj.getInt(ConstantsKeys.CycleId);
-
                                     // Save Driver Cycle With Current Date
                                     constants.SaveCycleWithCurrentDate(CycleId, utcCurrentDateTime.toString(), "UpdateOfflineDriverLog_api",
                                             global, getApplicationContext());
+
+                                    // update CycleId on home screen
+                                    String CurrentCycle = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getApplicationContext()), getApplicationContext());
+                                    if (CycleId != 0 && !CurrentCycle.equals(""+CycleId)) {
+                                        updateMalDiaInfoWindowAtHomePage(false, true);
+                                    }
+
+
                                 }
 
 
@@ -5400,7 +5411,8 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
 
                     if(updateOfflineNoResponseCount > 0) {
                         constants.IsAlsServerResponding = false;
-                        constants.saveAppLog("Update Offline API failed", DriverId, dbHelper, driverPermissionMethod, obdUtil);
+                        constants.saveAppLog("Update Offline API failed - " +Globally.GetCurrentDateTime(global, getApplicationContext()),
+                                DriverId, dbHelper, driverPermissionMethod, obdUtil);
                     }
 
                     updateOfflineNoResponseCount++;
@@ -5547,7 +5559,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
             String violatioReason = RulesObj.getViolationReason().trim();
 
             if(isEldToast){
-                if(!status.equals(getString(R.string.screen_reset))) {
+                if(msg.length() > 0 ) {  //!status.equals(getString(R.string.screen_reset)) ||
                     global.ShowNotificationWithSound(getApplicationContext(), "ELD", msg, mNotificationManager);
                 }
 
@@ -5565,7 +5577,7 @@ public class BackgroundLocationService extends Service implements TextToSpeech.O
                         }, 4000);
 
                     }catch (Exception e){
-
+                        e.printStackTrace();
                     }
                 }
 

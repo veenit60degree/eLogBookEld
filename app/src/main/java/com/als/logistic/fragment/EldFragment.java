@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -3918,6 +3919,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             }
                         }else if (intent.getBooleanExtra(ConstantsKeys.IsUpdateMalDiaInfoWindow, false) == true) {
                             setMalfnDiagnEventInfo();
+                        }else if (intent.getBooleanExtra(ConstantsKeys.IsCycleChange, false) == true) {
+                            GetDriverCycle();
                         }
                     }else if(intent.hasExtra(ConstantsKeys.IsCertifyReminder)){
                         if (intent.getBooleanExtra(ConstantsKeys.IsCertifyReminder, false) == true) {
@@ -4049,12 +4052,15 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 LocationType = "";
             }
 
+            boolean isHosLogging = false;
             getExceptionStatus();
             try {
                 if (DriverType == Constants.MAIN_DRIVER_TYPE) {
                     DriverName = MainDriverName;
+                    isHosLogging = SharedPref.getMainDriverLoggingStatus(getActivity());
                 } else {
                     DriverName = CoDriverName;
+                    isHosLogging = SharedPref.getCoDriverLoggingStatus(getActivity());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -4098,7 +4104,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             LocationType, MalfunctionDefinition, IsNorthCanada, false,
                             SharedPref.getObdOdometer(getActivity()), CoDriverIdInSaveStatus, CoDriverNameInSaveStatus,
                             TruckNumber, TrailorNumber, SharedPref.getObdEngineHours(getActivity()),
-                            SharedPref.getObdOdometer(getActivity()), Constants.Driver, hMethods, dbHelper, getActivity());
+                            SharedPref.getObdOdometer(getActivity()), Constants.Driver, isHosLogging,
+                            hMethods, dbHelper, getActivity());
 
 
                     String CurrentDate = Globally.GetDriverCurrentDateTime(Global, getActivity());
@@ -4231,7 +4238,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         Constants.getLocationSource(getActivity()),
                         SharedPref.getObdEngineHours(getActivity()),
                         SharedPref.getObdOdometer(getActivity()),
-                        Constants.Driver
+                        Constants.Driver,
+                        ""+isHosLogging
 
                 );
 
@@ -4295,7 +4303,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         LocationType, MalfunctionDefinition, IsNorthCanada, isCycleChange,
                         SharedPref.getObdOdometer(getActivity()), CoDriverIdInSaveStatus, CoDriverNameInSaveStatus,
                         TruckNumber, TrailorNumber, SharedPref.getObdEngineHours(getActivity()),
-                        SharedPref.getObdOdometer(getActivity()), Constants.Driver, hMethods, dbHelper, getActivity());
+                        SharedPref.getObdOdometer(getActivity()), Constants.Driver, isHosLogging,
+                        hMethods, dbHelper, getActivity());
 
                 /* ---------------- DB Helper operations (Insert/Update) --------------- */
                 hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, driverLogArray);
@@ -4318,7 +4327,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         LocationType, MalfunctionDefinition, IsNorthCanada, isCycleChange, CoDriverIdInSaveStatus, CoDriverNameInSaveStatus,
                         SharedPref.getObdOdometer(getActivity()), TruckNumber, TrailorNumber,
                         SharedPref.getObdEngineHours(getActivity()),
-                        SharedPref.getObdOdometer(getActivity()),  Constants.Driver, hMethods, dbHelper, getActivity());
+                        SharedPref.getObdOdometer(getActivity()),  Constants.Driver, isHosLogging,
+                        hMethods, dbHelper, getActivity());
 
                 /* ---------------- DB Helper operations (Insert/Update) --------------- */
                 hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, driverLogArray);
@@ -6491,7 +6501,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(Globally.LONGITUDE);
 
-        if (!SharedPref.IsAOBRD(getActivity()) && !IsPrePost ){
+        if (!SharedPref.IsAOBRD(getActivity()) && !IsPrePost && Globally.isConnected(getActivity())){
             params = new HashMap<String, String>();
             params.put(ConstantsKeys.Latitude, Globally.LATITUDE);
             params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
@@ -6500,7 +6510,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             GetAddFromLatLngRequest.executeRequest(Request.Method.POST, APIs.GET_Add_FROM_LAT_LNG, params, ConstantsEnum.GetAddFromLatLng,
                     Constants.SocketTimeout5Sec, ResponseCallBack, ErrorCallBack);
         }else{
-            progressBar.setVisibility(View.GONE);
+             progressBar.setVisibility(View.GONE);
             EnableJobViews();
         }
     }

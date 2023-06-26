@@ -160,6 +160,8 @@ public class AssignUnidentifiedRecordDialog extends Dialog {
                  params.put(ConstantsKeys.DeviceId, DeviceId);
                //  params.put(ConstantsKeys.CompanyId, CompanyId);
 
+                Logger.LogDebug("api", ">>>Assign unidentified: " );
+
                 return params;
             }
         };
